@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "165836112149",
+    "project_id": "djizhub",
+    "storage_bucket": "djizhub.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:165836112149:android:76de9139d708a87268e91c",
+        "android_client_info": {
+          "package_name": "com.example.djizhub_light"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "165836112149-3tmnu4p87oij36p55uij5fqnf8j9hcqf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaSzGBMPS1cz2hbXBz-MD98P45QRbxMRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "165836112149-3tmnu4p87oij36p55uij5fqnf8j9hcqf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
