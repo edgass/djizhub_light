@@ -15,7 +15,7 @@ class Login extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               SizedBox(),
-              LoginForm(),
+            //  LoginForm(),
               LoginFooter()
             ],
           ),

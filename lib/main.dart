@@ -1,6 +1,4 @@
-import 'package:djizhub_light/auth/login.dart';
-import 'package:djizhub_light/home/account_details.dart';
-import 'package:djizhub_light/home/home.dart';
+import 'package:djizhub_light/App_home.dart';
 import 'package:djizhub_light/utils/binding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -20,9 +18,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+    debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
+
             seedColor:  Color(0xFFF27F0C),
             brightness: Brightness.light,
             primary:  Color(0xFFF27F0C),
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         // primarySwatch: Colors.blue,
         primaryColor: Color(0xFF70bccc),
       ),
-      home: const Login(),
+      home: IntroScreen()
     );
   }
 }

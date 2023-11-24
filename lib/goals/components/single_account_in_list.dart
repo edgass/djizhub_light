@@ -1,8 +1,9 @@
-import 'package:djizhub_light/home/account_details.dart';
+
 import 'package:djizhub_light/home/info_box.dart';
 import 'package:flutter/material.dart';
 
-import '../globals.dart';
+import '../../globals.dart';
+import 'account_details.dart';
 class SingleAccountInList extends StatelessWidget {
   const SingleAccountInList({Key? key}) : super(key: key);
 
@@ -17,15 +18,32 @@ class SingleAccountInList extends StatelessWidget {
           height: MediaQuery.of(context).size.width*0.7,
           decoration: BoxDecoration(
             backgroundBlendMode: BlendMode.overlay,
-            borderRadius: BorderRadius.circular(35),
+            borderRadius: BorderRadius.circular(20),
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey,
-                offset: Offset(0.0, 0.1), //(x,y)
-                blurRadius: 6.0,
+                color: Colors.grey.shade600,
+                spreadRadius: 1,
+                blurRadius: 15,
+                offset: const Offset(5, 5),
               ),
+              const BoxShadow(
+                  color: Colors.white,
+                  offset: Offset(-5,-5),
+                  blurRadius: 15,
+                  spreadRadius: 1
+              ) ,
             ],
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.grey.shade200,
+                Colors.grey.shade300,
+                Colors.grey.shade400,
+                Colors.grey.shade500,
+              ],
+            ),
           ),
           child: Padding(
             padding: const EdgeInsets.only(left: 20.0,right: 20.0,top: 25.0,bottom: 25.0),
@@ -59,8 +77,8 @@ class SingleAccountInList extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    InfoBox(title: "Solde",price: 14000),
-                    InfoBox(title: "Objectif",price: 25000),
+                    InfoBox(title: "Solde",price: 14000,designShadow: false,),
+                    InfoBox(title: "Objectif",price: 25000,designShadow: false,),
                   ],
                 ),
               ],

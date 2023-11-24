@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../globals.dart';
+import '../../globals.dart';
 class TransactionsActions extends StatelessWidget {
   const TransactionsActions({Key? key}) : super(key: key);
 
@@ -34,7 +34,7 @@ class TransactionsActions extends StatelessWidget {
                                color: Colors.blueAccent,
                                borderRadius: BorderRadius.circular(10)
                            ),
-                           child: Icon(Icons.mobile_friendly),
+                           child: Icon(Icons.arrow_downward),
                          ),
                          Padding(
                            padding: const EdgeInsets.only(left: 15.0),
@@ -60,7 +60,7 @@ class TransactionsActions extends StatelessWidget {
                                 color: Colors.blue,
                                 borderRadius: BorderRadius.circular(10)
                             ),
-                            child: Icon(Icons.mobile_friendly),
+                            child: Icon(Icons.arrow_upward),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 15.0),
@@ -86,7 +86,7 @@ class TransactionsActions extends StatelessWidget {
                                 color: Colors.blueGrey,
                                 borderRadius: BorderRadius.circular(10)
                             ),
-                            child: Icon(Icons.mobile_friendly),
+                            child: Icon(Icons.settings),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 15.0),

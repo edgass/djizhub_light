@@ -1,9 +1,10 @@
+
 import 'package:djizhub_light/home/info_box.dart';
-import 'package:djizhub_light/home/single_transaction.dart';
-import 'package:djizhub_light/home/transaction_actions.dart';
 import 'package:flutter/material.dart';
 
-import '../globals.dart';
+import '../../globals.dart';
+import '../../transactions/components/single_transaction.dart';
+import '../../transactions/components/transaction_actions.dart';
 class AccoutDetails extends StatelessWidget {
   const AccoutDetails({Key? key}) : super(key: key);
 
@@ -46,7 +47,7 @@ class AccoutDetails extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 25,),
+              SizedBox(height: 20,),
               Column(
                 children: [
                   Text("Objectif voiture",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),),
@@ -56,25 +57,26 @@ class AccoutDetails extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      InfoBox(title: "Solde",price: 14000),
-                      InfoBox(title: "Objectif",price: 25000),
+                      InfoBox(title: "Solde",price: 14000,designShadow: true,),
+                      InfoBox(title: "Objectif",price: 25000,designShadow: true,),
                     ],
                   ),
                 ],
               ),
+              SizedBox(height: 20,),
               Expanded(
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(75),topRight: Radius.circular(65)),
+                    borderRadius: BorderRadius.only(topLeft: Radius.circular(15),topRight: Radius.circular(15)),
                     color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0.0, 0.1), //(x,y)
-                        blurRadius: 6.0,
-                      ),
-                    ],
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.grey.shade300,
+                            spreadRadius: 1,
+                            blurRadius: 20
+                        )
+                      ]
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(18.0),
@@ -82,7 +84,7 @@ class AccoutDetails extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 20.0,right: 20.0),
                       child: ListView(
                         children: [
-                          Text("Transactions",textAlign: TextAlign.center,style: TextStyle(fontSize:20),),
+                          Text("Transactions",textAlign: TextAlign.center,style: TextStyle(fontSize:20,color: apCol,fontWeight: FontWeight.bold),),
                           SizedBox(height: 15,),
                           SingleTransactionInList(),
                           SingleTransactionInList(),

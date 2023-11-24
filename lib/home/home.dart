@@ -1,9 +1,12 @@
-import 'package:djizhub_light/home/account_list.dart';
+import 'package:djizhub_light/auth/setting.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../globals.dart';
+import '../goals/components/account_list.dart';
 class Home extends StatelessWidget {
-  const Home({Key? key}) : super(key: key);
+
+   Home({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +19,7 @@ class Home extends StatelessWidget {
             bottom: Radius.circular(35),
           ),
         ),
-        title: Text('+221 77 247 77 30',style: TextStyle(fontWeight: FontWeight.bold),),
+        title: Text(FirebaseAuth.instance.currentUser?.email ?? "Actif",style: TextStyle(fontWeight: FontWeight.bold),),
         centerTitle: true,
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(60),
@@ -29,19 +32,23 @@ class Home extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                          color: apCol,
-                          borderRadius: BorderRadius.circular(15)
+                  Text("Djizhub",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25,color: Colors.white),),
+                  InkWell(
+                    onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingPage())),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: apCol,
+                            borderRadius: BorderRadius.circular(15)
+                        ),
+                        child: Icon(Icons.settings,color: Colors.white,),
                       ),
-                      child: Icon(Icons.settings,color: Colors.white,),
                     ),
                   ),
-                  Text("Djizhub",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25,color: Colors.white),)
+
                 ],
               ),
             ),
