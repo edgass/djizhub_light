@@ -38,9 +38,6 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         controller: nameController,
                         decoration: InputDecoration(
                           labelText: "Nom",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
                         ),
                         // The validator receives the text that the user has entered.
                         validator: (value) {
@@ -57,9 +54,6 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         controller: emailController,
                         decoration: InputDecoration(
                           labelText: "Adresse mail",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
                         ),
                         // The validator receives the text that the user has entered.
                         validator: (value) {
@@ -78,9 +72,6 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         controller: ageController,
                         decoration: InputDecoration(
                           labelText: "Age",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
                         ),
                         // The validator receives the text that the user has entered.
                         validator: (value) {
@@ -98,9 +89,6 @@ class _EmailSignUpState extends State<EmailSignUp> {
                         controller: passwordController,
                         decoration: InputDecoration(
                           labelText: "Mot de passe",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
                         ),
                         // The validator receives the text that the user has entered.
                         validator: (value) {
@@ -127,7 +115,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
                             registerToFb();
                           }
                         },
-                        child: Text('Envoyer'),
+                        child: Text('Envoyer',style: TextStyle(color: Colors.white)),
                       ),
                     )
                   ]))),

@@ -33,9 +33,6 @@ class _EmailLogInState extends State<EmailLogIn> {
                         controller: emailController,
                         decoration: InputDecoration(
                           labelText: "Adresse Mail",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
                         ),
                         // The validator receives the text that the user has entered.
                         validator: (value) {
@@ -55,9 +52,6 @@ class _EmailLogInState extends State<EmailLogIn> {
                         controller: passwordController,
                         decoration: InputDecoration(
                           labelText: "Mot de passe",
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
                         ),
                         // The validator receives the text that the user has entered.
                         validator: (value) {
@@ -84,7 +78,7 @@ class _EmailLogInState extends State<EmailLogIn> {
                             logInToFb();
                           }
                         },
-                        child: Text('Envoyer'),
+                        child: Text('Envoyer',style: TextStyle(color: Colors.white),),
                       ),
                     ),
                     Padding(

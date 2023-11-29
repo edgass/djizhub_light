@@ -17,7 +17,7 @@ class IntroScreen extends StatelessWidget {
         loadingTextPadding: EdgeInsets.all(0),
         loadingText: Text(""),
         navigateAfterSeconds: result != null ? Home() : SignUp(),
-        seconds: 5,
+        seconds: 3,
         title: Text(
           'Bienvenue dans Djizub!',
           style: new TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),

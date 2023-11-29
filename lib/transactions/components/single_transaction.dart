@@ -1,38 +1,73 @@
+import 'package:djizhub_light/globals.dart';
+import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
+import 'package:djizhub_light/models/goals_model.dart';
+import 'package:djizhub_light/transactions/components/single_transaction_details.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 class SingleTransactionInList extends StatelessWidget {
-  const SingleTransactionInList({Key? key}) : super(key: key);
+  Transaction transaction;
+   SingleTransactionInList({Key? key,required this.transaction}) : super(key: key);
+   FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20.0),
-      child: Row(
-        children: [
-          Container(
-            width: 25,
-            height: 25,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10)
-            ),
-            child: Icon(Icons.mobile_friendly),
+    var formatter = NumberFormat("#,###");
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: transaction.type == "WITHDRAWAL" ? BorderRadius.circular(10) : null,
+        color: transaction.type == "WITHDRAWAL" ? Color(0xFFFFE4BD) : null
+      ),
+      child: InkWell(
+        onTap: ()=>{
+          fetchGoalsController.setCurrentTransaction(transaction),
+          Get.to(()=>SingleTransactionDetails())
+        },
+        child: Padding(
+          padding: const EdgeInsets.only(top: 10.0,left: 10,right: 10,bottom: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 15.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(transaction.transactionOperator ?? "",style: TextStyle(fontSize:15,fontWeight: FontWeight.bold),),
+                    SizedBox(height: 4,),
+                    Text("${transaction.createdAt?.day}/${transaction.createdAt?.month}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour}h ${transaction.createdAt?.minute}",style: TextStyle(),),
+                    SizedBox(height: 4,),
+                    transaction.status == "PENDING" ?
+                    Row(
+                      children: [
+                        Text("Statut : "),
+                        Text("En attente",style: const TextStyle(color: Colors.orange),),
+                      ],
+                    ) :
+                    transaction.status == "SUCCESS" ?
+                    Row(
+                      children: [
+                        Text("Statut : "),
+                        Text("Succés",style: const TextStyle(color: Colors.green),),
+                      ],
+                    ) :
+                    Row(
+                      children: [
+                        Text("Statut : "),
+                        Text("Echec",style: const TextStyle(color: Colors.redAccent),),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Expanded(
+                  child:transaction.type == "DEPOSIT" ? Text("+${formatter.format(transaction.amount)} FCFA",textAlign:TextAlign.right,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 15),) :
+                  Text("-${formatter.format(transaction.amount)} FCFA",textAlign:TextAlign.right,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 15),)
+              )
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Free Money",style: TextStyle(fontSize:16,fontWeight: FontWeight.bold),),
-                SizedBox(height: 4,),
-                Text("12/05/2022 à 10h 30",style: TextStyle(),),
-              ],
-            ),
-          ),
-          Expanded(
-              child: Text("+5000 FCFA",textAlign:TextAlign.right,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16),)
-          )
-        ],
+        ),
       ),
     );
   }

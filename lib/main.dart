@@ -1,4 +1,5 @@
 import 'package:djizhub_light/App_home.dart';
+import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/utils/binding.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -21,12 +22,12 @@ class MyApp extends StatelessWidget {
     debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
+        //scaffoldBackgroundColor: Color(0xFFF8F8F8),
         colorScheme: ColorScheme.fromSeed(
-
-            seedColor:  Color(0xFFF27F0C),
+            seedColor:  lightGrey,
             brightness: Brightness.light,
-            primary:  Color(0xFFF27F0C),
-            secondary: Colors.amber),
+            primary:  lightGrey,
+            secondary: lightGrey),
       //  useMaterial3: true,
         // This is the theme of your application.
         //
@@ -39,6 +40,11 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         // primarySwatch: Colors.blue,
         primaryColor: Color(0xFF70bccc),
+        appBarTheme: AppBarTheme(
+         // backgroundColor: lightGrey,
+
+        )
+
       ),
       home: IntroScreen()
     );

@@ -1,6 +1,160 @@
 import 'package:djizhub_light/auth/setting.dart';
+import 'package:djizhub_light/goals/components/create_goal.dart';
+import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
+import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../globals.dart';
+import '../goals/components/account_list.dart';
+class Home extends StatefulWidget {
+
+   Home({Key? key}) : super(key: key);
+
+  @override
+  State<Home> createState() => _HomeState();
+
+
+}
+
+  FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
+  CreateGoalController createGoalController = Get.find<CreateGoalController>();
+
+
+
+class _HomeState extends State<Home> {
+  late TextEditingController _textController = TextEditingController();
+
+  Future<void> _showModal() async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Entrez l'url"),
+          content: TextField(
+            controller: _textController,
+            decoration: InputDecoration(hintText: 'back url'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                createGoalController.setNewUrl(_textController.text);
+                Navigator.of(context).pop();
+              },
+              child: Text('Valider'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    print("hjfezjs");
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _showModal().then((value) => fetchGoalsController.getGoals());
+    });
+   // fetchGoalsController.getGoals();
+
+  }
+
+
+
+  @override
+  Widget build(BuildContext context) {
+
+
+
+
+    return Scaffold(
+     // backgroundColor: apCol,
+      appBar: AppBar(
+       backgroundColor: lightGrey,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(5),
+          ),
+        ),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25)
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Djizhub",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25,color: Colors.white),),
+                  InkWell(
+                    onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingPage())),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            color: apCol,
+                            borderRadius: BorderRadius.circular(15)
+                        ),
+                        child: Icon(Icons.settings,color: Colors.white,),
+                      ),
+                    ),
+                  ),
+
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width*0.7,
+                height: 50,
+                child: ElevatedButton(// foreground
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateColor.resolveWith((states) => lightGrey)
+                  ),
+                  onPressed:()=>Get.to(()=>CreateGoal()),
+                  child: const Text('Créer une autre épargne',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                ),
+              ),
+            ),
+            SizedBox(height: 25,),
+            AccountList(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+/*
+import 'package:djizhub_light/auth/setting.dart';
+import 'package:djizhub_light/goals/components/create_goal.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../globals.dart';
 import '../goals/components/account_list.dart';
@@ -13,10 +167,10 @@ class Home extends StatelessWidget {
     return Scaffold(
      // backgroundColor: apCol,
       appBar: AppBar(
-      // backgroundColor: Color(0xFF70bccc),
+       backgroundColor: lightGrey,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(35),
+            bottom: Radius.circular(5),
           ),
         ),
         title: Text(FirebaseAuth.instance.currentUser?.email ?? "Actif",style: TextStyle(fontWeight: FontWeight.bold),),
@@ -65,9 +219,9 @@ class Home extends StatelessWidget {
                 height: 50,
                 child: ElevatedButton(// foreground
                   style: ButtonStyle(
-                      backgroundColor: MaterialStateColor.resolveWith((states) => Color(0XFF35BBCA))
+                      backgroundColor: MaterialStateColor.resolveWith((states) => lightGrey)
                   ),
-                  onPressed:null,
+                  onPressed:()=>Get.to(()=>CreateGoal()),
                   child: const Text('Créer une autre épargne',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
                 ),
               ),
@@ -80,3 +234,5 @@ class Home extends StatelessWidget {
     );
   }
 }
+
+ */

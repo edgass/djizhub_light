@@ -1,18 +1,27 @@
 
+import 'package:circulito/circulito.dart';
+import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/home/info_box.dart';
+import 'package:djizhub_light/models/goals_model.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../globals.dart';
 import 'account_details.dart';
 class SingleAccountInList extends StatelessWidget {
-  const SingleAccountInList({Key? key}) : super(key: key);
+  Goal currentGoal;
+   SingleAccountInList({Key? key,required this.currentGoal}) : super(key: key);
+   FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
-        onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => const AccoutDetails())),
+        onTap: ()=> {
+           fetchGoalsController.setCurrentGoal(currentGoal),
+          Navigator.push(context, MaterialPageRoute(builder: (context) => const AccoutDetails()))
+        },
         child: Container(
           width: MediaQuery.of(context).size.width*0.8,
           height: MediaQuery.of(context).size.width*0.7,
@@ -21,29 +30,8 @@ class SingleAccountInList extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             color: Colors.white,
             boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade600,
-                spreadRadius: 1,
-                blurRadius: 15,
-                offset: const Offset(5, 5),
-              ),
-              const BoxShadow(
-                  color: Colors.white,
-                  offset: Offset(-5,-5),
-                  blurRadius: 15,
-                  spreadRadius: 1
-              ) ,
+
             ],
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.grey.shade200,
-                Colors.grey.shade300,
-                Colors.grey.shade400,
-                Colors.grey.shade500,
-              ],
-            ),
           ),
           child: Padding(
             padding: const EdgeInsets.only(left: 20.0,right: 20.0,top: 25.0,bottom: 25.0),
@@ -58,18 +46,46 @@ class SingleAccountInList extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text("Achat de Voiture",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17,color: Colors.black54),),
-                          Text("Retrait : 12/01/2023",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black54)),
+                          Text(currentGoal.name ?? "",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17,color: Colors.black54),),
+                          Text("Retrait : ${currentGoal.dateOfWithdrawal?.day}/${currentGoal.dateOfWithdrawal?.month}/${currentGoal.dateOfWithdrawal?.year}",style: TextStyle(fontWeight: FontWeight.bold,color: lightGrey)),
                         ],
                       ),
+
+
                       Container(
                         width: 50,
                         height: 50,
+                        /*
                         decoration: BoxDecoration(
                           color: apCol,
                           borderRadius: BorderRadius.circular(15)
                         ),
-                        child: Icon(Icons.money,color: Colors.white,),
+
+                         */
+                   //     child: Icon(Icons.money,color: Colors.white,),
+
+                        child:  Circulito(
+                          background: CirculitoBackground(
+                            decoration: const CirculitoDecoration.fromColor(Colors.black12),
+                          ) ,
+                          child: Text("${(((currentGoal.balance! / double.parse(currentGoal.goal.toString())) * 100).toInt()).toString()}%"),
+
+                          animation: CirculitoAnimation(
+                            duration: 600,
+                            curve: Curves.easeInOut,
+                          ),
+                          strokeWidth: 5,
+                          maxSize: 50,
+                          sections: [
+                            // One single section at 50%.
+                            CirculitoSection(
+
+                              value: (currentGoal.balance! / double.parse(currentGoal.goal.toString())),
+                              decoration: const CirculitoDecoration.fromColor(Color(0XFF35BBCA)),
+                            )
+                          ],
+                        ),
+
                       )
                     ],
                   ),
@@ -77,10 +93,11 @@ class SingleAccountInList extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    InfoBox(title: "Solde",price: 14000,designShadow: false,),
-                    InfoBox(title: "Objectif",price: 25000,designShadow: false,),
+                    InfoBox(title: "Solde",price: double.parse(currentGoal.balance.toString()) ?? 0.0,designShadow: false,),
+                    InfoBox(title: "Objectif",price: double.parse(currentGoal.goal.toString()) ?? 0.0,designShadow: false,),
                   ],
                 ),
+
               ],
             ),
           ),
