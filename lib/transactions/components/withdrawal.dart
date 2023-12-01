@@ -66,7 +66,6 @@ class Withdrawal extends StatelessWidget {
                     builder: (value)=>CheckboxListTile(
                         title: Text("J'accepte"),
                         controlAffinity: ListTileControlAffinity.leading,
-
                         value: value.acceptEmmergencyTerm,
                         onChanged: (bool? value){
                           if(value != null){

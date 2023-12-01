@@ -80,6 +80,8 @@ class Deposit extends StatelessWidget {
                         return 'Ce champs est obligatoire';
                       }else if (double.parse(value ?? "0.0")<500) {
                         return 'Le montant minimum est de 500 FCFA';
+                      }else if (double.parse(value ?? "0.0")>200000) {
+                        return 'Le montant maximum est de 200.000 FCFA';
                       }
                       return null;
                     },

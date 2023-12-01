@@ -62,8 +62,10 @@ class CreateGoal extends StatelessWidget {
                       ),
                       // The validator receives the text that the user has entered.
                       validator: (value) {
-                        if (int.parse(value ?? "0") <500) {
-                          return 'Le montant minimum est de 500 FCFA';
+                        if (int.parse(value ?? "0") <5000) {
+                          return 'Le montant minimum est de 5000 FCFA';
+                        }else if(int.parse(value ?? "0") > 10000000){
+                          return 'Le montant maximum est de 10.000.000 FCFA';
                         }
                         return null;
                       },

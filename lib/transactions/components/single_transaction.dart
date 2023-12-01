@@ -36,7 +36,7 @@ class SingleTransactionInList extends StatelessWidget {
                   children: [
                     Text(transaction.transactionOperator ?? "",style: TextStyle(fontSize:15,fontWeight: FontWeight.bold),),
                     SizedBox(height: 4,),
-                    Text("${transaction.createdAt?.day}/${transaction.createdAt?.month}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour}h ${transaction.createdAt?.minute}",style: TextStyle(),),
+                    Text("${transaction.createdAt?.day.toString().padLeft(2, '0')}/${transaction.createdAt?.month.toString().padLeft(2, '0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour}h ${transaction.createdAt?.minute}",style: TextStyle(),),
                     SizedBox(height: 4,),
                     transaction.status == "PENDING" ?
                     Row(

@@ -49,7 +49,7 @@ class SingleAccountInList extends StatelessWidget {
                           Row(
                             children: [
                               Text(currentGoal.name?.toUpperCase() ?? "",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17,color: Colors.black54),),
-                              currentGoal.withdrawable ?? true ?
+                              currentGoal.withdrawable == true || currentGoal.status == "WITHDRAWN"  ?
                                SizedBox() :
                                Padding(
                                 padding:  EdgeInsets.only(left: 8.0),

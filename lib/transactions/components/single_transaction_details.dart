@@ -73,7 +73,7 @@ class SingleTransactionDetails extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text("Date",),
-                          Text("${value.currentTransaction.createdAt?.day}/${value.currentTransaction.createdAt?.month}/${value.currentTransaction.createdAt?.year} à ${value.currentTransaction.createdAt?.hour}H ${value.currentTransaction.createdAt?.minute}"),
+                          Text("${value.currentTransaction.createdAt?.day.toString().padLeft(2, '0')}/${value.currentTransaction.createdAt?.month.toString().padLeft(2, '0')}/${value.currentTransaction.createdAt?.year} à ${value.currentTransaction.createdAt?.hour.toString().padLeft(2, '0')}H ${value.currentTransaction.createdAt?.minute.toString().padLeft(2, '0')}"),
                         ],
                       ),
                       SizedBox(height: 35,),
