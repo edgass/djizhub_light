@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
+import 'package:djizhub_light/models/goals_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +32,7 @@ class newGoalModel {
 
 class CreateGoalController extends GetxController{
 
-  DateTime selectedDate = DateTime.now().add(const Duration(days: 5));
+  DateTime selectedDate = DateTime.now().add(const Duration(days: 8));
   bool goalConstraint = false;
   CreateGoalState createGoalState = CreateGoalState.PENDING;
 
@@ -64,12 +65,15 @@ class CreateGoalController extends GetxController{
 
     if (response.statusCode == 201) {
       createGoalState = CreateGoalState.SUCCESS;
+      print(response.body);
+
+      //fetchGoalsController.addNewGoal(goalFromJson(response.body));
       update();
       print("Compte Crée avec success");
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Compte crée avec succés",),backgroundColor: Colors.green,)
       );
-      fetchGoalsController.getGoals();
+        fetchGoalsController.getGoals();
       Get.back();
     } else {
       print("Erreur de requete  lors de la creation du compte ${response.body}");
@@ -94,7 +98,7 @@ class CreateGoalController extends GetxController{
     final DateTime? picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime.now().add(const Duration(days: 3)),
+        firstDate: DateTime.now().add(const Duration(days: 7)),
         lastDate: DateTime(2050));
     if (picked != null) {
       selectedDate = picked;

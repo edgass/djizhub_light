@@ -25,36 +25,30 @@ class CreateGoal extends StatelessWidget {
             key: _formKey,
             child: SingleChildScrollView(
                 child: Column(children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.only(top: 10.0,bottom: 10),
-                    child: TextFormField(
-                      maxLength: 15,
-                      controller: nameController,
-                      decoration: InputDecoration(
-                        labelText: "Nom",
-                      ),
-                      // The validator receives the text that the user has entered.
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Ce champs est obligatoire';
-                        }
-                        if(value.length < 5){
-                          return 'Nom trop court';
-                        }
-                        return null;
-                      },
+                  TextFormField(
+                    maxLength: 12,
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      labelText: "Nom",
                     ),
+                    // The validator receives the text that the user has entered.
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Ce champs est obligatoire';
+                      }
+                      if(value.length < 5){
+                        return 'Nom trop court';
+                      }
+                      return null;
+                    },
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10.0,bottom: 10),
-                    child: TextFormField(
-                      maxLength: 100,
-                      maxLines: 2,
-                      controller: descriptionController,
-                      decoration: InputDecoration(
+                  TextFormField(
+                    maxLength: 100,
+                    maxLines: 2,
+                    controller: descriptionController,
+                    decoration: InputDecoration(
 
-                        labelText: "Description",
-                      ),
+                      labelText: "Description",
                     ),
                   ),
                   Padding(
@@ -81,7 +75,7 @@ class CreateGoal extends StatelessWidget {
                       child:
 
                       Padding(
-                        padding: EdgeInsets.only(top: 10.0,bottom: 10),
+                        padding: EdgeInsets.only(top: 25.0,bottom: 10),
 
                         child: GetBuilder<CreateGoalController>(
                           builder:(value)=>  TextFormField(

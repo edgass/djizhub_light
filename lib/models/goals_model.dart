@@ -29,8 +29,7 @@ class Goals {
     message: json["message"],
     error: json["error"],
     metadata: json["metadata"] == null ? null : Metadata.fromJson(json["metadata"]),
-   // data: json["data"] == null ? [] : List<Goal>.from(json["data"]!.map((x) => Goal.fromJson(x))),
-    data: json["data"] is List ? List<Goal>.from((json["data"] as List).map((x) => Goal.fromJson(x))) : [],
+    data: json["data"] == null ? [] : List<Goal>.from(json["data"]!.map((x) => Goal.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -44,55 +43,67 @@ class Goals {
 
 class Goal {
   String? id;
+  int? goal;
   String? name;
   String? description;
-  int? goal;
   DateTime? dateOfWithdrawal;
+  bool? withdrawable;
+  bool? emmergency_withdrawal;
+  int? percent_progress;
   bool? constraint;
-  List<Transaction>? transactions;
   int? balance;
   String? status;
+  List<Transaction>? transactions;
   DateTime? createdAt;
   DateTime? updatedAt;
 
   Goal({
     this.id,
+    this.goal,
     this.name,
     this.description,
-    this.goal,
     this.dateOfWithdrawal,
+    this.withdrawable,
+    this.emmergency_withdrawal,
+    this.percent_progress,
     this.constraint,
-    this.transactions,
     this.balance,
     this.status,
+    this.transactions,
     this.createdAt,
     this.updatedAt,
   });
 
   factory Goal.fromJson(Map<String, dynamic> json) => Goal(
     id: json["id"],
+    goal: json["goal"],
     name: json["name"],
     description: json["description"],
-    goal: json["goal"],
     dateOfWithdrawal: json["date_of_withdrawal"] == null ? null : DateTime.parse(json["date_of_withdrawal"]),
+    withdrawable: json["withdrawable"],
+    emmergency_withdrawal: json["emmergency_withdrawal"],
+    percent_progress: json["percent_progress"],
     constraint: json["constraint"],
-    transactions: json["transactions"] == null ? [] : List<Transaction>.from(json["transactions"]!.map((x) => Transaction.fromJson(x))),
     balance: json["balance"],
     status: json["status"],
+    transactions: json["transactions"] == null ? [] : List<Transaction>.from(json["transactions"]!.map((x) => Transaction.fromJson(x))),
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
   );
 
   Map<String, dynamic> toJson() => {
     "id": id,
+    "goal": goal,
     "name": name,
     "description": description,
-    "goal": goal,
     "date_of_withdrawal": dateOfWithdrawal?.toIso8601String(),
+    "withdrawable": withdrawable,
+    "emmergency_withdrawal": emmergency_withdrawal,
+    "percent_progress": percent_progress,
     "constraint": constraint,
-    "transactions": transactions == null ? [] : List<dynamic>.from(transactions!.map((x) => x.toJson())),
     "balance": balance,
     "status": status,
+    "transactions": transactions == null ? [] : List<dynamic>.from(transactions!.map((x) => x.toJson())),
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
   };

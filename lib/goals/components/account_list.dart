@@ -15,13 +15,15 @@ class AccountList extends StatelessWidget {
       child: Obx(
         ()=> fetchGoalsController.fetchState.value == FetchState.LOADING ?
         CircularProgressIndicator() :
-        fetchGoalsController.fetchState.value == FetchState.SUCCESS ?
-                fetchGoalsController.goals.value.isEmpty ?
+        fetchGoalsController.fetchState.value == FetchState.SUCCESS && fetchGoalsController.goals.value.isEmpty  ?
+
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Text("Bienvenue, vous n'avez encore rien épargné. Créez un compte et profitez de notre solution.",textAlign: TextAlign.center,),
                 ):
+        fetchGoalsController.fetchState.value == FetchState.SUCCESS && fetchGoalsController.goals.value.isNotEmpty  ?
                 AccountFilteredSection() :
+
 
             Padding(
           padding: const EdgeInsets.all(15.0),

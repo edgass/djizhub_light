@@ -1,13 +1,20 @@
+import 'dart:convert';
+
 import 'package:djizhub_light/auth/setting.dart';
 import 'package:djizhub_light/goals/components/create_goal.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
+import 'package:djizhub_light/models/Single_goal_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart';
+
 
 import '../globals.dart';
 import '../goals/components/account_list.dart';
+import '../models/goals_model.dart';
 class Home extends StatefulWidget {
 
    Home({Key? key}) : super(key: key);
@@ -18,8 +25,13 @@ class Home extends StatefulWidget {
 
 }
 
+
+
+
+
   FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
   CreateGoalController createGoalController = Get.find<CreateGoalController>();
+
 
 
 
@@ -50,13 +62,57 @@ class _HomeState extends State<Home> {
     );
   }
 
+
   @override
   void initState() {
+
+    IO.Socket socket;
+    FirebaseAuth.instance.currentUser?.getIdToken().then((value) =>{
+
+    socket = IO.io('https://c41a-41-83-20-74.ngrok-free.app',
+    OptionBuilder()
+        .setTransports(['websocket']) // for Flutter or Dart VM
+        .disableAutoConnect()  // disable auto-connection
+        .setExtraHeaders({'authorization': value }) // optional
+        .build()),
+        socket.connect(),
+    socket.onConnectError((data) => print("connect error $data")),
+    socket.onConnect((_) {
+      print('connected successfully to websocket');
+      socket.emit('msg', 'test');
+    }),
+    socket.on('update.goal', (goal) => {
+      print(goal),
+      fetchGoalsController.setUpdatedGoal(Goal.fromJson(goal)),
+      fetchGoalsController.setCurrentGoal(Goal.fromJson(goal))
+    }),
+    socket.on('success.transaction', (data) => print(data)),
+    socket.onDisconnect((_) => print('disconnect')),
+
+    }
+
+    );
+
+
+
+
+
+
     print("hjfezjs");
     WidgetsBinding.instance?.addPostFrameCallback((_) {
-      _showModal().then((value) => fetchGoalsController.getGoals());
+      _showModal().then((value) => {
+
+
+        fetchGoalsController.getGoals(),
+
+
+      });
+
+
+
     });
    // fetchGoalsController.getGoals();
+
 
   }
 

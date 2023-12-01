@@ -30,9 +30,18 @@ class _AccountFilteredSectionState extends State<AccountFilteredSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-        ()=>Container(
-          child: Column(
+    return Container(
+          decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                    color: Colors.grey.shade100,
+                    spreadRadius: 0.2,
+                    blurRadius: 15,
+                    offset: const Offset(0, 15)
+                )
+              ]
+          ),
+          child: Obx(() => Column(
 
             children: [
               FlutterToggleTab
@@ -49,51 +58,43 @@ class _AccountFilteredSectionState extends State<AccountFilteredSection> {
                     fontSize: 14,
                     fontWeight: FontWeight.w400),
                 labels: const ["En cours","Terminés"],
-              //  icons: _listIconTabToggle,
+                //  icons: _listIconTabToggle,
                 selectedIndex: fetchGoalsController.selectedTab.value,
                 selectedLabelIndex: (index) {
-                 fetchGoalsController.selectedTab(index);
+                  fetchGoalsController.selectedTab(index);
                 },
               ),
-              fetchGoalsController.selectedTab.value == 0  ?
+              fetchGoalsController.selectedTab.value == 0 && fetchGoalsController.openedGoals.isEmpty ?
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text("Pour le moment, vous n'avez aucun compte actif. Créez un compte !",textAlign: TextAlign.center,),
+              ) :
+              fetchGoalsController.selectedTab.value == 1 && fetchGoalsController.closedGoals.isEmpty ?
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text("Pour le moment, vous n'avez aucun compte cloturé.",textAlign: TextAlign.center,),
+              ) :
+              fetchGoalsController.selectedTab.value == 0 && fetchGoalsController.openedGoals.isNotEmpty ?
               Column(
                 children: [
-                  containOPENED.isEmpty ?
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text("Pour le moment, vous n'avez aucun compte actif. Créez un compte !",textAlign: TextAlign.center,),
-                      ) :
-                      Column(
-                        children: [
-                          for(var goal in fetchGoalsController.goals ?? [])
-                            if(goal.status != "WITHDRAWN" )
-                              SingleAccountInList(currentGoal: goal),
-                        ],
-                      )
-
+                  for(var goal in fetchGoalsController.openedGoals ?? [])
+                    SingleAccountInList(currentGoal: goal),
                 ],
               ) :
-
+              fetchGoalsController.selectedTab.value == 1 && fetchGoalsController.closedGoals.isNotEmpty ?
               Column(
                 children: [
-                  containWithDraw.isEmpty ?
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Text("Pour le moment, vous n'avez aucun compte cloturé.",textAlign: TextAlign.center,),
-                  ) :
-                      Column(
-                        children: [
-                          for(var goal in fetchGoalsController.goals ?? [])
-                            if(goal.status == "WITHDRAWN")
-                              SingleAccountInList(currentGoal: goal),
-                        ],
-                      )
-
+                  for(var goal in fetchGoalsController.closedGoals ?? [])
+                    SingleAccountInList(currentGoal: goal),
                 ],
-              )
+              )   : SizedBox()
+
+
+
             ],
           ),
-        )
-    );
+
+          )
+        );
   }
 }

@@ -27,10 +27,11 @@ class newTransactionModel {
   final String? operator;
   final double? amount;
   final String? otp;
+  final bool? emergency;
 
 
   newTransactionModel(
-      this.phone_number,this.operator,this.amount,this.otp
+      this.phone_number,this.operator,this.amount,this.otp,this.emergency
       );
 
 }
@@ -41,10 +42,17 @@ class DepositController extends GetxController{
   CreateGoalController createGoalController = Get.find<CreateGoalController>();
   Operator operator = Operator.WAVE;
   MakeTransactionState makeTransactionState = MakeTransactionState.PENDING;
+  bool acceptEmmergencyTerm = false;
 
 
   setOperator(Operator op){
     operator = op;
+    update();
+  }
+
+
+  setAcceptEmmergencyTerm(bool accept){
+    acceptEmmergencyTerm = accept;
     update();
   }
 
@@ -78,8 +86,8 @@ class DepositController extends GetxController{
         );
 
         var goal = singleGoalsFromJson(response.body).data;
-      fetchGoalsController.setCurrentGoal(goal!);
-      fetchGoalsController.getGoals();
+    //  fetchGoalsController.setCurrentGoal(goal!);
+   //   fetchGoalsController.getGoals();
 
      //   print(singleGoalsFromJson(response.body));
        // fetchGoalsController.setCurrentGoal(goalsFromJson(response.body).data![0]);
@@ -119,7 +127,7 @@ class DepositController extends GetxController{
           body: jsonEncode({
             "phone_number": transaction.phone_number,
             "operator": transaction.operator,
-            "emergency":true
+            "emergency":transaction.emergency
           }));
       print(response.statusCode);
       if (response.statusCode == 200) {
@@ -132,7 +140,7 @@ class DepositController extends GetxController{
         );
 
         var goal = singleGoalsFromJson(response.body).data;
-         await fetchGoalsController.setCurrentGoal(goal!);
+     //    await fetchGoalsController.setCurrentGoal(goal!);
 
 
 

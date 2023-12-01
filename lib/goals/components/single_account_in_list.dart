@@ -46,8 +46,18 @@ class SingleAccountInList extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(currentGoal.name ?? "",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17,color: Colors.black54),),
-                          Text("Retrait : ${currentGoal.dateOfWithdrawal?.day}/${currentGoal.dateOfWithdrawal?.month}/${currentGoal.dateOfWithdrawal?.year}",style: TextStyle(fontWeight: FontWeight.bold,color: lightGrey)),
+                          Row(
+                            children: [
+                              Text(currentGoal.name?.toUpperCase() ?? "",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17,color: Colors.black54),),
+                              currentGoal.withdrawable ?? true ?
+                               SizedBox() :
+                               Padding(
+                                padding:  EdgeInsets.only(left: 8.0),
+                                child: Icon(Icons.lock_rounded,size: 16,color: lightGrey,),
+                              )
+                            ],
+                          ),
+                          Text("Retrait : ${currentGoal.dateOfWithdrawal?.day.toString().padLeft(2, '0')}/${currentGoal.dateOfWithdrawal?.month.toString().padLeft(2, '0')}/${currentGoal.dateOfWithdrawal?.year}",style: TextStyle(fontWeight: FontWeight.bold,color: lightGrey)),
                         ],
                       ),
 
@@ -68,7 +78,7 @@ class SingleAccountInList extends StatelessWidget {
                           background: CirculitoBackground(
                             decoration: const CirculitoDecoration.fromColor(Colors.black12),
                           ) ,
-                          child: Text("${(((currentGoal.balance! / double.parse(currentGoal.goal.toString())) * 100).toInt()).toString()}%"),
+                          child: Text("${currentGoal.percent_progress}%"),
 
                           animation: CirculitoAnimation(
                             duration: 600,
@@ -81,7 +91,8 @@ class SingleAccountInList extends StatelessWidget {
                             CirculitoSection(
 
                               value: (currentGoal.balance! / double.parse(currentGoal.goal.toString())),
-                              decoration: const CirculitoDecoration.fromColor(Color(0XFF35BBCA)),
+                           //   decoration: CirculitoDecoration.fromColor(fetchGoalsController.getColorFromValue(currentGoal.percent_progress!.toInt() ?? 0)),
+                              decoration: CirculitoDecoration.fromColor(fetchGoalsController.getColorFromValue(currentGoal.percent_progress ?? 0)),
                             )
                           ],
                         ),

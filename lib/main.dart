@@ -5,10 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+import 'package:socket_io_client/socket_io_client.dart';
+
+
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   HomeBinding().dependencies();
+
+
+
+
+
+
+
   runApp(const MyApp());
 }
 

@@ -53,11 +53,13 @@ class Deposit extends StatelessWidget {
                             labelText: "Numéro de Téléphone",
                           ),
                           // The validator receives the text that the user has entered.
-                          validator: (value) {
-                            if (value!.isEmpty) {
+                          validator: (val) {
+                            if (val!.isEmpty) {
                               return 'Ce champs est obligatoire';
-                            }else if(value.length != 9 || (!value.startsWith('77') & !value.startsWith('78') & !value.startsWith('76') & !value.startsWith('75'))){
+                            }else if(val.length != 9 || (!val.startsWith('77') & !val.startsWith('78') & !val.startsWith('76') & !val.startsWith('75'))){
                               return 'Numéro de téléphone invalide';
+                            }else if((val.startsWith('76') || (val.startsWith('75'))) && value.operator == Operator.OM ){
+                              return 'Entrez un numéro OM valide';
                             }
                             return null;
                           },
@@ -151,9 +153,10 @@ class Deposit extends StatelessWidget {
                           : ElevatedButton(
                         style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(apCol)),
                         onPressed: () {
+                          print("+221${numeroTelController.text}");
                           if(_formKey.currentState!.validate()){
                             FocusScope.of(context).unfocus();
-                            depositController.makeDeposit(context, newTransactionModel(numeroTelController.text, depositController.operator.name, double.parse(amountController.text),otpController.text ), goalId);
+                            depositController.makeDeposit(context, newTransactionModel("221${numeroTelController.text}", depositController.operator.name, double.parse(amountController.text),otpController.text,null ), goalId);
                           }
 
                         },

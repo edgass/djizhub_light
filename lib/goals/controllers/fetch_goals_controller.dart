@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:core';
 import 'dart:ffi';
+import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:djizhub_light/globals.dart';
@@ -11,7 +12,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../models/goals_model.dart';
 
 enum FetchState {
@@ -35,6 +36,8 @@ class FetchGoalsController extends GetxController{
 
  Rx<int> selectedTab = 0.obs;
  RxList<Goal> goals = <Goal>[].obs;
+ RxList<Goal> openedGoals = <Goal>[].obs;
+ RxList<Goal> closedGoals = <Goal>[].obs;
  Rx<Goal> currentGoal = Goal().obs;
  double goalPercentage = 0;
  Transaction currentTransaction = Transaction();
@@ -46,8 +49,17 @@ class FetchGoalsController extends GetxController{
  @override
   void onInit() {
     // TODO: implement onInit
+   /*
+   var _channel = WebSocketChannel.connect(
+     Uri.parse('wss://bb9e-41-83-20-74.ngrok-free.app:3000',),
+   ).printError();
+*/
+   // Create a WebSocket client.
 
-  }
+
+
+
+ }
 
 
 
@@ -69,7 +81,16 @@ class FetchGoalsController extends GetxController{
 
 
     if (response.statusCode == 200) {
+      openedGoals.value = [];
+      closedGoals.value = [];
       goals.value = goalsFromJson(response.body).data ?? [];
+      for(var i=0;i<goals.length;i++){
+        if(goals[i].status != "WITHDRAWN"){
+          openedGoals.add(goals[i]);
+        }else{
+          closedGoals.add(goals[i]);
+        }
+      }
       fetchState.value = FetchState.SUCCESS;
       update();
 
@@ -145,7 +166,6 @@ class FetchGoalsController extends GetxController{
    setCurrentGoal(Goal goal) {
    currentGoal.value = goal;
    fetchSingleGoalState.value = FetchSingleGoalState.SUCCESS;
-   update();
   }
 
  setCurrentTransaction(Transaction transaction) {
@@ -157,5 +177,57 @@ class FetchGoalsController extends GetxController{
  setSelectedTab(int tab){
    selectedTab.value = tab;
  }
+
+ setUpdatedGoal(Goal goal){
+   int index = goals.value.indexWhere((item) => item.id == goal.id);
+   if (index != -1) {
+     goals[index] = goal;
+   }else{
+     goals.insert(0,goal);
+   }
+  openedGoals.value = [];
+  closedGoals.value = [];
+   for(var i=0;i<goals.length;i++){
+     if(goals[i].status != "WITHDRAWN"){
+       openedGoals.add(goals[i]);
+     }else{
+       closedGoals.add(goals[i]);
+     }
+   }
+  fetchState.value = FetchState.SUCCESS;
+ }
+
+ addNewGoal(Goal goal){
+   print("goooaaaaaall : ${goal.balance}");
+    goals.add(goal);
+    for(var i=0;i<goals.length;i++){
+      if(goals[i].status != "WITHDRAWN"){
+        openedGoals.add(goals[i]);
+      }else{
+        closedGoals.add(goals[i]);
+      }
+    }
+ }
+
+ Color getColorFromValue(int value) {
+   // Assure que la valeur est dans la plage de 0 à 100
+   value = value.clamp(0, 100);
+
+   // Calcule les composants de couleur en fonction de la valeur
+   int red = (255 - (255 * value / 100)).round();
+   int green = (255 * value / 100).round();
+
+   // Crée et renvoie la couleur correspondante
+   return Color.fromRGBO(red, green, 0, 0.6);
+ }
+
+ void main() {
+   // Test de la fonction avec différentes valeurs
+   for (int i = 0; i <= 100; i += 10) {
+     Color color = getColorFromValue(i);
+     print('Valeur: $i, Couleur: $color');
+   }
+ }
+
 
 }
