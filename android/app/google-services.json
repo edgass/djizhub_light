@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "165836112149",
+    "firebase_url": "https://djizhub-default-rtdb.firebaseio.com",
     "project_id": "djizhub",
     "storage_bucket": "djizhub.appspot.com"
   },
@@ -14,7 +15,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "165836112149-3tmnu4p87oij36p55uij5fqnf8j9hcqf.apps.googleusercontent.com",
+          "client_id": "165836112149-aknj3g8sptio7e3hf6m9115jn6rsbaiv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.djizhub_light",
+            "certificate_hash": "7af99ea817f1c46acb05fc214e42a32615cd5a9c"
+          }
+        },
+        {
+          "client_id": "165836112149-slj4m84021s896iupgo0pdr3jrponoun.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

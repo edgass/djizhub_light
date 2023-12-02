@@ -8,8 +8,15 @@ class Setting extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Reglage"),
       ),
-      body: const Column(
+      body:  Column(
         children: [
+          Container(
+            child: Column(
+              children: [
+
+              ],
+            ),
+          )
 
         ],
       ),

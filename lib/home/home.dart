@@ -4,6 +4,7 @@ import 'package:djizhub_light/auth/setting.dart';
 import 'package:djizhub_light/goals/components/create_goal.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
+import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
 
 import 'package:djizhub_light/utils/local_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,6 +33,7 @@ class Home extends StatefulWidget {
 
   FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
   CreateGoalController createGoalController = Get.find<CreateGoalController>();
+  DepositController depositController = Get.find<DepositController>();
 
 
 
@@ -98,11 +100,11 @@ class _HomeState extends State<Home> {
     if(transaction.type == "DEPOSIT"){
 
       NotificationService()
-        //  .showNotification(title: 'Transaction Réussie', body: "Votre dépot de ${transaction.amount} FCFA réalisé le ${transaction.createdAt?.day}/${transaction.createdAt?.month}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour}H ${transaction.createdAt?.minute} par ${transaction.transactionOperator} a été réalisée avec succés.")
-          .showNotification(title: 'Transaction Réussie', body: "Dépot de ${transaction.amount} FCFA réalisé avec succés.")
+          .showNotification(id: depositController.generateRandomNotificationId(),title: 'Transaction Réussie', body: "Votre dépot de ${transaction.amount} FCFA réalisé le ${transaction.createdAt?.day.toString().padLeft(2,'0')}/${transaction.createdAt?.month.toString().padLeft(2,'0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour.toString().padLeft(2,'0')}H ${transaction.createdAt?.minute.toString().padLeft(2,'0')} par ${transaction.transactionOperator} a été réalisée avec succés.",payLoad: '')
+        //  .showNotification(title: 'Transaction Réussie', body: "Dépot de ${transaction.amount} FCFA réalisé avec succés.")
     }else{
       NotificationService()
-          .showNotification(title: 'Transaction Réussi', body: "Vous avez retiré ${transaction.amount} FCFA avec succés.")
+          .showNotification(id: depositController.generateRandomNotificationId(),title: 'Transaction Réussi', body: "Vous avez retiré avec succés la somme de ${transaction.amount} FCFA par ${transaction.transactionOperator} le ${transaction.createdAt?.day.toString().padLeft(2,'0')}/${transaction.createdAt?.month.toString().padLeft(2,'0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour.toString().padLeft(2,'0')}H ${transaction.createdAt?.minute.toString().padLeft(2,'0')}",payLoad: '')
     },
 
 

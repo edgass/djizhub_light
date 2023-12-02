@@ -1,10 +1,15 @@
+import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import 'email_login.dart';
 import 'email_signup.dart';
 
 class SignUp extends StatelessWidget {
+
+  AuthController authController = Get.find<AuthController>();
   final String title = "Creer un Compte";
   @override
   Widget build(BuildContext context) {
@@ -40,14 +45,9 @@ class SignUp extends StatelessWidget {
                 child: SignInButton(
                   Buttons.Google,
                   text: "Compte via Google",
-                  onPressed: () {},
-                )),
-            Padding(
-                padding: EdgeInsets.all(10.0),
-                child: SignInButton(
-                  Buttons.Twitter,
-                  text: "Compte via Twitter",
-                  onPressed: () {},
+                  onPressed: () {
+                    authController.signInWithGoogle(context);
+                  },
                 )),
             Padding(
                 padding: EdgeInsets.all(10.0),

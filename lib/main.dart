@@ -1,7 +1,10 @@
 import 'package:djizhub_light/App_home.dart';
+import 'package:djizhub_light/auth/signup.dart';
 import 'package:djizhub_light/globals.dart';
+import 'package:djizhub_light/home/home.dart';
 import 'package:djizhub_light/utils/binding.dart';
 import 'package:djizhub_light/utils/local_notifications.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -59,7 +62,17 @@ class MyApp extends StatelessWidget {
         )
 
       ),
-      home: IntroScreen()
+    //  home: IntroScreen()
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context,snapshot){
+          if(snapshot.hasData){
+            return Home();
+          }else{
+            return SignUp();
+          }
+        },
+      )
     );
   }
 }

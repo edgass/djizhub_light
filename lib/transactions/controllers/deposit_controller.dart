@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
@@ -48,6 +49,11 @@ class DepositController extends GetxController{
   setOperator(Operator op){
     operator = op;
     update();
+  }
+
+  int generateRandomNotificationId() {
+    final random = Random();
+    return random.nextInt(100000);
   }
 
 
