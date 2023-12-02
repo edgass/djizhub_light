@@ -57,7 +57,7 @@ class _AccountFilteredSectionState extends State<AccountFilteredSection> {
                     color: lightGrey,
                     fontSize: 14,
                     fontWeight: FontWeight.w400),
-                labels: const ["En cours","Terminés"],
+                labels: const ["En cours","Clôturés"],
                 //  icons: _listIconTabToggle,
                 selectedIndex: fetchGoalsController.selectedTab.value,
                 selectedLabelIndex: (index) {
@@ -75,18 +75,24 @@ class _AccountFilteredSectionState extends State<AccountFilteredSection> {
                 child: Text("Pour le moment, vous n'avez aucun compte cloturé.",textAlign: TextAlign.center,),
               ) :
               fetchGoalsController.selectedTab.value == 0 && fetchGoalsController.openedGoals.isNotEmpty ?
-              Column(
-                children: [
-                  for(var goal in fetchGoalsController.openedGoals ?? [])
-                    SingleAccountInList(currentGoal: goal),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0,bottom: 15.0),
+                child: Column(
+                  children: [
+                    for(var goal in fetchGoalsController.openedGoals ?? [])
+                      SingleAccountInList(currentGoal: goal),
+                  ],
+                ),
               ) :
               fetchGoalsController.selectedTab.value == 1 && fetchGoalsController.closedGoals.isNotEmpty ?
-              Column(
-                children: [
-                  for(var goal in fetchGoalsController.closedGoals ?? [])
-                    SingleAccountInList(currentGoal: goal),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0,bottom: 15.0),
+                child: Column(
+                  children: [
+                    for(var goal in fetchGoalsController.closedGoals ?? [])
+                      SingleAccountInList(currentGoal: goal),
+                  ],
+                ),
               )   : SizedBox()
 
 

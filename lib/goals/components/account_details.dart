@@ -102,7 +102,7 @@ class AccoutDetails extends StatelessWidget {
                             child: ActionBox(title: "Retrait",backColor: Color(0xFFFFE4BD),iconColor:Color(0xFFFF9900),icon: Icons.output,function:fetchGoalsController.currentGoal.value.withdrawable == true ? ()=>Get.to(()=>Withdrawal(goalId: fetchGoalsController.currentGoal.value.id ?? "",emergency: false,)): (){},)),
                         Opacity(
                             opacity: fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true ? 1 : 0.4,
-                            child: ActionBox(title: "Urgence",backColor: Color(0xFFBFD2E3),iconColor:Color(0xFF0B5394),icon: Icons.emergency,function:fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true ? ()=>Get.to(()=>Withdrawal(goalId: fetchGoalsController.currentGoal.value.id ?? "",emergency: true,)): (){},)),
+                            child: ActionBox(title: "Urgence",backColor: Color(0xFFFFCCCC),iconColor:Color(0xFFFF4C4C),icon: Icons.emergency,function:fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true ? ()=>Get.to(()=>Withdrawal(goalId: fetchGoalsController.currentGoal.value.id ?? "",emergency: true,)): (){},)),
                         Opacity(
                             opacity: fetchGoalsController.currentGoal.value.status == "OPENED" ? 1 : 0.4,
                             child: ActionBox(title: "Réglages",backColor: Color(0xFFE9CAFF),iconColor: Color(0xFF9900FF),icon: Icons.settings,function:fetchGoalsController.currentGoal.value.status == "OPENED" ? ()=>Get.to(()=>Setting()): (){},)),

@@ -15,9 +15,8 @@ class SingleTransactionInList extends StatelessWidget {
     var formatter = NumberFormat("#,###");
     return Container(
       decoration: BoxDecoration(
-        borderRadius: transaction.type == "WITHDRAWAL" ? BorderRadius.circular(10) : null,
-        color: transaction.type == "WITHDRAWAL" ? Color(0xFFFFE4BD) : null
-      ),
+        borderRadius: BorderRadius.circular(10) ,
+        color: transaction.type == "WITHDRAWAL" ? Color(0xFFFFE4BD): transaction.type == "EMERGENCY_WITHDRAWAL" ? Color(0xFFFFCCCC) : null),
       child: InkWell(
         onTap: ()=>{
           fetchGoalsController.setCurrentTransaction(transaction),

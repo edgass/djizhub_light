@@ -90,7 +90,7 @@ class SingleAccountInList extends StatelessWidget {
                             // One single section at 50%.
                             CirculitoSection(
 
-                              value: (currentGoal.balance! / double.parse(currentGoal.goal.toString())),
+                              value: (double.parse(currentGoal.percent_progress.toString())/100),
                            //   decoration: CirculitoDecoration.fromColor(fetchGoalsController.getColorFromValue(currentGoal.percent_progress!.toInt() ?? 0)),
                               decoration: CirculitoDecoration.fromColor(fetchGoalsController.getColorFromValue(currentGoal.percent_progress ?? 0)),
                             )

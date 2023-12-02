@@ -1,4 +1,5 @@
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
+import 'package:djizhub_light/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:djizhub_light/transactions/components/operator_card.dart';
 import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
@@ -14,6 +15,7 @@ class Withdrawal extends StatelessWidget {
    Withdrawal({super.key,required this.goalId,required this.emergency});
   final _formKey = GlobalKey<FormState>();
   TextEditingController numeroTelController = TextEditingController();
+  TextEditingController amountTelController = TextEditingController();
   DepositController depositController = Get.find<DepositController>();
 
   @override
@@ -56,10 +58,27 @@ class Withdrawal extends StatelessWidget {
                     },
                   ),
                 ),
+                Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: amountTelController,
+                    decoration: InputDecoration(
+                      labelText: "Montant",
+                    ),
+                    // The validator receives the text that the user has entered.
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Ce champs est obligatoire';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
                 emergency ?
                 Padding(
                   padding: EdgeInsets.only(top: 20.0,left: 10.0,right: 10.0),
-                  child: Text("Attention ! En procédant à un retrait d'urgence, une pénalité de 25% sera déduite de votre compte.",textAlign: TextAlign.center,style: TextStyle(color: Colors.redAccent),),
+                  child: Text("Lors d'un retrait d'urgence, la limite est de 50 % du compte, soit ${((int.parse(fetchGoalsController.currentGoal.value.balance.toString())~/2) /5).floor() * 5} FCFA maximum, avec une pénalité de 5 % sur le montant retiré.",textAlign: TextAlign.center,style: TextStyle(color: Colors.redAccent),),
                 ) : SizedBox(),
                 emergency ?
                 GetBuilder<DepositController>(
@@ -84,7 +103,7 @@ class Withdrawal extends StatelessWidget {
                      onPressed: emergency & !depositController.acceptEmmergencyTerm ? null : () {
                        if(_formKey.currentState!.validate()){
                          depositController.makeWithdrawal(context, newTransactionModel(
-                             "221${numeroTelController.text}", depositController.operator.name, null,null,emergency), goalId);
+                             "221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text),null,emergency), goalId);
                        }
 
                      },

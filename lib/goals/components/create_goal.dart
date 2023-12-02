@@ -83,7 +83,7 @@ class CreateGoal extends StatelessWidget {
                           builder:(value)=>  TextFormField(
                             controller: TextEditingController(text: "${value.selectedDate.toLocal()}".split(' ')[0]),
                             decoration: const InputDecoration(
-                              labelText: "Date de retrait",
+                              labelText: "ÉCHÉANCE",
                             ),
                             // The validator receives the text that the user has entered.
                           ),

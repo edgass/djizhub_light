@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
+import 'package:djizhub_light/models/Single_goal_model.dart';
 import 'package:djizhub_light/models/goals_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,18 +39,19 @@ class CreateGoalController extends GetxController{
 
   FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
 
-  String backendUrl = "";
+  String backendUrl = "https://feasible-vocal-gator.ngrok-free.app";
 
 
   void createNewGoal(BuildContext context,newGoalModel newGoal) async {
     String url = "$backendUrl/goals";
+    var response;
 
   try{
     final user = FirebaseAuth.instance.currentUser!;
     final idToken = await user.getIdToken();
     createGoalState = CreateGoalState.LOADING;
     update();
-    var response = await http.post(Uri.parse(url),
+     response = await http.post(Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -71,7 +73,7 @@ class CreateGoalController extends GetxController{
       update();
       print("Compte Crée avec success");
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Compte crée avec succés",),backgroundColor: Colors.green,)
+          SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Compte crée avec succés",),backgroundColor: Colors.green,)
       );
         fetchGoalsController.getGoals();
       Get.back();
@@ -80,7 +82,7 @@ class CreateGoalController extends GetxController{
       createGoalState = CreateGoalState.ERROR;
       update();
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
+          SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
       );
     }
   }catch(err){
@@ -88,7 +90,7 @@ class CreateGoalController extends GetxController{
     createGoalState = CreateGoalState.SUCCESS;
     update();
     ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
+        SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
     );
   }
   }

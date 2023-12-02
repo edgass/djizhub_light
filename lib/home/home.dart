@@ -4,7 +4,8 @@ import 'package:djizhub_light/auth/setting.dart';
 import 'package:djizhub_light/goals/components/create_goal.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
-import 'package:djizhub_light/models/Single_goal_model.dart';
+
+import 'package:djizhub_light/utils/local_notifications.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,6 +39,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late TextEditingController _textController = TextEditingController();
 
+
+
   Future<void> _showModal() async {
     await showDialog(
       context: context,
@@ -66,10 +69,13 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
 
+    fetchGoalsController.getGoals();
+
     IO.Socket socket;
+    Transaction transaction;
     FirebaseAuth.instance.currentUser?.getIdToken().then((value) =>{
 
-    socket = IO.io('https://c41a-41-83-20-74.ngrok-free.app',
+    socket = IO.io("${createGoalController.backendUrl}",
     OptionBuilder()
         .setTransports(['websocket']) // for Flutter or Dart VM
         .disableAutoConnect()  // disable auto-connection
@@ -86,7 +92,23 @@ class _HomeState extends State<Home> {
       fetchGoalsController.setUpdatedGoal(Goal.fromJson(goal)),
       fetchGoalsController.setCurrentGoal(Goal.fromJson(goal))
     }),
-    socket.on('success.transaction', (data) => print(data)),
+    socket.on('success.transaction', (data) =>{
+       transaction = Transaction.fromJson(data),
+
+    if(transaction.type == "DEPOSIT"){
+
+      NotificationService()
+        //  .showNotification(title: 'Transaction Réussie', body: "Votre dépot de ${transaction.amount} FCFA réalisé le ${transaction.createdAt?.day}/${transaction.createdAt?.month}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour}H ${transaction.createdAt?.minute} par ${transaction.transactionOperator} a été réalisée avec succés.")
+          .showNotification(title: 'Transaction Réussie', body: "Dépot de ${transaction.amount} FCFA réalisé avec succés.")
+    }else{
+      NotificationService()
+          .showNotification(title: 'Transaction Réussi', body: "Vous avez retiré ${transaction.amount} FCFA avec succés.")
+    },
+
+
+    }
+
+    ),
     socket.onDisconnect((_) => print('disconnect')),
 
     }
@@ -97,6 +119,7 @@ class _HomeState extends State<Home> {
 
 
 
+/*
 
     print("hjfezjs");
     WidgetsBinding.instance?.addPostFrameCallback((_) {
@@ -111,6 +134,8 @@ class _HomeState extends State<Home> {
 
 
     });
+
+    */
    // fetchGoalsController.getGoals();
 
 

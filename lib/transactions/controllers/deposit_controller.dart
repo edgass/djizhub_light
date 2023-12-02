@@ -97,7 +97,7 @@ class DepositController extends GetxController{
         makeTransactionState = MakeTransactionState.ERROR;
         update();
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
+            SnackBar(content:  Text(singleGoalsFromJson(response.body).message ?? "Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
         );
       }
     }catch(err){
@@ -127,7 +127,8 @@ class DepositController extends GetxController{
           body: jsonEncode({
             "phone_number": transaction.phone_number,
             "operator": transaction.operator,
-            "emergency":transaction.emergency
+            "emergency":transaction.emergency,
+            "amount":transaction.amount
           }));
       print(response.statusCode);
       if (response.statusCode == 200) {
@@ -154,7 +155,7 @@ class DepositController extends GetxController{
         update();
         var error = errorTypeFromJson(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content:Text(error.message ?? "Une erreur est survenue, veuillez réessayer"),backgroundColor: Colors.redAccent,)
+            SnackBar(content:Text(singleGoalsFromJson(response.body).message ?? "Une erreur est survenue, veuillez réessayer"),backgroundColor: Colors.redAccent,)
         );
       }
 
