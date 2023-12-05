@@ -30,77 +30,66 @@ class _AccountFilteredSectionState extends State<AccountFilteredSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-          decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.shade100,
-                    spreadRadius: 0.2,
-                    blurRadius: 15,
-                    offset: const Offset(0, 15)
-                )
-              ]
-          ),
-          child: Obx(() => Column(
+    return Obx(() => Column(
 
+      children: [
+        FlutterToggleTab
+          (
+          width: 40,
+          height: 35,
+          borderRadius: 15,
+          selectedTextStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 8,
+              fontWeight: FontWeight.w600),
+          unSelectedTextStyle: TextStyle(
+              color: lightGrey,
+              fontSize: 14,
+              fontWeight: FontWeight.w400),
+          labels: const ["En cours","Clôturés"],
+          //  icons: _listIconTabToggle,
+          selectedIndex: fetchGoalsController.selectedTab.value,
+          selectedLabelIndex: (index) {
+            fetchGoalsController.selectedTab(index);
+          },
+        ),
+
+        fetchGoalsController.selectedTab.value == 0 && fetchGoalsController.openedGoals.isEmpty ?
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Text("Pour le moment, vous n'avez aucun compte actif. Créez un compte !",textAlign: TextAlign.center,),
+        ) :
+        fetchGoalsController.selectedTab.value == 1 && fetchGoalsController.closedGoals.isEmpty ?
+        Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Text("Pour le moment, vous n'avez aucun compte cloturé.",textAlign: TextAlign.center,),
+        ) :
+        fetchGoalsController.selectedTab.value == 0 && fetchGoalsController.openedGoals.isNotEmpty ?
+        Padding(
+          padding: const EdgeInsets.only(top: 15.0,bottom: 15.0),
+          child: Column(
             children: [
-              FlutterToggleTab
-                (
-                width: 40,
-                height: 35,
-                borderRadius: 15,
-                selectedTextStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 8,
-                    fontWeight: FontWeight.w600),
-                unSelectedTextStyle: TextStyle(
-                    color: lightGrey,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400),
-                labels: const ["En cours","Clôturés"],
-                //  icons: _listIconTabToggle,
-                selectedIndex: fetchGoalsController.selectedTab.value,
-                selectedLabelIndex: (index) {
-                  fetchGoalsController.selectedTab(index);
-                },
-              ),
-              fetchGoalsController.selectedTab.value == 0 && fetchGoalsController.openedGoals.isEmpty ?
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text("Pour le moment, vous n'avez aucun compte actif. Créez un compte !",textAlign: TextAlign.center,),
-              ) :
-              fetchGoalsController.selectedTab.value == 1 && fetchGoalsController.closedGoals.isEmpty ?
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Text("Pour le moment, vous n'avez aucun compte cloturé.",textAlign: TextAlign.center,),
-              ) :
-              fetchGoalsController.selectedTab.value == 0 && fetchGoalsController.openedGoals.isNotEmpty ?
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0,bottom: 15.0),
-                child: Column(
-                  children: [
-                    for(var goal in fetchGoalsController.openedGoals ?? [])
-                      SingleAccountInList(currentGoal: goal),
-                  ],
-                ),
-              ) :
-              fetchGoalsController.selectedTab.value == 1 && fetchGoalsController.closedGoals.isNotEmpty ?
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0,bottom: 15.0),
-                child: Column(
-                  children: [
-                    for(var goal in fetchGoalsController.closedGoals ?? [])
-                      SingleAccountInList(currentGoal: goal),
-                  ],
-                ),
-              )   : SizedBox()
-
-
-
+              for(var goal in fetchGoalsController.openedGoals ?? [])
+                SingleAccountInList(currentGoal: goal),
             ],
           ),
+        ) :
+        fetchGoalsController.selectedTab.value == 1 && fetchGoalsController.closedGoals.isNotEmpty ?
+        Padding(
+          padding: const EdgeInsets.only(top: 15.0,bottom: 15.0),
+          child: Column(
+            children: [
+              for(var goal in fetchGoalsController.closedGoals ?? [])
+                SingleAccountInList(currentGoal: goal),
+            ],
+          ),
+        )   : SizedBox()
 
-          )
-        );
+
+
+      ],
+    ),
+
+    );
   }
 }

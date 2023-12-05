@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:pinput/pinput.dart';
 
 import '../globals.dart';
 class Otp extends StatelessWidget {
@@ -29,6 +28,7 @@ class Otp extends StatelessWidget {
               Text("Un code a été envoyé au 77 247 77 30",textAlign: TextAlign.center),
               SizedBox(height: 25,),
               SizedBox(height: 10,),
+              /*
               Pinput(
                 length: 6,
                // defaultPinTheme: defaultPinTheme,
@@ -51,6 +51,8 @@ class Otp extends StatelessWidget {
                   }
                 },
               ),
+
+               */
               Padding(
                 padding: const EdgeInsets.only(top: 20.0),
                 child: Container(

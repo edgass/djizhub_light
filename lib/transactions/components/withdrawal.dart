@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
 
 import '../../globals.dart';
 class Withdrawal extends StatelessWidget {
@@ -24,96 +25,104 @@ class Withdrawal extends StatelessWidget {
       appBar: AppBar(
         title: emergency ? const Text("Retrait d'urgence") : Text("Retrait"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(25.0),
-        child:  SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(25.0),
+          child:  SingleChildScrollView(
+            child: IdleDetector(
+              idleTime: const Duration(minutes: 1),
+              onIdle: () {
+                securityController.showOverlay(context);
+              },
+              child: Form(
+                key: _formKey,
+                child: Column(
                   children: [
-                    OperatorCard(name:"Wave", assetPath: "assets/logo/wave_logo.png",operator: Operator.WAVE,),
-                    OperatorCard(name:"Orange Money",assetPath: "assets/logo/om_logo.png",operator: Operator.OM),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        OperatorCard(name:"Wave", assetPath: "assets/logo/wave_logo.png",operator: Operator.WAVE,),
+                        OperatorCard(name:"Orange Money",assetPath: "assets/logo/om_logo.png",operator: Operator.OM),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: numeroTelController,
+                        decoration: InputDecoration(
+                          prefix: Text("+221"),
+                          labelText: "Numéro de Téléphone",
+                        ),
+                        // The validator receives the text that the user has entered.
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Ce champs est obligatoire';
+                          }else if(value.length != 9 || (!value.startsWith('77') & !value.startsWith('78') & !value.startsWith('76') & !value.startsWith('75'))){
+                            return 'Numéro de téléphone invalide';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: amountTelController,
+                        decoration: InputDecoration(
+                          labelText: "Montant",
+                        ),
+                        // The validator receives the text that the user has entered.
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Ce champs est obligatoire';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    emergency ?
+                    Padding(
+                      padding: EdgeInsets.only(top: 20.0,left: 10.0,right: 10.0),
+                      child: Text("Lors d'un retrait d'urgence, la limite est de 50 % du compte, soit ${((int.parse(fetchGoalsController.currentGoal.value.balance.toString())~/2) /5).floor() * 5} FCFA maximum, avec une pénalité de 5 % sur le montant retiré.",textAlign: TextAlign.center,style: TextStyle(color: Colors.redAccent),),
+                    ) : SizedBox(),
+                    emergency ?
+                    GetBuilder<DepositController>(
+                        builder: (value)=>CheckboxListTile(
+                            title: Text("J'accepte"),
+                            controlAffinity: ListTileControlAffinity.leading,
+                            value: value.acceptEmmergencyTerm,
+                            onChanged: (bool? value){
+                              if(value != null){
+                                depositController.setAcceptEmmergencyTerm(value);
+                              }
+                            }
+        
+                        )) : SizedBox(),
+                    GetBuilder<DepositController>(
+                        builder: (value)=> Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: value.makeTransactionState == MakeTransactionState.LOADING
+                              ? CircularProgressIndicator()
+                              : ElevatedButton(
+                            style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(emergency & !depositController.acceptEmmergencyTerm ? Colors.black12 : lightGrey)),
+                         onPressed: emergency & !depositController.acceptEmmergencyTerm ? null : () {
+                           if(_formKey.currentState!.validate()){
+                             depositController.makeWithdrawal(context, newTransactionModel(
+                                 "221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text),null,emergency), goalId);
+                           }
+        
+                         },
+                         onLongPress: null,
+        
+                            child: Text('Recevoir',style: TextStyle(color: Colors.white),),
+                          ),
+                        ))
+        
                   ],
                 ),
-                Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    controller: numeroTelController,
-                    decoration: InputDecoration(
-                      prefix: Text("+221"),
-                      labelText: "Numéro de Téléphone",
-                    ),
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ce champs est obligatoire';
-                      }else if(value.length != 9 || (!value.startsWith('77') & !value.startsWith('78') & !value.startsWith('76') & !value.startsWith('75'))){
-                        return 'Numéro de téléphone invalide';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    controller: amountTelController,
-                    decoration: InputDecoration(
-                      labelText: "Montant",
-                    ),
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Ce champs est obligatoire';
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-                emergency ?
-                Padding(
-                  padding: EdgeInsets.only(top: 20.0,left: 10.0,right: 10.0),
-                  child: Text("Lors d'un retrait d'urgence, la limite est de 50 % du compte, soit ${((int.parse(fetchGoalsController.currentGoal.value.balance.toString())~/2) /5).floor() * 5} FCFA maximum, avec une pénalité de 5 % sur le montant retiré.",textAlign: TextAlign.center,style: TextStyle(color: Colors.redAccent),),
-                ) : SizedBox(),
-                emergency ?
-                GetBuilder<DepositController>(
-                    builder: (value)=>CheckboxListTile(
-                        title: Text("J'accepte"),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        value: value.acceptEmmergencyTerm,
-                        onChanged: (bool? value){
-                          if(value != null){
-                            depositController.setAcceptEmmergencyTerm(value);
-                          }
-                        }
-
-                    )) : SizedBox(),
-                GetBuilder<DepositController>(
-                    builder: (value)=> Padding(
-                      padding: EdgeInsets.all(20.0),
-                      child: value.makeTransactionState == MakeTransactionState.LOADING
-                          ? CircularProgressIndicator()
-                          : ElevatedButton(
-                        style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(emergency & !depositController.acceptEmmergencyTerm ? Colors.black12 : lightGrey)),
-                     onPressed: emergency & !depositController.acceptEmmergencyTerm ? null : () {
-                       if(_formKey.currentState!.validate()){
-                         depositController.makeWithdrawal(context, newTransactionModel(
-                             "221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text),null,emergency), goalId);
-                       }
-
-                     },
-                     onLongPress: null,
-
-                        child: Text('Recevoir',style: TextStyle(color: Colors.white),),
-                      ),
-                    ))
-
-              ],
+              ),
             ),
           ),
         ),

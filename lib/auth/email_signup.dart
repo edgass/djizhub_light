@@ -1,4 +1,5 @@
 import 'package:djizhub_light/globals.dart';
+import 'package:djizhub_light/home/home_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -136,7 +137,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
         isLoading = false;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Home()),
+          MaterialPageRoute(builder: (context) => HomeCheck()),
         );
       });
     }).catchError((err) {

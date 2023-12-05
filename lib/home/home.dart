@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:djizhub_light/auth/setting.dart';
@@ -7,9 +8,11 @@ import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
 
 import 'package:djizhub_light/utils/local_notifications.dart';
+import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -34,12 +37,16 @@ class Home extends StatefulWidget {
   FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
   CreateGoalController createGoalController = Get.find<CreateGoalController>();
   DepositController depositController = Get.find<DepositController>();
+  SecurityController securityController = Get.find<SecurityController>();
 
 
 
 
 class _HomeState extends State<Home> {
   late TextEditingController _textController = TextEditingController();
+  late IO.Socket socket;
+  Timer? _timer;
+
 
 
 
@@ -71,9 +78,11 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
 
+    super.initState();
+
     fetchGoalsController.getGoals();
 
-    IO.Socket socket;
+
     Transaction transaction;
     FirebaseAuth.instance.currentUser?.getIdToken().then((value) =>{
 
@@ -117,31 +126,14 @@ class _HomeState extends State<Home> {
 
     );
 
-
-
-
-
-/*
-
-    print("hjfezjs");
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      _showModal().then((value) => {
-
-
-        fetchGoalsController.getGoals(),
-
-
-      });
-
-
-
-    });
-
-    */
-   // fetchGoalsController.getGoals();
-
-
   }
+
+  @override
+  void dispose() {
+    _timer?.cancel(); // Assurez-vous d'annuler le minuteur lors de la suppression de l'objet State
+    super.dispose();
+  }
+
 
 
 
@@ -175,7 +167,7 @@ class _HomeState extends State<Home> {
                 children: [
                   Text("Djizhub",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25,color: Colors.white),),
                   InkWell(
-                    onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingPage())),
+                    onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingPage(socket: socket,))),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Container(
@@ -196,26 +188,32 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 20.0),
-              child: SizedBox(
-                width: MediaQuery.of(context).size.width*0.7,
-                height: 50,
-                child: ElevatedButton(// foreground
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateColor.resolveWith((states) => lightGrey)
+      body: IdleDetector(
+        idleTime: const Duration(minutes: 1),
+        onIdle: () {
+         securityController.showOverlay(context);
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width*0.7,
+                  height: 50,
+                  child: ElevatedButton(// foreground
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith((states) => lightGrey)
+                    ),
+                    onPressed:()=>Get.to(()=>CreateGoal()),
+                    child: const Text('Créer une autre épargne',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
                   ),
-                  onPressed:()=>Get.to(()=>CreateGoal()),
-                  child: const Text('Créer une autre épargne',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
                 ),
               ),
-            ),
-            SizedBox(height: 25,),
-            AccountList(),
-          ],
+              SizedBox(height: 25,),
+              AccountList(),
+            ],
+          ),
         ),
       ),
     );

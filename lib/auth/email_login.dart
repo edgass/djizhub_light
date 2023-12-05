@@ -1,6 +1,12 @@
+import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/globals.dart';
+import 'package:djizhub_light/home/home_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/button_list.dart';
+import 'package:flutter_signin_button/button_view.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../home/home.dart';
 
@@ -14,6 +20,8 @@ class _EmailLogInState extends State<EmailLogIn> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  AuthController authController = Get.find<AuthController>();
+
 
   bool isLoading = false;
   bool isLoadingSendForgetPassword = false;
@@ -96,7 +104,18 @@ class _EmailLogInState extends State<EmailLogIn> {
                         },
                         child: Text('Mot de passe oublié ?'),
                       ),
-                    )
+                    ),
+                    Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: SignInButton(
+
+                          Buttons.Google,
+                          text: "Connexion via Google",
+                          onPressed: () {
+                            authController.signInWithGoogle(context);
+                          },
+                        )),
+
                   ]))),
         ));
   }
@@ -107,12 +126,11 @@ class _EmailLogInState extends State<EmailLogIn> {
         .signInWithEmailAndPassword(
         email: newMail, password: passwordController.text)
         .then((result) {
-          print("Access token : ");
           print(result.credential?.accessToken);
       isLoading = false;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Home()),
+        MaterialPageRoute(builder: (context) => HomeCheck()),
       );
     }).catchError((err) {
       print(err.message);

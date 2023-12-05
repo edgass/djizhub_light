@@ -1,11 +1,16 @@
 import 'package:djizhub_light/App_home.dart';
+import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/auth/signup.dart';
 import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/home/home.dart';
+import 'package:djizhub_light/home/home_check.dart';
 import 'package:djizhub_light/utils/binding.dart';
+import 'package:djizhub_light/utils/loading.dart';
 import 'package:djizhub_light/utils/local_notifications.dart';
+import 'package:djizhub_light/utils/security/enter_pin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -25,11 +30,13 @@ void main() async {
 
 
 
-  runApp(const MyApp());
+  runApp( MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key});
+  AuthController authController = Get.find<AuthController>();
+   final storage = const FlutterSecureStorage();
 
   // This widget is the root of your application.
   @override
@@ -65,10 +72,27 @@ class MyApp extends StatelessWidget {
     //  home: IntroScreen()
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context,snapshot){
-          if(snapshot.hasData){
-            return Home();
-          }else{
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return FutureBuilder(
+              future:  authController.searchPinInCache(),
+              builder: (context, pinSnapshot) {
+                if (pinSnapshot.connectionState == ConnectionState.waiting) {
+                  // You can return a loading indicator or something here if needed.
+                  return Loading();
+                } else {
+                  print("pin in cache = ${pinSnapshot.data}");
+
+                  if (pinSnapshot.data != null) {
+
+                    return EnterPin(rightPin: pinSnapshot.data ?? "",);
+                  } else {
+                    return HomeCheck();
+                  }
+                }
+              },
+            );
+          } else {
             return SignUp();
           }
         },
