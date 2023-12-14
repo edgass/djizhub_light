@@ -8,6 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_shakemywidget/flutter_shakemywidget.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:local_session_timeout/local_session_timeout.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../globals.dart';
@@ -121,11 +122,13 @@ class _EnterPinState extends State<ReenterPin> {
                         )
                       ],
                       onCompleted: (v) {
-                        print("right pin : ${this.widget.rightPin}");
-                        print("v : $v");
                         if(this.widget.rightPin == v){
 
+
+                          securityController.startListening();
                           securityController.removeOverlay();
+
+
                         }else{
                           shakeKey.currentState?.shake();
 

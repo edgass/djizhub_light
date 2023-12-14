@@ -1,4 +1,5 @@
 import 'package:djizhub_light/globals.dart';
+import 'package:djizhub_light/goals/components/goals_loading_shimmer.dart';
 import 'package:djizhub_light/goals/components/single_account_in_list.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:flutter/material.dart';

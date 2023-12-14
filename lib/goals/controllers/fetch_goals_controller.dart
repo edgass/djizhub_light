@@ -10,9 +10,11 @@ import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import '../../models/goals_model.dart';
 
 enum FetchState {
@@ -44,6 +46,7 @@ class FetchGoalsController extends GetxController{
  Rx<FetchState> fetchState = FetchState.PENDING.obs;
  Rx<FetchSingleGoalState> fetchSingleGoalState = FetchSingleGoalState.PENDING.obs;
  FetchSingleTransactionState fetchSingleTransactionState = FetchSingleTransactionState.PENDING;
+ final storage = const FlutterSecureStorage();
 
 
  @override
@@ -61,45 +64,91 @@ class FetchGoalsController extends GetxController{
 
  }
 
+ Future<List<Goal>?> loadGoalsFromCache() async {
+   var goalListString = await storage.read(key: 'goals');
+
+   // Récupérer la chaîne JSON depuis la cache
+   if (goalListString != null) {
+     // Convertir la chaîne JSON en une liste d'objets
+     List<Goal> loadedGoalList = (jsonDecode(goalListString) as List).map((item) => Goal.fromJson(item)).toList();
+     print("loaded goals $loadedGoalList");
+     // Mettre à jour l'état de la liste
+   goals.value = loadedGoalList;
+   return loadedGoalList;
+   }
+ }
+
+ void saveGoalsToCache() async {
+   // Convertir la liste en une chaîne JSON
+   String goealListString = jsonEncode(goals.value);
+   // Enregistrer la chaîne JSON dans la cache
+   await storage.write(key: 'goals', value: goealListString);
+ }
+
+ Future getGoals() async {
+   fetchState.value = FetchState.LOADING;
+   final hasInternet = await InternetConnectivity().hasInternetConnection;
+   if (!hasInternet) {
+     loadGoalsFromCache().then((value) {
+       if (value != null) {
+         openedGoals.value = [];
+         closedGoals.value = [];
+         goals.value = value;
+
+         for (var i = 0; i < goals.length; i++) {
+           if (goals[i].status != "WITHDRAWN") {
+             openedGoals.add(goals[i]);
+           } else {
+             closedGoals.add(goals[i]);
+           }
+         }
+         fetchState.value = FetchState.SUCCESS;
+         update();
+       } else {
+         fetchGoalsFromApi();
+       }
+     });
+   }else{
+     fetchGoalsFromApi();
+   }
+ }
+
+ Future<void> fetchGoalsFromApi() async {
+   String url = "${createGoalController.backendUrl}/goals";
 
 
-  void getGoals() async {
-    String url = "${createGoalController.backendUrl}/goals";
+   final user = FirebaseAuth.instance.currentUser!;
+   final idToken = await user.getIdToken();
+   fetchState.value = FetchState.LOADING;
 
+   var response = await http.get(Uri.parse(url),
+       headers: {
+         'Content-Type': 'application/json',
+         'Accept': 'application/json',
+         'Authorization': 'Bearer $idToken',
+       });
 
-    final user = FirebaseAuth.instance.currentUser!;
-    final idToken = await user.getIdToken();
-    fetchState.value = FetchState.LOADING;
-    update();
+   if (response.statusCode == 200) {
+     openedGoals.value = [];
+     closedGoals.value = [];
+     goals.value = goalsFromJson(response.body).data ?? [];
+     saveGoalsToCache();
+     for (var i = 0; i < goals.length; i++) {
+       if (goals[i].status != "WITHDRAWN") {
+         openedGoals.add(goals[i]);
+       } else {
+         closedGoals.add(goals[i]);
+       }
+     }
+     fetchState.value = FetchState.SUCCESS;
+     update();
+   } else {
+     fetchState.value = FetchState.ERROR;
+     update();
+   }
 
-    final response = await http.get(Uri.parse(url),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $idToken',
-    });
-
-
-    if (response.statusCode == 200) {
-      openedGoals.value = [];
-      closedGoals.value = [];
-      goals.value = goalsFromJson(response.body).data ?? [];
-      for(var i=0;i<goals.length;i++){
-        if(goals[i].status != "WITHDRAWN"){
-          openedGoals.add(goals[i]);
-        }else{
-          closedGoals.add(goals[i]);
-        }
-      }
-      fetchState.value = FetchState.SUCCESS;
-      update();
-
-    } else {
-      fetchState.value = FetchState.ERROR;
-      update();
-    }
-    print(response.statusCode);
-  }
+   print(response.statusCode);
+ }
 
   getSingleGoal(String idGoal) async {
    print("executing get goals ");
@@ -121,7 +170,6 @@ class FetchGoalsController extends GetxController{
 
    if (response.statusCode == 200) {
 
-     print(goalsFromJson(response.body).data) ;
      fetchState.value = FetchState.SUCCESS;
      update();
      print(" get goals executed");

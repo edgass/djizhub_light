@@ -46,7 +46,10 @@ class Transaction {
   Type? type;
   Operator? transactionOperator;
   int? amount;
+  int? fee;
   Status? status;
+  Status? partner_id;
+  Status? phone_number;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -55,7 +58,10 @@ class Transaction {
     this.type,
     this.transactionOperator,
     this.amount,
+    this.fee,
     this.status,
+    this.partner_id,
+    this.phone_number,
     this.createdAt,
     this.updatedAt,
   });
@@ -65,7 +71,10 @@ class Transaction {
     type: typeValues.map[json["type"]]!,
     transactionOperator: operatorValues.map[json["operator"]]!,
     amount: json["amount"],
+    fee: json["fee"],
     status: statusValues.map[json["status"]]!,
+    partner_id: statusValues.map[json["partner_id"]]!,
+    phone_number: statusValues.map[json["phone_number"]]!,
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
   );
@@ -75,7 +84,10 @@ class Transaction {
     "type": typeValues.reverse[type],
     "operator": operatorValues.reverse[transactionOperator],
     "amount": amount,
+    "fee": fee,
     "status": statusValues.reverse[status],
+    "partner_id": statusValues.reverse[partner_id],
+    "phone_number": statusValues.reverse[phone_number],
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
   };

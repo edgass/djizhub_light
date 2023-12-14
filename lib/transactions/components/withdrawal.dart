@@ -7,9 +7,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
 
 import '../../globals.dart';
+import 'package:intl/intl.dart';
 class Withdrawal extends StatelessWidget {
   String goalId;
   bool emergency;
@@ -18,6 +18,19 @@ class Withdrawal extends StatelessWidget {
   TextEditingController numeroTelController = TextEditingController();
   TextEditingController amountTelController = TextEditingController();
   DepositController depositController = Get.find<DepositController>();
+
+
+  void formatInput() {
+    // Utilise NumberFormat pour formater le nombre avec une virgule
+    NumberFormat formatter = NumberFormat('#,###');
+    String formattedNumber = formatter.format(double.parse(amountTelController.text.replaceAll(',', '')));
+
+    // Met à jour le texte dans le TextField avec le nombre formaté
+    amountTelController.value = amountTelController.value.copyWith(
+      text: formattedNumber,
+      selection: TextSelection.collapsed(offset: formattedNumber.length),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +42,7 @@ class Withdrawal extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(25.0),
           child:  SingleChildScrollView(
-            child: IdleDetector(
-              idleTime: const Duration(minutes: 1),
-              onIdle: () {
-                securityController.showOverlay(context);
-              },
-              child: Form(
+            child: Form(
                 key: _formKey,
                 child: Column(
                   children: [
@@ -65,23 +73,26 @@ class Withdrawal extends StatelessWidget {
                         },
                       ),
                     ),
+                    emergency ?
                     Padding(
                       padding: EdgeInsets.all(20.0),
                       child: TextFormField(
+                        onChanged: (value){
+                          formatInput();
+                        },
                         keyboardType: TextInputType.number,
                         controller: amountTelController,
                         decoration: InputDecoration(
                           labelText: "Montant",
                         ),
-                        // The validator receives the text that the user has entered.
                         validator: (value) {
-                          if (value!.isEmpty) {
+                          if (value!.isEmpty & emergency) {
                             return 'Ce champs est obligatoire';
                           }
                           return null;
                         },
                       ),
-                    ),
+                    ) : const SizedBox(),
                     emergency ?
                     Padding(
                       padding: EdgeInsets.only(top: 20.0,left: 10.0,right: 10.0),
@@ -107,12 +118,20 @@ class Withdrawal extends StatelessWidget {
                               ? CircularProgressIndicator()
                               : ElevatedButton(
                             style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(emergency & !depositController.acceptEmmergencyTerm ? Colors.black12 : lightGrey)),
-                         onPressed: emergency & !depositController.acceptEmmergencyTerm ? null : () {
+                         onPressed:emergency ?
+                                             emergency & !depositController.acceptEmmergencyTerm ? null : () {
+                                               if(_formKey.currentState!.validate()){
+                                                 depositController.makeWithdrawal(context, newTransactionModel(
+                                                     "221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text.replaceAll(',', '')),null,emergency), goalId);
+                                               }
+
+                                             } :
+                             () {
                            if(_formKey.currentState!.validate()){
                              depositController.makeWithdrawal(context, newTransactionModel(
-                                 "221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text),null,emergency), goalId);
+                                 "221${numeroTelController.text}", depositController.operator.name, null,null,emergency), goalId);
                            }
-        
+
                          },
                          onLongPress: null,
         
@@ -123,7 +142,7 @@ class Withdrawal extends StatelessWidget {
                   ],
                 ),
               ),
-            ),
+
           ),
         ),
       ),

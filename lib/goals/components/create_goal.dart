@@ -128,7 +128,7 @@ class CreateGoal extends StatelessWidget {
                         style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(apCol)),
                         onPressed: () {
                           if (_formKey.currentState!.validate()){
-                            createGoalController.createNewGoal(context, newGoalModel(nameController.text, descriptionController.text, double.parse(objectifController.text), createGoalController.selectedDate.toString(), createGoalController.goalConstraint));
+                            createGoalController.createNewGoal(context, newGoalModel(null,nameController.text, descriptionController.text, double.parse(objectifController.text), createGoalController.selectedDate.toString(), createGoalController.goalConstraint));
                           }
                         },
                         child: Text('Envoyer',style: TextStyle(color: Colors.white),),

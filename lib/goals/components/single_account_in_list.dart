@@ -26,11 +26,23 @@ class SingleAccountInList extends StatelessWidget {
           width: MediaQuery.of(context).size.width*0.8,
           height: MediaQuery.of(context).size.width*0.7,
           decoration: BoxDecoration(
-            backgroundBlendMode: BlendMode.overlay,
+          //  backgroundBlendMode: BlendMode.overlay,
             borderRadius: BorderRadius.circular(20),
             color: Colors.white,
             boxShadow: [
-
+              fetchGoalsController.currentGoal.value.foreign_account ?? false == true ?
+              BoxShadow(
+                color: lightGrey,
+                spreadRadius: 1,
+                blurRadius: 20,
+                offset: const Offset(2, 0),
+              ):
+              BoxShadow(
+                color: Colors.grey.shade200,
+                spreadRadius: 1,
+                blurRadius: 20,
+                offset: const Offset(0, 0),
+              )
             ],
           ),
           child: Padding(
@@ -57,7 +69,7 @@ class SingleAccountInList extends StatelessWidget {
                               )
                             ],
                           ),
-                          Text("Retrait : ${currentGoal.dateOfWithdrawal?.day.toString().padLeft(2, '0')}/${currentGoal.dateOfWithdrawal?.month.toString().padLeft(2, '0')}/${currentGoal.dateOfWithdrawal?.year}",style: TextStyle(fontWeight: FontWeight.bold,color: lightGrey)),
+                          Text("Échéance : ${currentGoal.dateOfWithdrawal?.day.toString().padLeft(2, '0')}/${currentGoal.dateOfWithdrawal?.month.toString().padLeft(2, '0')}/${currentGoal.dateOfWithdrawal?.year}",style: TextStyle(fontWeight: FontWeight.bold,color: lightGrey)),
                         ],
                       ),
 

@@ -3,7 +3,6 @@ import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:idle_detector_wrapper/idle_detector_wrapper.dart';
 import 'package:intl/intl.dart';
 
 import '../controllers/deposit_controller.dart';
@@ -25,12 +24,7 @@ class SingleTransactionDetails extends StatelessWidget {
         ),
         title: Text(""),
       ),
-      body: IdleDetector(
-        idleTime: const Duration(minutes: 1),
-        onIdle: () {
-          securityController.showOverlay(context);
-        },
-        child: GetBuilder<FetchGoalsController>(
+      body: GetBuilder<FetchGoalsController>(
           builder: (value)=> value.fetchSingleTransactionState == FetchSingleTransactionState.LOADING || value.fetchSingleTransactionState == FetchSingleTransactionState.PENDING ?
           Center(child: CircularProgressIndicator()) :
           Padding(
@@ -67,6 +61,14 @@ class SingleTransactionDetails extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Text("Frais",),
+                            Text("${formatter.format(value.currentTransaction.fee)} FCFA"),
+                          ],
+                        ),
+                        SizedBox(height: 35,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
                             Text("Reférence",),
                             Flexible(child: SizedBox( child: Text(value.currentTransaction.id ?? "",maxLines: 2,))),
                           ],
@@ -91,6 +93,14 @@ class SingleTransactionDetails extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Text("téléphone",),
+                            Text("+${value.currentTransaction.phone_number.toString()}"),
+                          ],
+                        ),
+                        SizedBox(height: 35,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
                             Text("Opérateur",),
                             Text(value.currentTransaction.transactionOperator ?? ""),
                           ],
@@ -100,7 +110,8 @@ class SingleTransactionDetails extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("Id transaction",),
-                            Text(""),
+                            value.currentTransaction.partner_id == null ? const Text("") :
+                            Text(value.currentTransaction.partner_id.toString()),
                           ],
                         ),
                       ],
@@ -112,7 +123,6 @@ class SingleTransactionDetails extends StatelessWidget {
             ),
           ),
         ),
-      )
     );
   }
 }

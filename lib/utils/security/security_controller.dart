@@ -1,16 +1,70 @@
+import 'package:djizhub_light/main.dart';
 import 'package:djizhub_light/utils/security/Reenter_pin.dart';
 import 'package:djizhub_light/utils/security/enter_pin.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:local_session_timeout/local_session_timeout.dart';
 
 class SecurityController extends GetxController{
 
   String currentPin = "";
   late OverlayEntry overlayEntry;
+  late SessionConfig sessionConfig;
+  final sessionStateStream = StreamController<SessionState>();
+  bool canAskPin = true;
+
+  startListening() {
+    print("start listning");
+    sessionStateStream.add(SessionState.startListening);
+    update();
+    print("start added");
+  }
+
+  stopListening(){
+    print("stop listning");
+    sessionStateStream.add(SessionState.stopListening);
+    update();
+  }
+
+  stopListeningStream(){
+    sessionConfig.dispose();
+  }
+
+  startTimer(){
+    canAskPin = false;
+    Future.delayed(const Duration(minutes: 1), () {
+      canAskPin = true;
+    });
+
+  }
+
+  listenStream(){
+    sessionConfig.stream.listen((SessionTimeoutState timeoutEvent) {
+      if (timeoutEvent == SessionTimeoutState.userInactivityTimeout) {
+
+        // handle user  inactive timeout
+        // Navigator.of(context).pushNamed("/auth");
+      } else if (timeoutEvent == SessionTimeoutState.appFocusTimeout) {
+        print("Focus perdu");
+        stopListening();
+        showOverlay(Get.overlayContext!);
+        // handle user  app lost focus timeout
+        // Navigator.of(context).pushNamed("/auth");
+      }
+    });
+  }
 
   @override
   void onInit() {
+     sessionConfig = SessionConfig(
+        invalidateSessionForAppLostFocus: const Duration(seconds:15),
+        invalidateSessionForUserInactivity: const Duration(seconds: 15));
+
+
+
+      startListening();
+      listenStream();
     // TODO: implement onInit
     super.onInit();
      overlayEntry =OverlayEntry(
@@ -27,6 +81,9 @@ class SecurityController extends GetxController{
     );
 
   }
+
+
+
 
 
 

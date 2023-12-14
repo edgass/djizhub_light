@@ -1,11 +1,16 @@
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:djizhub_light/auth/signup.dart';
+import 'package:djizhub_light/home/home.dart';
+import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../globals.dart';
 class SettingPage extends StatelessWidget {
@@ -14,6 +19,7 @@ class SettingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SecurityController securityController = Get.find<SecurityController>();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Reglage"),
@@ -46,7 +52,7 @@ class SettingPage extends StatelessWidget {
                               color: Colors.white54,
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black12,
+                                  color: Colors.grey.shade200,
                                   spreadRadius: 1,
                                   blurRadius: 20,
                                   offset: const Offset(0, 1),
@@ -57,11 +63,14 @@ class SettingPage extends StatelessWidget {
                               padding: const EdgeInsets.all(15.0),
                               child: Column(
                                 children: [
-                                  Row(children: [
-                                    Icon(Icons.share,size: 25,),
-                                    SizedBox(width: 10,),
-                                    Text("Inviter un ami à partager",style: TextStyle(fontSize: 16,color: Colors.black87),)
-                                  ],),
+                                  InkWell(
+                                    onTap: ()async=> _onShare(context),
+                                    child: Row(children: [
+                                      Icon(Icons.share,size: 25,),
+                                      SizedBox(width: 10,),
+                                      Text("Inviter un ami à partager",style: TextStyle(fontSize: 16,color: Colors.black87),)
+                                    ],),
+                                  ),
                                   SizedBox(height: 15,),
                                   Row(children: [
                                     Icon(Icons.brightness_5_outlined,size: 25,),
@@ -109,23 +118,32 @@ class SettingPage extends StatelessWidget {
                               padding: const EdgeInsets.all(15.0),
                               child: Column(
                                 children: [
-                                  Row(children: [
-                                    Icon(Icons.call,size: 25,),
-                                    SizedBox(width: 10,),
-                                    Text("Contacter le service client",style: TextStyle(fontSize: 16,color: Colors.black87),)
-                                  ],),
+                                  InkWell(
+                                    onTap: ()async=>contactClientService(),
+                                    child: Row(children: [
+                                      Icon(Icons.call,size: 25,),
+                                      SizedBox(width: 10,),
+                                      Text("Contacter le service client",style: TextStyle(fontSize: 16,color: Colors.black87),)
+                                    ],),
+                                  ),
                                   SizedBox(height: 15,),
-                                  Row(children: [
-                                    Icon(Icons.web,size: 25,),
-                                    SizedBox(width: 10,),
-                                    Text("Visiter le site",style: TextStyle(fontSize: 16,color: Colors.black87),)
-                                  ],),
+                                  InkWell(
+                                    onTap: ()async=>visitWebsite(),
+                                    child: Row(children: [
+                                      Icon(Icons.web,size: 25,),
+                                      SizedBox(width: 10,),
+                                      Text("Visiter le site",style: TextStyle(fontSize: 16,color: Colors.black87),)
+                                    ],),
+                                  ),
                                   SizedBox(height: 15,),
-                                  Row(children: [
-                                    Icon(Icons.group_add,size: 25,),
-                                    SizedBox(width: 10,),
-                                    Text("Collaboration",style: TextStyle(fontSize: 16,color: Colors.black87),)
-                                  ],)
+                                  InkWell(
+                                    onTap: ()async =>contactCollabo(),
+                                    child: Row(children: [
+                                      Icon(Icons.group_add,size: 25,),
+                                      SizedBox(width: 10,),
+                                      Text("Collaboration",style: TextStyle(fontSize: 16,color: Colors.black87),)
+                                    ],),
+                                  )
                                 ],
                               ),
                             ),
@@ -320,4 +338,52 @@ _httpsCall() async {
 
   */
 
+}
+
+void _onShare(BuildContext context) async {
+  ShareResult shareResult;
+  securityController.stopListening();
+
+  final box = context.findRenderObject() as RenderBox?;
+
+    shareResult = await Share.shareWithResult("On modernise la tradition avec Djizhub, la Condané Digitale! 🚀 Téléchargez l'appli maintenant et faites revivre l'épargne d'une manière nouvelle et amusante. Télecharger l'app : https://play.google.com/store/apps/details?id=com.wave.personal&pcampaignid=web_share",
+        subject: "💼 Retour aux sources avec Djizhub - La Condané Digitale! 💰🔄",
+        sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
+
+    if(shareResult.status == ShareResultStatus.success || shareResult.status == ShareResultStatus.dismissed){
+    securityController.startListening();
+    }
+
+}
+
+contactClientService() async{
+  var contact = "+221778370953";
+  var url = "https://wa.me/$contact?text=${Uri.parse('Bonjour Djizhub ')}";
+
+  try{
+    await launchUrl(Uri.parse(url));
+  } on Exception{
+    print('WhatsApp is not installed.');
+  }
+}
+
+contactCollabo() async{
+  var contact = "+221778370953";
+  var url = "https://wa.me/$contact?text=${Uri.parse("Bonjour Djizhub je vous contacte à propos d'une collaboration ")}";
+
+  try{
+    await launchUrl(Uri.parse(url));
+  } on Exception{
+    print('WhatsApp is not installed.');
+  }
+}
+
+visitWebsite() async{
+  var url = "https://www.wave.com/fr/";
+
+  try{
+    await launchUrl(Uri.parse(url));
+  } on Exception{
+    print('Erreur d launch');
+  }
 }

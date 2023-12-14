@@ -132,6 +132,7 @@ import '../../globals.dart';
                       await authController.addPinToFirebase();
                       print("End sending to firebase");
                     }
+                    securityController.startListening();
                   }
 
 

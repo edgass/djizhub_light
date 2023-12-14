@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:djizhub_light/goals/components/informations.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/models/Single_goal_model.dart';
 import 'package:djizhub_light/models/goals_model.dart';
@@ -16,8 +17,14 @@ enum CreateGoalState {
 
 }
 
+enum UpdateGoalState {
+  PENDING,LOADING,ERROR,SUCCESS
+
+}
+
 class newGoalModel {
 
+  final String? id;
   final String name;
   final String description;
   final double goal;
@@ -26,7 +33,7 @@ class newGoalModel {
 
 
   newGoalModel(
-      this.name,this.description,this.goal,this.date_of_withdrawal,this.constraint
+      this.id,this.name,this.description,this.goal,this.date_of_withdrawal,this.constraint
       );
 
 }
@@ -34,8 +41,11 @@ class newGoalModel {
 class CreateGoalController extends GetxController{
 
   DateTime selectedDate = DateTime.now().add(const Duration(days: 8));
+  DateTime selectedUpdateDate = DateTime.now();
   bool goalConstraint = false;
+  bool goalConstraintOfUpdate = false;
   CreateGoalState createGoalState = CreateGoalState.PENDING;
+  UpdateGoalState updateGoalState = UpdateGoalState.PENDING;
 
   FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
 
@@ -77,6 +87,7 @@ class CreateGoalController extends GetxController{
       );
         fetchGoalsController.getGoals();
       Get.back();
+    //  Get.to(()=>Informations());
     } else {
       print("Erreur de requete  lors de la creation du compte ${response.body}");
       createGoalState = CreateGoalState.ERROR;
@@ -87,12 +98,69 @@ class CreateGoalController extends GetxController{
     }
   }catch(err){
     print("Erreur lors de la creation du compte : $err");
-    createGoalState = CreateGoalState.SUCCESS;
+    createGoalState = CreateGoalState.ERROR;
     update();
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
     );
   }
+  }
+
+
+  void updateGoal(BuildContext context,newGoalModel newGoal) async {
+    String url = "$backendUrl/goals/${newGoal.id}";
+    print(newGoal.date_of_withdrawal);
+    var response;
+
+    try{
+      final user = FirebaseAuth.instance.currentUser!;
+      final idToken = await user.getIdToken();
+      updateGoalState = UpdateGoalState.LOADING;
+      update();
+      response = await http.patch(Uri.parse(url),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $idToken',
+          },
+          body: jsonEncode({
+            "name": newGoal.name,
+            "description": newGoal.description,
+            "goal": newGoal.goal,
+            "date_of_withdrawal": selectedUpdateDate.toIso8601String(),
+            "constraint": goalConstraintOfUpdate,
+          }));
+
+      if (response.statusCode == 200) {
+        updateGoalState = UpdateGoalState.SUCCESS;
+        print(singleGoalsFromJson(response.body).data);
+
+        //fetchGoalsController.addNewGoal(goalFromJson(response.body));
+        update();
+        print("Compte Crée avec success");
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Votre compte Epargne a été mis à jour avec succés",),backgroundColor: Colors.green,)
+        );
+        fetchGoalsController.setCurrentGoal((singleGoalsFromJson(response.body).data) ?? Goal());
+        fetchGoalsController.getGoals();
+        Get.back();
+      } else {
+        print("Erreur de requete  lors de la creation du compte ${response.body}");
+        updateGoalState = UpdateGoalState.ERROR;
+        update();
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
+        );
+      }
+    }catch(err){
+      print("Erreur lors de la creation du compte : $err");
+      updateGoalState = UpdateGoalState.ERROR;
+      update();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(singleGoalsFromJson(response.body ?? "").message ?? "Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
+      );
+    }
   }
 
 
@@ -110,8 +178,31 @@ class CreateGoalController extends GetxController{
     update();
   }
 
+  selectUpdateDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedUpdateDate,
+        firstDate: selectedUpdateDate,
+        lastDate: DateTime(2050));
+    if (picked != null) {
+      selectedUpdateDate = picked;
+
+    }
+    print(selectedDate);
+    update();
+  }
+
+  setInitialUpdateDate(DateTime date){
+    selectedUpdateDate = date;
+  }
+
   setGoalConstraint(value){
     goalConstraint = value;
+    update();
+  }
+
+  setUpdateGoalConstraint(bool value){
+    goalConstraintOfUpdate = value;
     update();
   }
 

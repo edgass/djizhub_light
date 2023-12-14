@@ -43,6 +43,7 @@ class Goals {
 
 class Goal {
   String? id;
+  String? code;
   int? goal;
   String? name;
   String? description;
@@ -51,7 +52,9 @@ class Goal {
   bool? emmergency_withdrawal;
   int? percent_progress;
   bool? constraint;
+  bool? foreign_account;
   int? balance;
+  int? subscribers;
   String? status;
   List<Transaction>? transactions;
   DateTime? createdAt;
@@ -59,6 +62,7 @@ class Goal {
 
   Goal({
     this.id,
+    this.code,
     this.goal,
     this.name,
     this.description,
@@ -67,7 +71,9 @@ class Goal {
     this.emmergency_withdrawal,
     this.percent_progress,
     this.constraint,
+    this.foreign_account,
     this.balance,
+    this.subscribers,
     this.status,
     this.transactions,
     this.createdAt,
@@ -76,6 +82,7 @@ class Goal {
 
   factory Goal.fromJson(Map<String, dynamic> json) => Goal(
     id: json["id"],
+    code: json["code"],
     goal: json["goal"],
     name: json["name"],
     description: json["description"],
@@ -84,7 +91,9 @@ class Goal {
     emmergency_withdrawal: json["emmergency_withdrawal"],
     percent_progress: json["percent_progress"],
     constraint: json["constraint"],
+    foreign_account: json["foreign_account"],
     balance: json["balance"],
+    subscribers: json["subscribers"],
     status: json["status"],
     transactions: json["transactions"] == null ? [] : List<Transaction>.from(json["transactions"]!.map((x) => Transaction.fromJson(x))),
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
@@ -93,6 +102,7 @@ class Goal {
 
   Map<String, dynamic> toJson() => {
     "id": id,
+    "code": code,
     "goal": goal,
     "name": name,
     "description": description,
@@ -101,7 +111,9 @@ class Goal {
     "emmergency_withdrawal": emmergency_withdrawal,
     "percent_progress": percent_progress,
     "constraint": constraint,
+    "foreign_account": foreign_account,
     "balance": balance,
+    "subscribers": subscribers,
     "status": status,
     "transactions": transactions == null ? [] : List<dynamic>.from(transactions!.map((x) => x.toJson())),
     "created_at": createdAt?.toIso8601String(),
@@ -114,7 +126,10 @@ class Transaction {
   String? type;
   String? transactionOperator;
   int? amount;
+  int? fee;
   String? status;
+  String? partner_id;
+  String? phone_number;
   DateTime? createdAt;
   DateTime? updatedAt;
 
@@ -123,7 +138,10 @@ class Transaction {
     this.type,
     this.transactionOperator,
     this.amount,
+    this.fee,
     this.status,
+    this.partner_id,
+    this.phone_number,
     this.createdAt,
     this.updatedAt,
   });
@@ -133,7 +151,10 @@ class Transaction {
     type: json["type"],
     transactionOperator: json["operator"],
     amount: json["amount"],
+    fee: json["fee"],
     status: json["status"],
+    partner_id: json["partner_id"],
+    phone_number: json["phone_number"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
   );
@@ -143,7 +164,10 @@ class Transaction {
     "type": type,
     "operator": transactionOperator,
     "amount": amount,
+    "fee": fee,
     "status": status,
+    "partner_id": partner_id,
+    "phone_number": phone_number,
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
   };

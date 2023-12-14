@@ -8,20 +8,27 @@ import 'package:djizhub_light/utils/binding.dart';
 import 'package:djizhub_light/utils/loading.dart';
 import 'package:djizhub_light/utils/local_notifications.dart';
 import 'package:djizhub_light/utils/security/enter_pin.dart';
+import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-import 'package:socket_io_client/socket_io_client.dart';
-
+import 'package:local_session_timeout/local_session_timeout.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   NotificationService().initNotification();
+  await Permission.notification.isDenied.then((value) {
+    if (value) {
+      Permission.notification.request();
+    }
+  });
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   HomeBinding().dependencies();
 
 
@@ -36,6 +43,7 @@ void main() async {
 class MyApp extends StatelessWidget {
    MyApp({super.key});
   AuthController authController = Get.find<AuthController>();
+  SecurityController securityController = Get.find<SecurityController>();
    final storage = const FlutterSecureStorage();
 
   // This widget is the root of your application.
@@ -45,6 +53,7 @@ class MyApp extends StatelessWidget {
     debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
+        fontFamily: 'poppins',
         //scaffoldBackgroundColor: Color(0xFFF8F8F8),
         colorScheme: ColorScheme.fromSeed(
             seedColor:  lightGrey,
@@ -70,32 +79,45 @@ class MyApp extends StatelessWidget {
 
       ),
     //  home: IntroScreen()
-      home: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return FutureBuilder(
-              future:  authController.searchPinInCache(),
-              builder: (context, pinSnapshot) {
-                if (pinSnapshot.connectionState == ConnectionState.waiting) {
-                  // You can return a loading indicator or something here if needed.
-                  return Loading();
-                } else {
-                  print("pin in cache = ${pinSnapshot.data}");
+      home: SessionTimeoutManager(
+        userActivityDebounceDuration: const Duration(seconds: 1),
+        sessionConfig: securityController.sessionConfig,
+        sessionStateStream: securityController.sessionStateStream.stream,
+        child: StreamBuilder<User?>(
+          stream: FirebaseAuth.instance.authStateChanges(),
 
-                  if (pinSnapshot.data != null) {
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return FutureBuilder(
+                future:  authController.searchPinInCache(),
+                builder: (context, pinSnapshot) {
+                  if (pinSnapshot.connectionState == ConnectionState.waiting) {
+                    // You can return a loading indicator or something here if needed.
+                    securityController.stopListening();
 
-                    return EnterPin(rightPin: pinSnapshot.data ?? "",);
+                    return Loading();
                   } else {
-                    return HomeCheck();
+                    print("pin in cache = ${pinSnapshot.data}");
+
+                    if (pinSnapshot.data != null) {
+                      securityController.stopListening();
+
+                      return EnterPin(rightPin: pinSnapshot.data ?? "",);
+                    } else {
+                      securityController.stopListening();
+
+
+                      return HomeCheck();
+                    }
                   }
-                }
-              },
-            );
-          } else {
-            return SignUp();
-          }
-        },
+                },
+              );
+            } else {
+              securityController.stopListening();
+              return SignUp();
+            }
+          },
+        ),
       )
     );
   }

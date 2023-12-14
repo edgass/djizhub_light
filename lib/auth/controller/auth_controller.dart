@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:djizhub_light/auth/otp.dart';
+import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/home/home_check.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 
 import '../../home/home.dart';
 
@@ -24,10 +26,40 @@ enum AuthState {
 
 }
 
+enum MyconnexionState {
+  noInternet,
+  backToInternet,
+  idle,
+}
+
 class AuthController extends GetxController{
   FirebaseAuth auth = FirebaseAuth.instance;
   final storage = const FlutterSecureStorage();
+  Rx<MyconnexionState> myConnexionState = Rx<MyconnexionState>(MyconnexionState.idle);
+  late final _connectivitySubscription;
 
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    final subscription =
+    InternetConnectivity().observeInternetConnection.listen((bool hasInternetAccess) {
+      if(!hasInternetAccess){
+        print('No Internet Connection');
+        myConnexionState.value = MyconnexionState.noInternet;
+      }else{
+        print("De retour sur internet");
+
+        myConnexionState.value = MyconnexionState.backToInternet;
+
+        Future.delayed(const Duration(seconds: 2), () {
+          myConnexionState.value = MyconnexionState.idle;
+        });
+        FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
+        fetchGoalsController.getGoals();
+      }
+    });
+  }
 
 
 

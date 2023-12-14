@@ -123,6 +123,7 @@ class _EnterPinState extends State<EnterPin> {
                       onCompleted: (v) {
                         if(this.widget.rightPin == v){
                           securityController.setCurrentPin(v);
+                          securityController.startListening();
                           Get.offAll(()=>Home());
                         }else{
                           shakeKey.currentState?.shake();

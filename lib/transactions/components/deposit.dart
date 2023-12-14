@@ -5,18 +5,31 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:flutter/gestures.dart';
+import 'package:intl/intl.dart';
 
 import '../../globals.dart';
 class Deposit extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   String goalId;
+  var formatter = NumberFormat("#,###");
    Deposit({super.key,required this.goalId});
   TextEditingController numeroTelController = TextEditingController();
   TextEditingController amountController = TextEditingController();
   TextEditingController otpController = TextEditingController();
   DepositController depositController = Get.find<DepositController>();
   RegExp myRegNumValidation = RegExp('0-9');
+
+  void formatInput() {
+    // Utilise NumberFormat pour formater le nombre avec une virgule
+    NumberFormat formatter = NumberFormat('#,###');
+    String formattedNumber = formatter.format(double.parse(amountController.text.replaceAll(',', '')));
+
+    // Met à jour le texte dans le TextField avec le nombre formaté
+    amountController.value = amountController.value.copyWith(
+      text: formattedNumber,
+      selection: TextSelection.collapsed(offset: formattedNumber.length),
+    );
+  }
 
 
   @override
@@ -69,6 +82,9 @@ class Deposit extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: TextFormField(
+                    onChanged: (value){
+                      formatInput();
+                    },
                     keyboardType: TextInputType.number,
                     controller: amountController,
                     decoration: InputDecoration(
@@ -78,9 +94,9 @@ class Deposit extends StatelessWidget {
                     validator: (value) {
                       if(value!.isEmpty){
                         return 'Ce champs est obligatoire';
-                      }else if (double.parse(value ?? "0.0")<500) {
+                      }else if (double.parse(value.replaceAll(',', '') ?? "0.0")<500) {
                         return 'Le montant minimum est de 500 FCFA';
-                      }else if (double.parse(value ?? "0.0")>200000) {
+                      }else if (double.parse(value.replaceAll(',', '') ?? "0.0")>200000) {
                         return 'Le montant maximum est de 200.000 FCFA';
                       }
                       return null;
@@ -158,7 +174,8 @@ class Deposit extends StatelessWidget {
                           print("+221${numeroTelController.text}");
                           if(_formKey.currentState!.validate()){
                             FocusScope.of(context).unfocus();
-                            depositController.makeDeposit(context, newTransactionModel("221${numeroTelController.text}", depositController.operator.name, double.parse(amountController.text),otpController.text,null ), goalId);
+                            String amountCleanString = amountController.text.replaceAll(',', '');
+                            depositController.makeDeposit(context, newTransactionModel("221${numeroTelController.text}", depositController.operator.name, double.parse(amountCleanString),otpController.text,null ), goalId);
                           }
 
                         },
@@ -174,3 +191,4 @@ class Deposit extends StatelessWidget {
     );
   }
 }
+
