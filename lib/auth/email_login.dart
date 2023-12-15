@@ -126,7 +126,7 @@ class _EmailLogInState extends State<EmailLogIn> {
         .signInWithEmailAndPassword(
         email: newMail, password: passwordController.text)
         .then((result) {
-          print(result.credential?.accessToken);
+            authController.fetchUserName(result.user?.uid ?? "");
       isLoading = false;
       Navigator.pushReplacement(
         context,

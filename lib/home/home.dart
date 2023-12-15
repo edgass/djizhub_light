@@ -7,12 +7,14 @@ import 'package:djizhub_light/auth/setting.dart';
 import 'package:djizhub_light/goals/components/create_goal.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
+import 'package:djizhub_light/goals/controllers/joinGoalController.dart';
 import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
 
 import 'package:djizhub_light/utils/local_notifications.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:local_session_timeout/local_session_timeout.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -34,7 +36,7 @@ class Home extends StatefulWidget {
 
 }
 
-
+final _joinFormKey = GlobalKey<FormState>();
 
 
 
@@ -43,6 +45,9 @@ class Home extends StatefulWidget {
   DepositController depositController = Get.find<DepositController>();
   SecurityController securityController = Get.find<SecurityController>();
   AuthController authController = Get.find<AuthController>();
+  JoinGoalController joinGoalController = Get.find<JoinGoalController>();
+
+TextEditingController codeController = TextEditingController();
 
 
 
@@ -60,6 +65,7 @@ class _HomeState extends State<Home> {
 
 
         _refreshController.refreshToIdle();
+        fetchGoalsController.getGoals();
 
 
 
@@ -131,7 +137,7 @@ class _HomeState extends State<Home> {
     if(transaction.type == "DEPOSIT"){
 
       NotificationService()
-          .showNotification(id: depositController.generateRandomNotificationId(),title: 'Transaction Réussie', body: "Votre dépot de ${transaction.amount} FCFA réalisé le ${formatter.format(transaction.createdAt?.day.toString().padLeft(2,'0'))}/${transaction.createdAt?.month.toString().padLeft(2,'0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour.toString().padLeft(2,'0')}H ${transaction.createdAt?.minute.toString().padLeft(2,'0')} par ${transaction.transactionOperator} a été réalisée avec succés.",payLoad: '')
+          .showNotification(id: depositController.generateRandomNotificationId(),title: 'Transaction Réussie', body: "Votre dépot de ${transaction.amount} FCFA réalisé le ${transaction.createdAt?.day.toString().padLeft(2,'0')}/${transaction.createdAt?.month.toString().padLeft(2,'0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour.toString().padLeft(2,'0')}H ${transaction.createdAt?.minute.toString().padLeft(2,'0')} par ${transaction.transactionOperator} a été réalisée avec succés.",payLoad: '')
         //  .showNotification(title: 'Transaction Réussie', body: "Dépot de ${transaction.amount} FCFA réalisé avec succés.")
     }else{
       NotificationService()
@@ -306,39 +312,75 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
     context: context,
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Rejoindre un coffre'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text("Veuillez entrer le code du coffre."),
-              Text("C'est un code à 4 caractéres.",style: TextStyle(fontSize: 15,fontStyle: FontStyle.italic),),
-              SizedBox(height: 10,),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Code du compte',
-                  helperMaxLines: 3,
-                  helperText: "Demandez au propriétaire du compte de vous fournir le code d'adhésion, puis saisissez-le ici."
-                ),
+      return Form(
+        key: _joinFormKey,
+        child: GetBuilder<JoinGoalController>(
+          builder: (value)=>AlertDialog(
+            title: const Text('Rejoindre un coffre'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text("Veuillez entrer le code du coffre."),
+                  Text("C'est un code à 4 caractéres.",style: TextStyle(fontSize: 15,fontStyle: FontStyle.italic),),
+                  SizedBox(height: 10,),
+                  TextFormField(
+                    inputFormatters: [UpperCaseTextFormatter()],
+                    maxLength: 4,
+                    validator: (value){
+                      if(value!.isEmpty){
+                        return 'Ce champs est obligatoire';
+                      }else if(value?.length != 4){
+                        return 'Format de code incorrecte';
+                      }
+                      return null;
+                    },
+                    controller: codeController,
+                    textCapitalization: TextCapitalization.characters,
+                    decoration: InputDecoration(
+                        hintText: 'Code du compte',
+                        helperMaxLines: 3,
+                        helperText: "Demandez au propriétaire du compte de vous fournir le code d'adhésion, puis saisissez-le ici.",
+                        counterText: "",
+                    ),
+                  )
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              value.joinGoalState == JoinGoalState.LOADING ? SizedBox() :
+              TextButton(
+                child: const Text('Annuler',style: TextStyle(color: Colors.deepOrangeAccent),),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              value.joinGoalState == JoinGoalState.LOADING ? CircularProgressIndicator() :
+              TextButton(
+                child: const Text('Ajouter'),
+                onPressed: () {
+                  if (_joinFormKey.currentState!.validate()){
+                    FocusScope.of(context).unfocus();
+                    joinGoalController.joinGoal(context, codeController.text);
+                  }
+
+                },
               )
+
             ],
           ),
         ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Ajouter'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          TextButton(
-            child: const Text('Annuler',style: TextStyle(color: Colors.deepOrangeAccent),),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
       );
     },
   );
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+      text: newValue.text!.toUpperCase(),
+      selection: newValue.selection,
+    );
+  }
 }

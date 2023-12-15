@@ -93,6 +93,15 @@ class SingleTransactionDetails extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Text("Émetteur",),
+                              Text(value.currentTransaction.name ?? "Djizhub User"),
+
+                          ],
+                        ),
+                        SizedBox(height: 35,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
                             Text("téléphone",),
                             Text("+${value.currentTransaction.phone_number.toString()}"),
                           ],

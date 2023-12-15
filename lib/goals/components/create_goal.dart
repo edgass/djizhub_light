@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../globals.dart';
+import 'package:intl/intl.dart';
+
 class CreateGoal extends StatelessWidget {
    CreateGoal({super.key});
   final _formKey = GlobalKey<FormState>();
@@ -10,14 +12,28 @@ class CreateGoal extends StatelessWidget {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController objectifController = TextEditingController();
+   var formatter = NumberFormat("#,###");
 
 
   @override
   Widget build(BuildContext context) {
     CreateGoalController createGoalController = Get.find<CreateGoalController>();
+
+
+    void formatInput() {
+      // Utilise NumberFormat pour formater le nombre avec une virgule
+      NumberFormat formatter = NumberFormat('#,###');
+      String formattedNumber = formatter.format(double.parse(objectifController.text.replaceAll(',', '')));
+
+      // Met à jour le texte dans le TextField avec le nombre formaté
+      objectifController.value = objectifController.value.copyWith(
+        text: formattedNumber,
+        selection: TextSelection.collapsed(offset: formattedNumber.length),
+      );
+    }
     return  Scaffold(
       appBar: AppBar(
-        title: Text("Créer une épargne"),
+        title: Text("Créer un coffre"),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 20.0,right: 20.0),
@@ -29,7 +45,7 @@ class CreateGoal extends StatelessWidget {
                     maxLength: 12,
                     controller: nameController,
                     decoration: InputDecoration(
-                      labelText: "Nom",
+                      labelText: "Quel nom voudrais-tu donner à ce coffre ?",
                     ),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
@@ -54,17 +70,21 @@ class CreateGoal extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(top: 10.0,bottom: 10),
                     child: TextFormField(
+                      onChanged: (value){
+                        formatInput();
+                      },
                       controller: objectifController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
+
                         suffix: Text("FCFA"),
-                        labelText: "Objectif",
+                        labelText: "Objectif financier pour ce coffre",
                       ),
                       // The validator receives the text that the user has entered.
                       validator: (value) {
-                        if (int.parse(value ?? "0") <5000) {
+                        if (int.parse(value?.replaceAll(',', '') ?? "0") <5000) {
                           return 'Le montant minimum est de 5000 FCFA';
-                        }else if(int.parse(value ?? "0") > 10000000){
+                        }else if(int.parse(value?.replaceAll(',', '') ?? "0") > 10000000){
                           return 'Le montant maximum est de 10.000.000 FCFA';
                         }
                         return null;
@@ -113,7 +133,7 @@ class CreateGoal extends StatelessWidget {
                         }
 
                         )),
-                      Text("Lorsque vous cochez cette case, vous ne pourrez pas retirer vos fonds tant que vous n'aurez pas atteint votre objectif, même si la date de retrait est déjà arrivée")
+                      Text("Lorsque vous cochez cette case, vous ne pourrez pas retirer vos fonds tant que vous n'aurez pas atteint votre objectif financier, même si la date de retrait est déjà arrivée")
                     ],
                     
                   ),
@@ -128,7 +148,8 @@ class CreateGoal extends StatelessWidget {
                         style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(apCol)),
                         onPressed: () {
                           if (_formKey.currentState!.validate()){
-                            createGoalController.createNewGoal(context, newGoalModel(null,nameController.text, descriptionController.text, double.parse(objectifController.text), createGoalController.selectedDate.toString(), createGoalController.goalConstraint));
+                            String objectifCleanString = objectifController.text.replaceAll(',', '');
+                            createGoalController.createNewGoal(context, newGoalModel(null,nameController.text, descriptionController.text, double.parse(objectifCleanString), createGoalController.selectedDate.toString(), createGoalController.goalConstraint));
                           }
                         },
                         child: Text('Envoyer',style: TextStyle(color: Colors.white),),

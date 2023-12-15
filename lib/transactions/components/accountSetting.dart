@@ -21,7 +21,7 @@ class AccountParameter extends StatelessWidget {
     CreateGoalController createGoalController = Get.find<CreateGoalController>();
     return  Scaffold(
       appBar: AppBar(
-        title: Text("Paramétres du compte"),
+        title: Text("Paramétres du coffre"),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 20.0,right: 20.0),
@@ -31,7 +31,7 @@ class AccountParameter extends StatelessWidget {
                 child: Column(children: <Widget>[
                   SizedBox(height: 20,),
                   Text("Identifiant : ${fetchGoalsController.currentGoal.value.code}",style: TextStyle(fontWeight: FontWeight.bold),),
-                  Text("N'échangez ce code qu'avec ceux avec qui vous souhaitez partager les informations du compte. Cependant, les personnes à qui vous le partagez ne pourront faire que des dépôts, pas de retraits.",textAlign:TextAlign.center, style: TextStyle(fontSize: 10),),
+                  Text("N'échangez ce code qu'avec ceux avec qui vous souhaitez partager les informations du coffre. Cependant, les personnes à qui vous le partagez ne pourront faire que des dépôts, pas de retraits.",textAlign:TextAlign.center, style: TextStyle(fontSize: 10),),
                   SizedBox(height: 20,),
                   TextFormField(
                     maxLength: 12,
@@ -122,8 +122,8 @@ class AccountParameter extends StatelessWidget {
 
                             )),
                         fetchGoalsController.currentGoal.value.constraint ?? true ?
-                        Text("Vous avez déjà validé la contrainte d'objectif. Vous récupérerez vos fonds dès que l'échéance sera atteinte et que vous aurez accompli votre objectif.") :
-                        Text("Lorsque vous cochez cette case, vous ne pourrez pas retirer vos fonds tant que vous n'aurez pas atteint votre objectif, même si la date de retrait est déjà arrivée")
+                        Text("Vous avez déjà validé la contrainte d'objectif. Vous récupérerez vos fonds dès que l'échéance sera atteinte et que vous aurez accompli votre objectif financier.") :
+                        Text("Lorsque vous cochez cette case, vous ne pourrez pas retirer vos fonds tant que vous n'aurez pas atteint votre objectif financier, même si la date de retrait est déjà arrivée")
                       ],
 
                     ),

@@ -1,8 +1,11 @@
+import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/home/home_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart';
 
 import '../home/home.dart';
 
@@ -23,6 +26,7 @@ class _EmailSignUpState extends State<EmailSignUp> {
   TextEditingController nameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController ageController = TextEditingController();
+  AuthController authController = Get.find<AuthController>();
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +42,19 @@ class _EmailSignUpState extends State<EmailSignUp> {
                       child: TextFormField(
                         controller: nameController,
                         decoration: InputDecoration(
-                          labelText: "Nom",
+                          labelText: "Prénom et nom",
                         ),
                         // The validator receives the text that the user has entered.
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Entrez votre nom';
+                          }
+                          List<String> names = value.split(' ');
+
+                          if (names.length < 2 ||
+                              names[0].length <2  ||
+                              names[1].length < 2) {
+                            return 'Veuillez entrer un prénom et nom valides';
                           }
                           return null;
                         },
@@ -124,16 +135,18 @@ class _EmailSignUpState extends State<EmailSignUp> {
   }
 
   void registerToFb() {
+    final storage = const FlutterSecureStorage();
     String newMail = emailController.text.replaceAll(' ', '');
     firebaseAuth
         .createUserWithEmailAndPassword(
         email: newMail, password: passwordController.text)
         .then((result) {
       dbRef.child(result.user!.uid).set({
-        "email": emailController.text,
         "age": ageController.text,
         "name": nameController.text
       }).then((res) {
+        storage.write(key: 'name', value: nameController.text);
+        authController.setUserName(nameController.text);
         isLoading = false;
         Navigator.pushReplacement(
           context,

@@ -24,45 +24,60 @@ class SingleTransactionInList extends StatelessWidget {
         },
         child: Padding(
           padding: const EdgeInsets.only(top: 10.0,left: 10,right: 10,bottom: 10),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(transaction.transactionOperator ?? "",style: TextStyle(fontSize:15,fontWeight: FontWeight.bold),),
-                    SizedBox(height: 4,),
-                    Text("${transaction.createdAt?.day.toString().padLeft(2, '0')}/${transaction.createdAt?.month.toString().padLeft(2, '0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour}h ${transaction.createdAt?.minute}",style: TextStyle(),),
-                    SizedBox(height: 4,),
-                    transaction.status == "PENDING" ?
-                    Row(
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Statut : "),
-                        Text("En attente",style: const TextStyle(color: Colors.orange),),
+                        Text(transaction.transactionOperator ?? "",style: TextStyle(fontSize:15,fontWeight: FontWeight.bold),),
+                        SizedBox(height: 4,),
+                        Text("${transaction.createdAt?.day.toString().padLeft(2, '0')}/${transaction.createdAt?.month.toString().padLeft(2, '0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour}h ${transaction.createdAt?.minute}",style: TextStyle(),),
+                        SizedBox(height: 4,),
+                        transaction.status == "PENDING" ?
+                        Row(
+                          children: [
+                            Text("Statut : "),
+                            Text("En attente",style: const TextStyle(color: Colors.orange),),
+                          ],
+                        ) :
+                        transaction.status == "SUCCESS" ?
+                        Row(
+                          children: [
+                            Text("Statut : "),
+                            Text("Succés",style: const TextStyle(color: Colors.green),),
+                          ],
+                        ) :
+                        Row(
+                          children: [
+                            Text("Statut : "),
+                            Text("Echec",style: const TextStyle(color: Colors.redAccent),),
+                          ],
+                        )
                       ],
-                    ) :
-                    transaction.status == "SUCCESS" ?
-                    Row(
-                      children: [
-                        Text("Statut : "),
-                        Text("Succés",style: const TextStyle(color: Colors.green),),
-                      ],
-                    ) :
-                    Row(
-                      children: [
-                        Text("Statut : "),
-                        Text("Echec",style: const TextStyle(color: Colors.redAccent),),
-                      ],
-                    )
-                  ],
-                ),
+                    ),
+                  ),
+                  Expanded(
+                      child:transaction.type == "DEPOSIT" ? Text("+${formatter.format(transaction.amount)} FCFA",textAlign:TextAlign.right,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 15),) :
+                      Text("-${formatter.format(transaction.amount)} FCFA",textAlign:TextAlign.right,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 15),)
+                  )
+                ],
               ),
-              Expanded(
-                  child:transaction.type == "DEPOSIT" ? Text("+${formatter.format(transaction.amount)} FCFA",textAlign:TextAlign.right,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 15),) :
-                  Text("-${formatter.format(transaction.amount)} FCFA",textAlign:TextAlign.right,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 15),)
+              Row(
+                mainAxisAlignment:  MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 15.0,right: 3),
+                    child: SizedBox(width:MediaQuery.of(context).size.width*0.4, child: Text(transaction.name ?? "Djizhub User",overflow: TextOverflow.ellipsis,)),
+                  ),
+                  Text("+${transaction.phone_number}")
+                ],
               )
             ],
           ),

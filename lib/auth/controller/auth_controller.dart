@@ -32,9 +32,12 @@ enum MyconnexionState {
   idle,
 }
 
+
+
 class AuthController extends GetxController{
   FirebaseAuth auth = FirebaseAuth.instance;
   final storage = const FlutterSecureStorage();
+  String? userName;
   Rx<MyconnexionState> myConnexionState = Rx<MyconnexionState>(MyconnexionState.idle);
   late final _connectivitySubscription;
 
@@ -59,6 +62,7 @@ class AuthController extends GetxController{
         fetchGoalsController.getGoals();
       }
     });
+    storage.read(key: 'name').then((value) => userName = value);
   }
 
 
@@ -229,5 +233,40 @@ class AuthController extends GetxController{
     yield* controller.stream;
   }
 
+  Future<String?> fetchUserName(String userId) async{
+    print(userId);
+
+    try {
+      final ref = FirebaseDatabase.instance.ref();
+      final snapshot = await ref.child('Users/$userId').get();
+      print(snapshot.value);
+      if (snapshot.exists) {
+        final dynamic value = snapshot.value;
+        if (value != null && value is Map<Object?, Object?>) {
+          print('Contenu de la map : $value');
+          final name = value['name'] as String?;
+          if (name != null) {
+            storage.write(key: 'name', value: name);
+            userName = name;
+            return name;
+          } else {
+            print("Valeur nom n'existe pas pour cet utilisateur");
+          }
+        } else {
+          print('La valeur du snapshot est invalide.');
+        }
+      } else {
+        print("Document inexistant");
+        return null;
+      }
+    } catch (e) {
+     print("erreur lors de la recuperation du nom depuis firebase Database : $e");
+    }
+  }
+
+
+setUserName(String name){
+    userName = name;
+}
 
 }

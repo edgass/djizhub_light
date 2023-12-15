@@ -6,6 +6,7 @@ import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:share_plus/share_plus.dart';
@@ -20,6 +21,7 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SecurityController securityController = Get.find<SecurityController>();
+    final storage = const FlutterSecureStorage();
     return Scaffold(
       appBar: AppBar(
         title: const Text("Reglage"),
@@ -161,16 +163,25 @@ class SettingPage extends StatelessWidget {
 
                         InkWell(
                           onTap: () async {
-                            socket.disconnect();
-                            socket.dispose();
-                            await GoogleSignIn().signOut();
-                            FirebaseAuth auth = FirebaseAuth.instance;
-                            auth.signOut().then((res) {
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(builder: (context) => SignUp()),
-                                      (Route<dynamic> route) => false);
-                            });
+                            try{
+                              socket.disconnect();
+                              socket.dispose();
+                            }catch(e){
+                              print(e);
+                            }finally{
+                              storage.deleteAll();
+                              await GoogleSignIn().signOut();
+                              FirebaseAuth auth = FirebaseAuth.instance;
+                              auth.signOut().then((res) {
+
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => SignUp()),
+                                        (Route<dynamic> route) => false);
+                              });
+                            }
+
+
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(top: 10.0),

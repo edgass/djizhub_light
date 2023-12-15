@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 
 class Informations extends StatelessWidget {
    Informations({super.key});
@@ -14,22 +15,43 @@ class Informations extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rnd = new Random();
 
     return Scaffold(
       appBar: AppBar(
-        
+        centerTitle: true,
+        title: Text(fetchGoalsController.currentGoal.value.name ?? ""),
       ),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(calculerStrategie(),style: TextStyle(fontSize: 20),),
-              SizedBox(height: 25,),
-              ElevatedButton(onPressed: Get.back, child: Text("Ok, c'est partie"))
-            ],
+        child: Stack(
+          children:[
+            Positioned(
+            right: 0,
+            //  top: MediaQuery.of(context).size.height*0.5,
+
+              child: Opacity(
+                opacity: 0.1,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: Lottie.asset('assets/lottie/faible/faible${1 + rnd.nextInt(10 - 1)}.json',fit: BoxFit.contain),
+                ),
+              ),
+            ),
+
+            SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(calculerStrategie(),style: TextStyle(fontSize: 17),),
+                SizedBox(height: 25,),
+                ElevatedButton(onPressed: Get.back, child: Text("Ok, c'est partie"))
+              ],
+            ),
           ),
+
+          ],
         ),
       ),
     );
@@ -85,7 +107,7 @@ String calculerStrategie() {
   montantRecommandeJour = montantRecommandeJour < 500 ? 500 : montantRecommandeJour;
   montantRecommandeSemaine = montantRecommandeSemaine < 500 ? 500 : montantRecommandeSemaine;
   var formatter = NumberFormat("#,###");
-  String messageStrategie = "Salut ${FirebaseAuth.instance.currentUser!.displayName ?? ""}, ${obtenirJoursRestants(joursRestants)}pour atteindre votre objectif de ${formatter.format(fetchGoalsController.currentGoal.value.goal!)}FCFA. ";
+  String messageStrategie = "Salut ${authController.userName ?? FirebaseAuth.instance.currentUser!.displayName ?? ""}, ${obtenirJoursRestants(joursRestants)}pour atteindre votre objectif de ${formatter.format(fetchGoalsController.currentGoal.value.goal!)}FCFA. ";
 
   // Classification du compte en tranches
   String classificationCompte = "modéré";
@@ -101,23 +123,23 @@ String calculerStrategie() {
     return "Félicitations ! Vous avez déjà atteint votre objectif. Continuez à rêver grand !";
   } else {
     messageStrategie += obtenirMessageAleatoire(classerCompte);
-    messageStrategie += "$classificationCompte en termes d'objectif. ";
+    messageStrategie += "$classificationCompte en termes d'objectif.  \n \n";
 
     // Messages personnalisés en fonction de la classification du compte
     switch (classificationCompte) {
       case "faible":
         messageStrategie += obtenirMessageAleatoire(faibleResume);
-        messageStrategie += obtenirMessageAleatoire(messagesRappels);
+        messageStrategie += "${obtenirMessageAleatoire(messagesRappels)}\n\n";
         break;
       case "modéré":
         messageStrategie += obtenirMessageAleatoire(modereeResume);
         messageStrategie += obtenirMessageAleatoire(modereApresResume);
-        messageStrategie += obtenirMessageAleatoire(messagesRappels);
+        messageStrategie += "${obtenirMessageAleatoire(messagesRappels)}\n\n";
         break;
       case "élevé":
         messageStrategie += obtenirMessageAleatoire(eleveResume);
         messageStrategie += obtenirMessageAleatoire(eleveApresResume);
-        messageStrategie += obtenirMessageAleatoire(messagesRappels);
+        messageStrategie += "${obtenirMessageAleatoire(messagesRappels)}\n\n";
         break;
       default:
         break;
@@ -163,13 +185,13 @@ String calculerStrategie() {
     // Sélectionner le message d'encouragement en fonction de la classification du compte
     switch (classificationCompte) {
       case "faible":
-        encouragementAleatoire = obtenirMessageAleatoire(messagesFaible);
+        encouragementAleatoire = "\n\n${obtenirMessageAleatoire(messagesFaible)}";
         break;
       case "modere":
-        encouragementAleatoire = obtenirMessageAleatoire(messagesModere);
+        encouragementAleatoire = "\n\n${obtenirMessageAleatoire(messagesModere)}";
         break;
       case "eleve":
-        encouragementAleatoire = obtenirMessageAleatoire(messagesEleve);
+        encouragementAleatoire = "\n\n${obtenirMessageAleatoire(messagesEleve)}";
         break;
       default:
         break;

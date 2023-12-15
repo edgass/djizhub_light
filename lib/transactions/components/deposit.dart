@@ -1,9 +1,14 @@
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
+import 'package:djizhub_light/auth/controller/auth_controller.dart';
+import 'package:djizhub_light/goals/controllers/joinGoalController.dart';
+import 'package:djizhub_light/home/home.dart';
 import 'package:djizhub_light/transactions/components/operator_card.dart';
 import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -13,10 +18,14 @@ class Deposit extends StatelessWidget {
   String goalId;
   var formatter = NumberFormat("#,###");
    Deposit({super.key,required this.goalId});
+  final storage = const FlutterSecureStorage();
+ // TextEditingController nameController = TextEditingController(text: authController.userName ?? FirebaseAuth.instance.currentUser?.displayName);
   TextEditingController numeroTelController = TextEditingController();
   TextEditingController amountController = TextEditingController();
   TextEditingController otpController = TextEditingController();
   DepositController depositController = Get.find<DepositController>();
+  JoinGoalController joinGoalController = Get.find<JoinGoalController>();
+  AuthController authController = Get.find<AuthController>();
   RegExp myRegNumValidation = RegExp('0-9');
 
   void formatInput() {
@@ -52,33 +61,57 @@ class Deposit extends StatelessWidget {
                       OperatorCard(name:"Orange Money",assetPath: "assets/logo/om_logo.png",operator: Operator.OM),
                     ],
                   ),
+                fetchGoalsController.currentGoal.value.foreign_account! ?
+                Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: TextFormField(
+
+                      initialValue: authController.userName ?? FirebaseAuth.instance.currentUser?.displayName,
+                      onChanged: (value){
+                        depositController.setNameToSend(value);
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Prénom et nom",
+                      ),
+                      // The validator receives the text that the user has entered.
+                      validator: (val) {
+                        if (val!.isEmpty) {
+                          return 'Ce champs est obligatoire';
+                        }
+                        List<String> names = val.split(' ');
+
+                        if (names.length < 2 ||
+                            names[0].length <2  ||
+                            names[1].length < 2) {
+                          return 'Veuillez entrer un prénom et nom valides';
+                        }
+                        return null;
+                      },
+                    ),
+                  ): SizedBox(),
                 GetBuilder<DepositController>(
-                    builder: (value)=> AnimatedSizeAndFade(
-                      fadeDuration: const Duration(milliseconds: 300),
-                      sizeDuration: const Duration(milliseconds: 600),
-                      child: value.operator == Operator.OM  || value.operator == Operator.WAVE ? Padding(
-                        padding: EdgeInsets.all(20.0),
-                        child: TextFormField(
-                          keyboardType: TextInputType.number,
-                          controller: numeroTelController,
-                          decoration: InputDecoration(
-                            prefix: Text("+221"),
-                            labelText: "Numéro de Téléphone",
-                          ),
-                          // The validator receives the text that the user has entered.
-                          validator: (val) {
-                            if (val!.isEmpty) {
-                              return 'Ce champs est obligatoire';
-                            }else if(val.length != 9 || (!val.startsWith('77') & !val.startsWith('78') & !val.startsWith('76') & !val.startsWith('75'))){
-                              return 'Numéro de téléphone invalide';
-                            }else if((val.startsWith('76') || (val.startsWith('75'))) && value.operator == Operator.OM ){
-                              return 'Entrez un numéro OM valide';
-                            }
-                            return null;
-                          },
+                    builder: (value)=> value.operator == Operator.OM  || value.operator == Operator.WAVE ? Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: numeroTelController,
+                        decoration: InputDecoration(
+                          prefix: Text("+221"),
+                          labelText: "Numéro de Téléphone",
                         ),
-                      ) : SizedBox(),
-                    ),),
+                        // The validator receives the text that the user has entered.
+                        validator: (val) {
+                          if (val!.isEmpty) {
+                            return 'Ce champs est obligatoire';
+                          }else if(val.length != 9 || (!val.startsWith('77') & !val.startsWith('78') & !val.startsWith('76') & !val.startsWith('75'))){
+                            return 'Numéro de téléphone invalide';
+                          }else if((val.startsWith('76') || (val.startsWith('75'))) && value.operator == Operator.OM ){
+                            return 'Entrez un numéro OM valide';
+                          }
+                          return null;
+                        },
+                      ),
+                    ) : SizedBox(),),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: TextFormField(
@@ -163,6 +196,19 @@ class Deposit extends StatelessWidget {
                           )
                       ),
                     ): SizedBox(),),
+                GetBuilder<JoinGoalController>(
+                    builder: (value)=>CheckboxListTile(
+                        title: Text("Faire un dépot anonyme (Cacher Nom et Numéro)"),
+                        controlAffinity: ListTileControlAffinity.leading,
+
+                        value: value.anonymousDeposit,
+                        onChanged: (bool? value){
+                          if(value != null){
+                            joinGoalController.setAnonymousDeposit(value);
+                          }
+                        }
+
+                    )),
                 GetBuilder<DepositController>(
                     builder: (value)=> Padding(
                       padding: EdgeInsets.all(20.0),
@@ -171,11 +217,21 @@ class Deposit extends StatelessWidget {
                           : ElevatedButton(
                         style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(apCol)),
                         onPressed: () {
-                          print("+221${numeroTelController.text}");
+                          print("221${numeroTelController.text}");
                           if(_formKey.currentState!.validate()){
                             FocusScope.of(context).unfocus();
                             String amountCleanString = amountController.text.replaceAll(',', '');
-                            depositController.makeDeposit(context, newTransactionModel("221${numeroTelController.text}", depositController.operator.name, double.parse(amountCleanString),otpController.text,null ), goalId);
+                            String? finalName = "";
+                            if(depositController.nameToSend == null){
+                              if(authController.userName == null){
+                                 finalName = FirebaseAuth.instance.currentUser?.displayName ?? "";
+                              }else{
+                                finalName = authController.userName!;
+                              }
+                            }else{
+                              finalName = depositController.nameToSend!;
+                            }
+                            depositController.makeDeposit(context, newTransactionModel(finalName,joinGoalController.anonymousDeposit,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountCleanString),otpController.text,null ), goalId);
                           }
 
                         },

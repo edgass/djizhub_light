@@ -4,12 +4,12 @@ import 'dart:ffi';
 import 'package:djizhub_light/goals/components/informations.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
+import 'package:djizhub_light/goals/controllers/joinGoalController.dart';
 import 'package:djizhub_light/home/actions_box.dart';
 import 'package:djizhub_light/home/home.dart';
 import 'package:djizhub_light/home/info_box.dart';
 import 'package:djizhub_light/transactions/components/deposit.dart';
 import 'package:djizhub_light/transactions/components/accountSetting.dart';
-import 'package:djizhub_light/transactions/components/urgence.dart';
 import 'package:djizhub_light/transactions/components/withdrawal.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,13 +18,14 @@ import 'package:share_plus/share_plus.dart';
 import '../../globals.dart';
 import '../../models/goals_model.dart';
 import '../../transactions/components/single_transaction.dart';
-import '../../transactions/components/transaction_actions.dart';
 class AccoutDetails extends StatelessWidget {
   const AccoutDetails({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     CreateGoalController createGoalController = Get.find<CreateGoalController>();
+    JoinGoalController joinGoalController = Get.find<JoinGoalController>();
+    FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -107,10 +108,10 @@ class AccoutDetails extends StatelessWidget {
                       children: [
                         Opacity(
                             opacity:fetchGoalsController.currentGoal.value.status == "OPENED" ? 1 : 0.4,
-                            child: ActionBox(title: "Dépot",backColor:  const Color(0xFFD5EDD0),iconColor:Color(0xFF38761D),icon: Icons.input,function: fetchGoalsController.currentGoal.value.status == "OPENED" ? ()=>Get.to(()=>Deposit(goalId: fetchGoalsController.currentGoal.value.id ?? "",)): (){},)),
+                            child: ActionBox(title: "Dépot",backColor:  const Color(0xFFD5EDD0),iconColor:Color(0xFF38761D),icon: Icons.input,function: fetchGoalsController.currentGoal.value.status == "OPENED" || !fetchGoalsController.currentGoal.value.foreign_account! ? ()=>Get.to(()=>Deposit(goalId: fetchGoalsController.currentGoal.value.id ?? "",)): (){},)),
                         Opacity(
-                            opacity: fetchGoalsController.currentGoal.value.withdrawable == true  ? 1 : 0.4,
-                            child: ActionBox(title: "Retrait",backColor: Color(0xFFFFE4BD),iconColor:Color(0xFFFF9900),icon: Icons.output,function:fetchGoalsController.currentGoal.value.withdrawable == true ? ()=>{
+                            opacity: fetchGoalsController.currentGoal.value.withdrawable == true && fetchGoalsController.currentGoal.value.foreign_account! == false ? 1 : 0.4,
+                            child: ActionBox(title: "Retrait",backColor: Color(0xFFFFE4BD),iconColor:Color(0xFFFF9900),icon: Icons.output,function:fetchGoalsController.currentGoal.value.withdrawable == true && fetchGoalsController.currentGoal.value.foreign_account == false ? ()=>{
                               Get.to(()=>Withdrawal(goalId: fetchGoalsController.currentGoal.value.id ?? "",emergency: false,)),
                               if(securityController.canAskPin){
                                 securityController.startTimer(),
@@ -119,8 +120,8 @@ class AccoutDetails extends StatelessWidget {
 
                             }: (){},)),
                         Opacity(
-                            opacity: fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true ? 1 : 0.4,
-                            child: ActionBox(title: "Urgence",backColor: Color(0xFFFFCCCC),iconColor:Color(0xFFFF4C4C),icon: Icons.emergency,function:fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true ? ()=>{
+                            opacity: (fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true) && fetchGoalsController.currentGoal.value.foreign_account! == false ? 1 : 0.4,
+                            child: ActionBox(title: "Urgence",backColor: Color(0xFFFFCCCC),iconColor:Color(0xFFFF4C4C),icon: Icons.emergency,function:(fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true) && fetchGoalsController.currentGoal.value.foreign_account! == false ? ()=>{
                               Get.to(()=>Withdrawal(goalId: fetchGoalsController.currentGoal.value.id ?? "",emergency: true,)),
                               if(securityController.canAskPin){
                                 securityController.startTimer(),
@@ -128,8 +129,8 @@ class AccoutDetails extends StatelessWidget {
                               }
                             }: (){},)),
                         Opacity(
-                            opacity: fetchGoalsController.currentGoal.value.status == "OPENED" ? 1 : 0.4,
-                            child: ActionBox(title: "Réglages",backColor: Color(0xFFE9CAFF),iconColor: Color(0xFF9900FF),icon: Icons.settings,function:fetchGoalsController.currentGoal.value.status == "OPENED" ? ()=>{
+                            opacity: fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.foreign_account! == false ? 1 : 0.4,
+                            child: ActionBox(title: "Réglages",backColor: Color(0xFFE9CAFF),iconColor: Color(0xFF9900FF),icon: Icons.settings,function:fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.foreign_account! == false ?  ()=>{
                               createGoalController.setUpdateGoalConstraint(fetchGoalsController.currentGoal.value.constraint ?? true),
                               createGoalController.setInitialUpdateDate(fetchGoalsController.currentGoal.value.dateOfWithdrawal ?? DateTime.now()),
                               createGoalController.goalConstraintOfUpdate = fetchGoalsController.currentGoal.value.constraint ?? true,
@@ -200,8 +201,8 @@ void _onShareAccount(BuildContext context) async {
 
   final box = context.findRenderObject() as RenderBox?;
 
-  shareResult = await Share.shareWithResult("Pour rejoindre le compte, veuillez entrer le code suivant : ${fetchGoalsController.currentGoal.value.code} ou cliquez tout simplement sur le lien suivant : https://djizhub.com/",
-      subject: "Invitation à rejoindre le compte ${fetchGoalsController.currentGoal.value.name}! 💰🔄",
+  shareResult = await Share.shareWithResult("Pour rejoindre le coffre, veuillez entrer le code suivant : ${fetchGoalsController.currentGoal.value.code} ou cliquez tout simplement sur le lien suivant : https://djizhub.com/",
+      subject: "Invitation à rejoindre le coffre ${fetchGoalsController.currentGoal.value.name}! 💰🔄",
       sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
 
   if(shareResult.status == ShareResultStatus.success || shareResult.status == ShareResultStatus.dismissed){
@@ -216,30 +217,34 @@ Future<void> _showDeletAccountDialog(BuildContext context) async {
     context: context,
     barrierDismissible: false, // user must tap button!
     builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Retrait du compte'),
+      return GetBuilder<JoinGoalController>(
+
+          builder:(value)=> AlertDialog(
+        title: const Text('Retrait du coffre'),
         content: const SingleChildScrollView(
           child: ListBody(
             children: <Widget>[
-              Text('Êtes-vous certain de vouloir retirer ce compte de votre liste de comptes'),
+              Text('Êtes-vous certain de vouloir retirer ce coffre de votre liste de comptes'),
             ],
           ),
         ),
         actions: <Widget>[
-          TextButton(
-            child: const Text('Retirer',style: TextStyle(color: Colors.deepOrangeAccent),),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
+          value.disjoinGoalState == DisjoinGoalState.LOADING ? const SizedBox():
           TextButton(
             child: const Text('Annuler'),
             onPressed: () {
               Navigator.of(context).pop();
             },
           ),
+          value.disjoinGoalState == DisjoinGoalState.LOADING ? const CircularProgressIndicator():
+          TextButton(
+            child: const Text('Retirer',style: TextStyle(color: Colors.deepOrangeAccent),),
+            onPressed: () {
+              joinGoalController.disjoinGoal(context, fetchGoalsController.currentGoal.value.code!);
+            },
+          ),
         ],
-      );
+      ));
     },
   );
 }
@@ -258,13 +263,14 @@ void showMoreMenu(BuildContext context) {
         },
       ),
       PopupMenuItem(
-        child: Text('Partager le compte'),
+        child: Text('Partager le coffre'),
         onTap: () {
           _onShareAccount(context);
         },
       ),
+      if(fetchGoalsController.currentGoal.value.foreign_account!)
       PopupMenuItem(
-        child: Text('Retirer le compte'),
+        child: Text('Retirer le coffre'),
         onTap: () {
           _showDeletAccountDialog(context);
         },

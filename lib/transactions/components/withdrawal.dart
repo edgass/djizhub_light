@@ -1,5 +1,7 @@
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
+import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/home/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:djizhub_light/transactions/components/operator_card.dart';
 import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
@@ -18,6 +20,7 @@ class Withdrawal extends StatelessWidget {
   TextEditingController numeroTelController = TextEditingController();
   TextEditingController amountTelController = TextEditingController();
   DepositController depositController = Get.find<DepositController>();
+  AuthController authController = Get.find<AuthController>();
 
 
   void formatInput() {
@@ -122,14 +125,21 @@ class Withdrawal extends StatelessWidget {
                                              emergency & !depositController.acceptEmmergencyTerm ? null : () {
                                                if(_formKey.currentState!.validate()){
                                                  depositController.makeWithdrawal(context, newTransactionModel(
-                                                     "221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text.replaceAll(',', '')),null,emergency), goalId);
+                                                     null,null,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text.replaceAll(',', '')),null,emergency), goalId);
                                                }
 
                                              } :
                              () {
                            if(_formKey.currentState!.validate()){
+                             String? finalName = "";
+                               if(authController.userName == null){
+                                 finalName = FirebaseAuth.instance.currentUser?.displayName ?? "";
+                               }else{
+                                 finalName = authController.userName!;
+                               }
+
                              depositController.makeWithdrawal(context, newTransactionModel(
-                                 "221${numeroTelController.text}", depositController.operator.name, null,null,emergency), goalId);
+                                 finalName,null,"221${numeroTelController.text}", depositController.operator.name, null,null,emergency), goalId);
                            }
 
                          },

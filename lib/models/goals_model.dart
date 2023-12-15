@@ -124,6 +124,8 @@ class Goal {
 class Transaction {
   String? id;
   String? type;
+  String? name;
+  bool? secret;
   String? transactionOperator;
   int? amount;
   int? fee;
@@ -136,6 +138,8 @@ class Transaction {
   Transaction({
     this.id,
     this.type,
+    this.name,
+    this.secret,
     this.transactionOperator,
     this.amount,
     this.fee,
@@ -149,6 +153,8 @@ class Transaction {
   factory Transaction.fromJson(Map<String, dynamic> json) => Transaction(
     id: json["id"],
     type: json["type"],
+    name: json["name"],
+    secret: json["secret"],
     transactionOperator: json["operator"],
     amount: json["amount"],
     fee: json["fee"],
@@ -162,6 +168,8 @@ class Transaction {
   Map<String, dynamic> toJson() => {
     "id": id,
     "type": type,
+    "name": name,
+    "secret": secret,
     "operator": transactionOperator,
     "amount": amount,
     "fee": fee,

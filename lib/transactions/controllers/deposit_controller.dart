@@ -24,6 +24,8 @@ enum MakeTransactionState {
 
 class newTransactionModel {
 
+  final String? name;
+  final bool? secret;
   final String? phone_number;
   final String? operator;
   final double? amount;
@@ -32,7 +34,7 @@ class newTransactionModel {
 
 
   newTransactionModel(
-      this.phone_number,this.operator,this.amount,this.otp,this.emergency
+      this.name,this.secret,this.phone_number,this.operator,this.amount,this.otp,this.emergency
       );
 
 }
@@ -44,6 +46,13 @@ class DepositController extends GetxController{
   Operator operator = Operator.WAVE;
   MakeTransactionState makeTransactionState = MakeTransactionState.PENDING;
   bool acceptEmmergencyTerm = false;
+
+  String? nameToSend;
+
+  setNameToSend(String newName){
+    nameToSend = newName;
+    update();
+  }
 
 
   setOperator(Operator op){
@@ -77,6 +86,8 @@ class DepositController extends GetxController{
             'Authorization': 'Bearer $idToken',
           },
           body: jsonEncode({
+            "name": transaction.name,
+            "secret": transaction.secret,
             "phone_number": transaction.phone_number,
             "operator": transaction.operator,
             "amount": transaction.amount,
@@ -131,6 +142,8 @@ class DepositController extends GetxController{
             'Authorization': 'Bearer $idToken',
           },
           body: jsonEncode({
+            "name": transaction.name,
+            "secret": transaction.secret,
             "phone_number": transaction.phone_number,
             "operator": transaction.operator,
             "emergency":transaction.emergency,
