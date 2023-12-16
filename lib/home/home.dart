@@ -13,6 +13,7 @@ import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
 import 'package:djizhub_light/utils/local_notifications.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -100,13 +101,13 @@ class _HomeState extends State<Home> {
       },
     );
   }
-
+  FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
 
   @override
   void initState() {
 
     super.initState();
-
+    initDynamicLinks();
     fetchGoalsController.getGoals();
 
 
@@ -148,14 +149,48 @@ class _HomeState extends State<Home> {
     }
 
     ),
-    socket.onDisconnect((_) => print('disconnect')),
+    socket.onDisconnect((_) => print('disconnect socket')),
 
     }
 
     );
 
+
+
   }
 
+  Future<void> initDynamicLinks() async {
+
+    print("Try to start dynamique link listener");
+
+    dynamicLinks.onLink.listen((dynamicLinkData) {
+      print("Listening dynamique link");
+      handleDynamicLink(dynamicLinkData);
+    }).onError((error) {
+      print('onLink error $error');
+      print(error.message);
+    });
+
+    final PendingDynamicLinkData? data = await dynamicLinks.getInitialLink();
+    if (data?.link != null) {
+      print("Handling initial link");
+      handleDynamicLink(data!);
+    }
+  }
+
+  void handleDynamicLink(PendingDynamicLinkData data) {
+    print("hjwhhjbsbkjbesbe");
+    final Uri? deepLink = data.link;
+
+    if (deepLink != null) {
+      String name = deepLink.queryParameters['name'] ?? '';
+      String code = deepLink.queryParameters['code'] ?? '';
+      if (code.isNotEmpty) {
+        _showAddForeignAccountDialog(context);
+        print("Voiciiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii le code : $code pour le coffre : $name");
+      }
+    }
+  }
   @override
   void dispose() {
     _timer?.cancel(); // Assurez-vous d'annuler le minuteur lors de la suppression de l'objet State
@@ -384,3 +419,4 @@ class UpperCaseTextFormatter extends TextInputFormatter {
     );
   }
 }
+

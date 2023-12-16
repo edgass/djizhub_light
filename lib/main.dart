@@ -9,6 +9,7 @@ import 'package:djizhub_light/utils/loading.dart';
 import 'package:djizhub_light/utils/local_notifications.dart';
 import 'package:djizhub_light/utils/security/enter_pin.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +23,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
   NotificationService().initNotification();
   await Permission.notification.isDenied.then((value) {
     if (value) {
