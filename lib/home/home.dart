@@ -170,7 +170,21 @@ class _HomeState extends State<Home> {
 
        backgroundColor: lightGrey,
      actions: [
-       Text("bdvjq")
+       InkWell(
+         onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingPage())),
+         child: Padding(
+           padding: const EdgeInsets.all(8.0),
+           child: Container(
+             width: 50,
+             height: 50,
+             decoration: BoxDecoration(
+                 color: apCol,
+                 borderRadius: BorderRadius.circular(15)
+             ),
+             child: Icon(Icons.settings,color: Colors.white,),
+           ),
+         ),
+       )
      ],
      /*   shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
@@ -182,14 +196,14 @@ class _HomeState extends State<Home> {
         automaticallyImplyLeading: false,
 
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60),
+          preferredSize: Size.fromHeight(10),
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25)
+              borderRadius: BorderRadius.circular(23)
             ),
             child: Column(
               children: [
-                Padding(
+           /*     Padding(
                   padding: const EdgeInsets.only(left: 20.0, right: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -214,6 +228,8 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 ),
+
+            */
                AnimatedSizeAndFade(
                  fadeDuration: const Duration(milliseconds: 300),
                  sizeDuration: const Duration(milliseconds: 600),
