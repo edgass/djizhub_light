@@ -1,6 +1,7 @@
 import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/home/home_check.dart';
+import 'package:djizhub_light/home/socket_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/button_list.dart';
@@ -21,6 +22,7 @@ class _EmailLogInState extends State<EmailLogIn> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   AuthController authController = Get.find<AuthController>();
+  SocketController socketController = Get.find<SocketController>();
 
 
   bool isLoading = false;
@@ -132,6 +134,8 @@ class _EmailLogInState extends State<EmailLogIn> {
         context,
         MaterialPageRoute(builder: (context) => HomeCheck()),
       );
+      socketController.disconnectToWebsocket();
+      socketController.connectToWebsocket();
     }).catchError((err) {
       print(err.message);
       showDialog(

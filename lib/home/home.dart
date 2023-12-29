@@ -8,6 +8,7 @@ import 'package:djizhub_light/goals/components/create_goal.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/goals/controllers/joinGoalController.dart';
+import 'package:djizhub_light/home/socket_controller.dart';
 import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
 
 import 'package:djizhub_light/utils/local_notifications.dart';
@@ -47,6 +48,7 @@ final _joinFormKey = GlobalKey<FormState>();
   SecurityController securityController = Get.find<SecurityController>();
   AuthController authController = Get.find<AuthController>();
   JoinGoalController joinGoalController = Get.find<JoinGoalController>();
+  SocketController socketController = Get.find<SocketController>();
 
 TextEditingController codeController = TextEditingController();
 
@@ -55,7 +57,6 @@ TextEditingController codeController = TextEditingController();
 
 class _HomeState extends State<Home> {
   late TextEditingController _textController = TextEditingController();
-  late IO.Socket socket;
   Timer? _timer;
   var formatter = NumberFormat("#,###");
   final RefreshController _refreshController = RefreshController(initialRefresh: false,initialRefreshStatus: RefreshStatus.idle);
@@ -104,58 +105,15 @@ class _HomeState extends State<Home> {
   FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
 
   @override
-  void initState() {
+  void initState(){
 
     super.initState();
-    initDynamicLinks();
+    initDynamicLinks().then((value) =>print("Done"));
     fetchGoalsController.getGoals();
 
 
-    Transaction transaction;
-    FirebaseAuth.instance.currentUser?.getIdToken().then((value) =>{
 
-    socket = IO.io("${createGoalController.backendUrl}",
-    OptionBuilder()
-        .setTransports(['websocket']) // for Flutter or Dart VM
-        .disableAutoConnect()  // disable auto-connection
-        .setExtraHeaders({'authorization': value }) // optional
-        .build()),
-        socket.connect(),
-    socket.onConnectError((data) => print("connect error $data")),
-    socket.onConnect((_) {
-      print('connected successfully to websocket');
-      socket.emit('msg', 'test');
-    }),
-    socket.on('update.goal', (goal) => {
-      print(goal),
-      fetchGoalsController.setUpdatedGoal(Goal.fromJson(goal)),
-      fetchGoalsController.saveGoalsToCache(),
-      fetchGoalsController.setCurrentGoal(Goal.fromJson(goal))
-    }),
-    socket.on('success.transaction', (data) =>{
-       transaction = Transaction.fromJson(data),
-
-    if(transaction.type == "DEPOSIT"){
-
-      NotificationService()
-          .showNotification(id: depositController.generateRandomNotificationId(),title: 'Transaction Réussie', body: "Votre dépot de ${transaction.amount} FCFA réalisé le ${transaction.createdAt?.day.toString().padLeft(2,'0')}/${transaction.createdAt?.month.toString().padLeft(2,'0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour.toString().padLeft(2,'0')}H ${transaction.createdAt?.minute.toString().padLeft(2,'0')} par ${transaction.transactionOperator} a été réalisée avec succés.",payLoad: '')
-        //  .showNotification(title: 'Transaction Réussie', body: "Dépot de ${transaction.amount} FCFA réalisé avec succés.")
-    }else{
-      NotificationService()
-          .showNotification(id: depositController.generateRandomNotificationId(),title: 'Transaction Réussi', body: "Vous avez retiré avec succés la somme de ${formatter.format(transaction.amount)} FCFA par ${transaction.transactionOperator} le ${transaction.createdAt?.day.toString().padLeft(2,'0')}/${transaction.createdAt?.month.toString().padLeft(2,'0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour.toString().padLeft(2,'0')}H ${transaction.createdAt?.minute.toString().padLeft(2,'0')}",payLoad: '')
-    },
-
-
-    }
-
-    ),
-    socket.onDisconnect((_) => print('disconnect socket')),
-
-    }
-
-    );
-
-
+    socketController.connectToWebsocket();
 
   }
 
@@ -209,14 +167,20 @@ class _HomeState extends State<Home> {
     return Scaffold(
      // backgroundColor: apCol,
       appBar: AppBar(
+
        backgroundColor: lightGrey,
-        shape: const RoundedRectangleBorder(
+     actions: [
+       Text("bdvjq")
+     ],
+     /*   shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(5),
           ),
         ),
+
+      */title: Image.asset('assets/logo/header_logo.png',width: 120,),
         automaticallyImplyLeading: false,
-        centerTitle: true,
+
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(60),
           child: Container(
@@ -232,7 +196,7 @@ class _HomeState extends State<Home> {
                     children: [
                       Text("Djizhub",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25,color: Colors.white),),
                       InkWell(
-                        onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingPage(socket: socket,))),
+                        onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingPage())),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Container(

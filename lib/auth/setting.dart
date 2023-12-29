@@ -2,6 +2,7 @@
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:djizhub_light/auth/signup.dart';
 import 'package:djizhub_light/home/home.dart';
+import 'package:djizhub_light/home/socket_controller.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,12 +16,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../globals.dart';
 class SettingPage extends StatelessWidget {
-  IO.Socket socket;
-   SettingPage({super.key,required this.socket});
+
+   SettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     SecurityController securityController = Get.find<SecurityController>();
+    SocketController socketController = Get.find<SocketController>();
     final storage = const FlutterSecureStorage();
     return Scaffold(
       appBar: AppBar(
@@ -164,8 +166,9 @@ class SettingPage extends StatelessWidget {
                         InkWell(
                           onTap: () async {
                             try{
-                              socket.disconnect();
-                              socket.dispose();
+                              socketController.disconnectToWebsocket();
+                           //   socket.disconnect();
+                         //     socket.dispose();
                             }catch(e){
                               print(e);
                             }finally{
