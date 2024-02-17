@@ -28,7 +28,7 @@ class ActionBox extends StatelessWidget {
             ),
           ),
           SizedBox(height: 5,),
-          Text(title,style: TextStyle(fontWeight: FontWeight.bold),)
+          Center(child: Text(title,style: TextStyle(fontWeight: FontWeight.bold),))
         ],
       ),
     );

@@ -125,7 +125,7 @@ class Withdrawal extends StatelessWidget {
                                              emergency & !depositController.acceptEmmergencyTerm ? null : () {
                                                if(_formKey.currentState!.validate()){
                                                  depositController.makeWithdrawal(context, newTransactionModel(
-                                                     null,null,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text.replaceAll(',', '')),null,emergency), goalId);
+                                                     null,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text.replaceAll(',', '')),null,emergency), goalId);
                                                }
 
                                              } :
@@ -139,7 +139,7 @@ class Withdrawal extends StatelessWidget {
                                }
 
                              depositController.makeWithdrawal(context, newTransactionModel(
-                                 finalName,null,"221${numeroTelController.text}", depositController.operator.name, null,null,emergency), goalId);
+                                 null,"221${numeroTelController.text}", depositController.operator.name, null,null,emergency), goalId);
                            }
 
                          },

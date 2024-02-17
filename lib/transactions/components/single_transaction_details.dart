@@ -103,7 +103,7 @@ class SingleTransactionDetails extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text("téléphone",),
-                            Text("+${value.currentTransaction.phone_number.toString()}"),
+                            Text(value.currentTransaction.phone_number.toString()),
                           ],
                         ),
                         SizedBox(height: 35,),

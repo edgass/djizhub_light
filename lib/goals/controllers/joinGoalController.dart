@@ -33,7 +33,7 @@ class JoinGoalController extends GetxController{
   String backendUrl = "https://feasible-vocal-gator.ngrok-free.app";
 
 
-  void joinGoal(BuildContext context,String goalCode) async {
+  void joinGoal(BuildContext context,String goalCode,String nameToSend) async {
     String url = "$backendUrl/goals/$goalCode/join";
     var response;
 
@@ -47,7 +47,10 @@ class JoinGoalController extends GetxController{
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer $idToken',
-          },);
+          },
+          body: jsonEncode({
+            "name": nameToSend,
+          }));
 
       if (response.statusCode == 200) {
         joinGoalState = JoinGoalState.SUCCESS;

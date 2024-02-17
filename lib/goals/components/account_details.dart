@@ -84,7 +84,7 @@ class AccoutDetails extends StatelessWidget {
                 ],
               ),
             ),*/
-            SizedBox(height: 20,),
+            SizedBox(height: 12,),
             Column(
               children: [
                 Text(fetchGoalsController.currentGoal?.value.name?.toUpperCase() ?? "",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),),
@@ -98,7 +98,7 @@ class AccoutDetails extends StatelessWidget {
                     InfoBox(title: "Objectif",price: double.parse(fetchGoalsController.currentGoal.value.goal.toString()) ?? 0.0,designShadow: true,),
                   ],
                 ),
-                SizedBox(height: 20,),
+                SizedBox(height: 15,),
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0,right: 15.0),
                   child: AbsorbPointer(

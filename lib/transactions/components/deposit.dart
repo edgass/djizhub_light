@@ -61,34 +61,6 @@ class Deposit extends StatelessWidget {
                       OperatorCard(name:"Orange Money",assetPath: "assets/logo/om_logo.png",operator: Operator.OM),
                     ],
                   ),
-                fetchGoalsController.currentGoal.value.foreign_account! ?
-                Padding(
-                    padding: EdgeInsets.all(20.0),
-                    child: TextFormField(
-
-                      initialValue: authController.userName ?? FirebaseAuth.instance.currentUser?.displayName,
-                      onChanged: (value){
-                        depositController.setNameToSend(value);
-                      },
-                      decoration: InputDecoration(
-                        labelText: "Prénom et nom",
-                      ),
-                      // The validator receives the text that the user has entered.
-                      validator: (val) {
-                        if (val!.isEmpty) {
-                          return 'Ce champs est obligatoire';
-                        }
-                        List<String> names = val.split(' ');
-
-                        if (names.length < 2 ||
-                            names[0].length <2  ||
-                            names[1].length < 2) {
-                          return 'Veuillez entrer un prénom et nom valides';
-                        }
-                        return null;
-                      },
-                    ),
-                  ): SizedBox(),
                 GetBuilder<DepositController>(
                     builder: (value)=> value.operator == Operator.OM  || value.operator == Operator.WAVE ? Padding(
                       padding: EdgeInsets.all(20.0),
@@ -231,7 +203,7 @@ class Deposit extends StatelessWidget {
                             }else{
                               finalName = depositController.nameToSend!;
                             }
-                            depositController.makeDeposit(context, newTransactionModel(finalName,joinGoalController.anonymousDeposit,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountCleanString),otpController.text,null ), goalId);
+                            depositController.makeDeposit(context, newTransactionModel(joinGoalController.anonymousDeposit,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountCleanString),otpController.text,null ), goalId);
                           }
 
                         },

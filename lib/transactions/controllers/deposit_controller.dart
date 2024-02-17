@@ -5,10 +5,12 @@ import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/models/Single_goal_model.dart';
 import 'package:djizhub_light/models/error_model.dart';
+import 'package:djizhub_light/models/transaction_response_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../goals/controllers/create_goal_controller.dart';
 import '../../models/goals_model.dart';
@@ -24,7 +26,6 @@ enum MakeTransactionState {
 
 class newTransactionModel {
 
-  final String? name;
   final bool? secret;
   final String? phone_number;
   final String? operator;
@@ -34,7 +35,7 @@ class newTransactionModel {
 
 
   newTransactionModel(
-      this.name,this.secret,this.phone_number,this.operator,this.amount,this.otp,this.emergency
+      this.secret,this.phone_number,this.operator,this.amount,this.otp,this.emergency
       );
 
 }
@@ -86,7 +87,6 @@ class DepositController extends GetxController{
             'Authorization': 'Bearer $idToken',
           },
           body: jsonEncode({
-            "name": transaction.name,
             "secret": transaction.secret,
             "phone_number": transaction.phone_number,
             "operator": transaction.operator,
@@ -101,8 +101,12 @@ class DepositController extends GetxController{
         ScaffoldMessenger.of(context).showSnackBar(
              SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Dépot réalisé avec succés",),backgroundColor: Colors.green,)
         );
+        var waveUrl = transactionResponseModelFromJson(response.body).data?.launchUrl;
+        await launchWaveUrl(waveUrl.toString());
 
-        var goal = singleGoalsFromJson(response.body).data;
+        print("Repoooooooooooooooooooooooooooooonse : "+waveUrl.toString());
+
+
     //  fetchGoalsController.setCurrentGoal(goal!);
    //   fetchGoalsController.getGoals();
 
@@ -142,7 +146,6 @@ class DepositController extends GetxController{
             'Authorization': 'Bearer $idToken',
           },
           body: jsonEncode({
-            "name": transaction.name,
             "secret": transaction.secret,
             "phone_number": transaction.phone_number,
             "operator": transaction.operator,
@@ -186,6 +189,15 @@ class DepositController extends GetxController{
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(error.message ?? "Une erreur est survenue, veuillez réessayer"),backgroundColor: Colors.redAccent,)
       );
+    }
+  }
+
+  launchWaveUrl(String waveUrl) async{
+
+    try{
+      await launchUrl(Uri.parse(waveUrl));
+    } on Exception{
+      print('Erreur d launch');
     }
   }
   

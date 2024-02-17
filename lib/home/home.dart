@@ -145,7 +145,6 @@ class _HomeState extends State<Home> {
       String code = deepLink.queryParameters['code'] ?? '';
       if (code.isNotEmpty) {
         _showAddForeignAccountDialog(context);
-        print("Voiciiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii le code : $code pour le coffre : $name");
       }
     }
   }
@@ -335,8 +334,34 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  Text("Veuillez entrer le code du coffre."),
-                  Text("C'est un code à 4 caractéres.",style: TextStyle(fontSize: 15,fontStyle: FontStyle.italic),),
+                  SizedBox(height: 10,),
+                  TextFormField(
+
+                    initialValue: authController.userName ?? FirebaseAuth.instance.currentUser?.displayName,
+                    onChanged: (value){
+                      depositController.setNameToSend(value);
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Prénom et nom",
+                    ),
+                    // The validator receives the text that the user has entered.
+                    validator: (val) {
+                      if (val!.isEmpty) {
+                        return 'Ce champs est obligatoire';
+                      }
+                      List<String> names = val.split(' ');
+
+                      if (names.length < 2 ||
+                          names[0].length <2  ||
+                          names[1].length < 2) {
+                        return 'Veuillez entrer un prénom et nom valides';
+                      }
+                      return null;
+                    },
+                  ),
+                  SizedBox(height: 10,),
+                //  Text("Veuillez entrer le code du coffre."),
+               //   Text("C'est un code à 4 caractéres.",style: TextStyle(fontSize: 15,fontStyle: FontStyle.italic),),
                   SizedBox(height: 10,),
                   TextFormField(
                     inputFormatters: [UpperCaseTextFormatter()],
@@ -357,7 +382,8 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
                         helperText: "Demandez au propriétaire du compte de vous fournir le code d'adhésion, puis saisissez-le ici.",
                         counterText: "",
                     ),
-                  )
+                  ),
+
                 ],
               ),
             ),
@@ -375,7 +401,7 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
                 onPressed: () {
                   if (_joinFormKey.currentState!.validate()){
                     FocusScope.of(context).unfocus();
-                    joinGoalController.joinGoal(context, codeController.text);
+                    joinGoalController.joinGoal(context, codeController.text,depositController.nameToSend.toString());
                   }
 
                 },

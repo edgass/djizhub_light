@@ -76,7 +76,7 @@ class SingleTransactionInList extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 15.0,right: 3),
                     child: SizedBox(width:MediaQuery.of(context).size.width*0.4, child: Text(transaction.name ?? "Djizhub User",overflow: TextOverflow.ellipsis,)),
                   ),
-                  Text("+${transaction.phone_number}")
+                  Text(transaction.phone_number.toString())
                 ],
               )
             ],
