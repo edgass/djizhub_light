@@ -5,13 +5,18 @@ import 'package:djizhub_light/main.dart';
 import 'package:djizhub_light/utils/join_account_page_by_link.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+
+import '../auth/controller/auth_controller.dart';
 
 class NotificationService {
 
   final _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin notificationsPlugin =
   FlutterLocalNotificationsPlugin();
+  final storage = const FlutterSecureStorage();
+
 
   Future<void> initNotification() async {
     AndroidInitializationSettings initializationSettingsAndroid =
@@ -122,6 +127,7 @@ Future <void> initFCMNotifications() async {
     await _firebaseMessaging.requestPermission();
     final FCMToken = await _firebaseMessaging.getToken();
     print("FCM TOKEN : $FCMToken");
+    storage.write(key: 'fcmToken', value: FCMToken);
   //  FirebaseMessaging.onBackgroundMessage(handleBackroundMessage);
   initPushNotification();
 

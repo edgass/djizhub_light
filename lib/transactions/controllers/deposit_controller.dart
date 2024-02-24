@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
+import 'package:djizhub_light/home/home.dart';
 import 'package:djizhub_light/models/Single_goal_model.dart';
 import 'package:djizhub_light/models/error_model.dart';
 import 'package:djizhub_light/models/transaction_response_model.dart';
@@ -46,6 +48,7 @@ class DepositController extends GetxController{
 
   FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
   CreateGoalController createGoalController = Get.find<CreateGoalController>();
+  AuthController authController = Get.find<AuthController>();
   Operator operator = Operator.WAVE;
   MakeTransactionState makeTransactionState = MakeTransactionState.PENDING;
   bool acceptEmmergencyTerm = false;
@@ -82,7 +85,7 @@ class DepositController extends GetxController{
     try{
       final user = FirebaseAuth.instance.currentUser!;
       final idToken = await user.getIdToken();
-      final fcmToken = await firebaseMessaging.getToken();
+     // final fcmToken = await firebaseMessaging.getToken();
       makeTransactionState = MakeTransactionState.LOADING;
       update();
        response = await http.patch(Uri.parse("$url/$goalId/deposit"),
@@ -90,7 +93,7 @@ class DepositController extends GetxController{
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer $idToken',
-            'fcmToken':fcmToken ?? "",
+            'fcmToken':authController.fcmToken ?? "",
           },
           body: jsonEncode({
             "secret": transaction.secret,
@@ -143,7 +146,7 @@ class DepositController extends GetxController{
     try{
       final user = FirebaseAuth.instance.currentUser!;
       final idToken = await user.getIdToken();
-      final fcmToken = await firebaseMessaging.getToken();
+    //  final fcmToken = await firebaseMessaging.getToken();
       makeTransactionState = MakeTransactionState.LOADING;
       update();
        response = await http.patch(Uri.parse("$url/$goalId/withdrawal"),
@@ -151,7 +154,7 @@ class DepositController extends GetxController{
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer $idToken',
-            'fcmToken':fcmToken ?? "",
+            'fcmToken':authController.fcmToken ?? "",
           },
           body: jsonEncode({
             "secret": transaction.secret,

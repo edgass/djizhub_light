@@ -104,7 +104,7 @@ class CreateGoal extends StatelessWidget {
                           labelText: "Nombre de participants",
                         ),
                         // The validator receives the text that the user has entered.
-                        validator: (value) {
+                        validator:value.goalType == GoalType.PRIVATE ? null : (value) {
                           if (value!.isEmpty) {
                             return 'Ce champs est obligatoire';
                           }
@@ -171,7 +171,7 @@ class CreateGoal extends StatelessWidget {
                         onPressed: () {
                           if (_formKey.currentState!.validate()){
                             String objectifCleanString = objectifController.text.replaceAll(',', '');
-                            createGoalController.createNewGoal(context, newGoalModel(null,nameController.text, descriptionController.text, double.parse(objectifCleanString), createGoalController.selectedDate.toString(), createGoalController.goalConstraint,createGoalController.goalType,int.parse(nbrParticipantsController.text)));
+                            createGoalController.createNewGoal(context, newGoalModel(null,nameController.text, descriptionController.text, double.parse(objectifCleanString), createGoalController.selectedDate.toString(), createGoalController.goalConstraint,createGoalController.goalType,int.tryParse(nbrParticipantsController.text) ?? 0));
                           }
                         },
                         child: Text('Envoyer',style: TextStyle(color: Colors.white),),

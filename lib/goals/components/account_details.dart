@@ -125,7 +125,7 @@ class AccoutDetails extends StatelessWidget {
 
                             }: (){},)),
                       fetchGoalsController.currentGoal.value.listable ?? true ?
-                      ActionBox(title: "Liste",backColor: Color(0xFFdfe3ee),iconColor:Color(0xFF8b9dc3),icon: Icons.list_alt_outlined,function:()=>{
+                      ActionBox(title: "Membres",backColor: Color(0xFFdfe3ee),iconColor:Color(0xFF8b9dc3),icon: Icons.list_alt_outlined,function:()=>{
                             fetchMemberController.fetchMembersFromApi(fetchGoalsController.currentGoal.value.id ?? ''),
                             Get.to(()=>MemberList())
                       },) :
@@ -287,7 +287,7 @@ void showMoreMenu(BuildContext context) {
       ),
       if(fetchGoalsController.currentGoal.value.foreign_account!)
       PopupMenuItem(
-        child: Text('Retirer le coffre'),
+        child: Text('Quitter le coffre'),
         onTap: () {
           _showDeletAccountDialog(context);
         },

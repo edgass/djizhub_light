@@ -38,6 +38,7 @@ class AuthController extends GetxController{
   FirebaseAuth auth = FirebaseAuth.instance;
   final storage = const FlutterSecureStorage();
   String? userName;
+  String fcmToken = "";
   Rx<MyconnexionState> myConnexionState = Rx<MyconnexionState>(MyconnexionState.idle);
   late final _connectivitySubscription;
 
@@ -63,6 +64,7 @@ class AuthController extends GetxController{
       }
     });
     storage.read(key: 'name').then((value) => userName = value);
+    storage.read(key: "fcmToken").then((value) => fcmToken = value ?? "");
   }
 
 
@@ -166,6 +168,11 @@ class AuthController extends GetxController{
     }
 
 
+  }
+
+  setFcmToken(String FCMToken){
+    fcmToken = FCMToken ?? "";
+    update();
   }
 
   addPinToFirebase () async{

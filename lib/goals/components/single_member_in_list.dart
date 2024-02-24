@@ -35,58 +35,69 @@ class SingleMemberInList extends StatelessWidget {
               Get.to(()=>TransactionList(member))
             }
           },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-           // crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SizedBox(
-                width: MediaQuery.of(context).size.width*0.4,
+          child: IntrinsicHeight(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+             // crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width*0.3,
 
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(member.name ?? "",overflow: TextOverflow.ellipsis,),
-                    SizedBox(height: 10,),
-                    Text("A rejoint le ${member.createdAt?.day.toString().padLeft(2, '0')}/${member.createdAt?.month.toString().padLeft(2, '0')}/${member.createdAt?.year}"),
-                  ],
-                ),
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    child: Column(
-                      children: [
-                        Text("${member.count} transactions(s)",style: TextStyle(fontWeight: FontWeight.bold),),
-                        SizedBox(height: 10,),
-                        Row(
-                          children: [
-                            Text("${formatter.format(member.total)} Fcfa",style: TextStyle(color: apCol),),
-                            Text(" au total"),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15.0),
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(color: Colors.black12,borderRadius: BorderRadius.circular(50)),
-                          width: 20,
-                          height: 20,
-                          child: Icon(Icons.arrow_forward_ios,size: 12,color: Colors.white,),
-                        ),
-                      ),
+                      Text(member.name ?? "",overflow: TextOverflow.ellipsis,),
+                      SizedBox(height: 2,),
+                      Text("A rejoint le ${member.createdAt?.day.toString().padLeft(2, '0')}/${member.createdAt?.month.toString().padLeft(2, '0')}/${member.createdAt?.year}",overflow: TextOverflow.ellipsis,),
+                      SizedBox(height: 2,),
+                      member.out ?? false ?
+                      Text("A Quitté",style: TextStyle(color: Colors.red)) :
+                      Text("Actif",style: TextStyle(color: Colors.green),)
                     ],
-                  )
-                ],
-              )
+                  ),
+                ),
+                SizedBox(
 
-            ],
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Text("${member.count} transaction(s)",style: TextStyle(fontWeight: FontWeight.bold),),
+
+                          Row(
+                            children: [
+                              Text("${formatter.format(member.total)} Fcfa",style: TextStyle(color: apCol),),
+                              Text(" au total"),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Column(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 15.0),
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(color: Colors.black12,borderRadius: BorderRadius.circular(50)),
+                              width: 20,
+                              height: 20,
+                              child: Icon(Icons.arrow_forward_ios,size: 12,color: Colors.white,),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                )
+
+              ],
+            ),
           ),
         ),
       ),

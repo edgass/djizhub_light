@@ -1,4 +1,5 @@
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
+import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -82,8 +83,8 @@ class AccountParameter extends StatelessWidget {
                       },
                     ),
                   ),
-                  GetBuilder<CreateGoalController>(
-                    builder: (value)=> value.goalType == GoalType.TONTIN ? TextFormField(
+                  GetBuilder<FetchGoalsController>(
+                    builder: (value)=> value.currentGoal.value.type == GoalType.TONTIN.name ? TextFormField(
                       controller: nbrParticipantsController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(

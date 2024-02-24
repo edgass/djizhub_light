@@ -6,6 +6,7 @@ import 'dart:ffi';
 import 'dart:io';
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,6 +16,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
+import '../../home/home.dart';
 import '../../models/goals_model.dart';
 
 enum FetchState {
@@ -46,6 +48,7 @@ class FetchGoalsController extends GetxController{
  Rx<FetchState> fetchState = FetchState.PENDING.obs;
  Rx<FetchSingleGoalState> fetchSingleGoalState = FetchSingleGoalState.PENDING.obs;
  FetchSingleTransactionState fetchSingleTransactionState = FetchSingleTransactionState.PENDING;
+ AuthController authController = Get.find<AuthController>();
  final storage = const FlutterSecureStorage();
 
 
@@ -120,12 +123,13 @@ class FetchGoalsController extends GetxController{
    final user = FirebaseAuth.instance.currentUser!;
    final idToken = await user.getIdToken();
    fetchState.value = FetchState.LOADING;
-
+    print("from fetch fcm from authController test : ${authController.fcmToken}");
    var response = await http.get(Uri.parse(url),
        headers: {
          'Content-Type': 'application/json',
          'Accept': 'application/json',
          'Authorization': 'Bearer $idToken',
+         'fcmToken':authController.fcmToken ?? "",
        });
    print(response.body);
 

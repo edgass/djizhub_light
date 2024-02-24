@@ -76,17 +76,6 @@ class SettingPage extends StatelessWidget {
                                     ],),
                                   ),
                                   SizedBox(height: 15,),
-                                  Row(children: [
-                                    Icon(Icons.brightness_5_outlined,size: 25,),
-                                    SizedBox(width: 10,),
-                                    Text("Faire chose ",style: TextStyle(fontSize: 16,color: Colors.black87),)
-                                  ],),
-                                  SizedBox(height: 15,),
-                                  Row(children: [
-                                    Icon(Icons.add_a_photo_outlined,size: 25,),
-                                    SizedBox(width: 10,),
-                                    Text("En faire encore",style: TextStyle(fontSize: 16,color: Colors.black87),)
-                                  ],)
                                 ],
                               ),
                             ),

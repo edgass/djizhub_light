@@ -131,7 +131,7 @@ class SingleAccountInList extends StatelessWidget {
                       ],
                     ),
                   ),
-                  currentGoal.balance == 0 && currentGoal.type == GoalType.PRIVATE.name && currentGoal.status == "WITHDRAWN" ?
+                  currentGoal.balance == 0 && currentGoal.type == GoalType.PRIVATE.name && currentGoal.status != "WITHDRAWN" ?
                   Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,

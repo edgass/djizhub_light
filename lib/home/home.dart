@@ -52,6 +52,7 @@ final _joinFormKey = GlobalKey<FormState>();
   SocketController socketController = Get.find<SocketController>();
 
 TextEditingController codeController = TextEditingController();
+TextEditingController numeroTelController = TextEditingController();
 
 
 
@@ -361,6 +362,23 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
                       return null;
                     },
                   ),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    controller: numeroTelController,
+                    decoration: InputDecoration(
+                      prefix: Text("+221"),
+                      labelText: "Numéro de Téléphone",
+                    ),
+                    // The validator receives the text that the user has entered.
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Ce champs est obligatoire';
+                      }else if(value.length != 9 || (!value.startsWith('77') & !value.startsWith('78') & !value.startsWith('76') & !value.startsWith('75'))){
+                        return 'Numéro de téléphone invalide';
+                      }
+                      return null;
+                    },
+                  ),
                   SizedBox(height: 10,),
                 //  Text("Veuillez entrer le code du coffre."),
                //   Text("C'est un code à 4 caractéres.",style: TextStyle(fontSize: 15,fontStyle: FontStyle.italic),),
@@ -403,7 +421,7 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
                 onPressed: () {
                   if (_joinFormKey.currentState!.validate()){
                     FocusScope.of(context).unfocus();
-                    joinGoalController.joinGoal(context, codeController.text,depositController.nameToSend.toString());
+                    joinGoalController.joinGoal(context, codeController.text,depositController.nameToSend.toString(),"221${numeroTelController.text}");
                   }
 
                 },

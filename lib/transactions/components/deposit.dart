@@ -170,6 +170,8 @@ class Deposit extends StatelessWidget {
                           )
                       ),
                     ): SizedBox(),),
+                //Depot anonyme actuellement supprimé
+                /*
                 GetBuilder<JoinGoalController>(
                     builder: (value)=>CheckboxListTile(
                         title: Text("Faire un dépot anonyme (Cacher Nom et Numéro)"),
@@ -183,6 +185,8 @@ class Deposit extends StatelessWidget {
                         }
 
                     )),
+
+                 */
                 GetBuilder<DepositController>(
                     builder: (value)=> Padding(
                       padding: EdgeInsets.all(20.0),
