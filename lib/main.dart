@@ -5,6 +5,7 @@ import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/home/home.dart';
 import 'package:djizhub_light/home/home_check.dart';
 import 'package:djizhub_light/utils/binding.dart';
+import 'package:djizhub_light/utils/dynamic_links.dart';
 import 'package:djizhub_light/utils/loading.dart';
 import 'package:djizhub_light/utils/local_notifications.dart';
 import 'package:djizhub_light/utils/security/enter_pin.dart';
@@ -19,11 +20,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:local_session_timeout/local_session_timeout.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+
+final navigatorKey = GlobalKey<NavigatorState>();
 void main() async {
+
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+  NotificationService().initFCMNotifications();
   NotificationService().initNotification();
   await Permission.notification.isDenied.then((value) {
     if (value) {
@@ -38,7 +43,7 @@ void main() async {
 
 
 
-
+  DynamicLinksProvider().initDynamicLink();
   runApp( MyApp());
 }
 
@@ -124,3 +129,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+

@@ -47,7 +47,7 @@ class SocketController extends GetxController{
         if(transaction.type == "DEPOSIT"){
 
           NotificationService()
-              .showNotification(id: depositController.generateRandomNotificationId(),title: 'Transaction Réussie', body: "Votre dépot de ${transaction.amount} FCFA réalisé le ${transaction.createdAt?.day.toString().padLeft(2,'0')}/${transaction.createdAt?.month.toString().padLeft(2,'0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour.toString().padLeft(2,'0')}H ${transaction.createdAt?.minute.toString().padLeft(2,'0')} par ${transaction.transactionOperator} a été réalisée avec succés.",payLoad: '')
+              .showNotification(id: depositController.generateRandomNotificationId(),title: 'Transaction Réussie', body: "Votre dépot de ${formatter.format(transaction.amount)} FCFA réalisé le ${transaction.createdAt?.day.toString().padLeft(2,'0')}/${transaction.createdAt?.month.toString().padLeft(2,'0')}/${transaction.createdAt?.year} à ${transaction.createdAt?.hour.toString().padLeft(2,'0')}H ${transaction.createdAt?.minute.toString().padLeft(2,'0')} par ${transaction.transactionOperator} a été réalisée avec succés.",payLoad: '')
           //  .showNotification(title: 'Transaction Réussie', body: "Dépot de ${transaction.amount} FCFA réalisé avec succés.")
         }else{
           NotificationService()

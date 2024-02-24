@@ -23,4 +23,9 @@ import flutter_local_notifications
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+  func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+      // Manipulez l'URL ici, extrayez les informations pertinentes
+      // et naviguez vers l'écran approprié dans votre application.
+      return true
+  }
 }

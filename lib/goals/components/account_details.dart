@@ -2,6 +2,7 @@
 import 'dart:ffi';
 
 import 'package:djizhub_light/goals/components/informations.dart';
+import 'package:djizhub_light/goals/components/member_list.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/goals/controllers/joinGoalController.dart';
@@ -11,6 +12,7 @@ import 'package:djizhub_light/home/info_box.dart';
 import 'package:djizhub_light/transactions/components/deposit.dart';
 import 'package:djizhub_light/transactions/components/accountSetting.dart';
 import 'package:djizhub_light/transactions/components/withdrawal.dart';
+import 'package:djizhub_light/transactions/controllers/fetch_member_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
@@ -26,6 +28,7 @@ class AccoutDetails extends StatelessWidget {
     CreateGoalController createGoalController = Get.find<CreateGoalController>();
     JoinGoalController joinGoalController = Get.find<JoinGoalController>();
     FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
+    FetchMemberController fetchMemberController = Get.find<FetchMemberController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -89,7 +92,9 @@ class AccoutDetails extends StatelessWidget {
               children: [
                 Text(fetchGoalsController.currentGoal?.value.name?.toUpperCase() ?? "",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),),
                 SizedBox(height: 10,),
-                Text("Échéance : ${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.day.toString().padLeft(2, '0')}/${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.month.toString().padLeft(2, '0')}/${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.year}",textAlign: TextAlign.center,style: TextStyle(),),
+                fetchGoalsController.currentGoal.value.type == GoalType.PRIVATE.name ?
+                Text("Échéance : ${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.day.toString().padLeft(2, '0')}/${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.month.toString().padLeft(2, '0')}/${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.year}",textAlign: TextAlign.center,style: TextStyle(),)
+                :Text("Nombre de participants : ${fetchGoalsController.currentGoal.value.subscribers}"),
                 SizedBox(height: 20,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -119,15 +124,20 @@ class AccoutDetails extends StatelessWidget {
                               }
 
                             }: (){},)),
-                        Opacity(
-                            opacity: (fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true) && fetchGoalsController.currentGoal.value.foreign_account! == false ? 1 : 0.4,
-                            child: ActionBox(title: "Urgence",backColor: Color(0xFFFFCCCC),iconColor:Color(0xFFFF4C4C),icon: Icons.emergency,function:(fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true) && fetchGoalsController.currentGoal.value.foreign_account! == false ? ()=>{
-                              Get.to(()=>Withdrawal(goalId: fetchGoalsController.currentGoal.value.id ?? "",emergency: true,)),
-                              if(securityController.canAskPin){
-                                securityController.startTimer(),
-                                securityController.showOverlay(context)
-                              }
-                            }: (){},)),
+                      fetchGoalsController.currentGoal.value.listable ?? true ?
+                      ActionBox(title: "Liste",backColor: Color(0xFFdfe3ee),iconColor:Color(0xFF8b9dc3),icon: Icons.list_alt_outlined,function:()=>{
+                            fetchMemberController.fetchMembersFromApi(fetchGoalsController.currentGoal.value.id ?? ''),
+                            Get.to(()=>MemberList())
+                      },) :
+                      Opacity(
+                          opacity: (fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true) && fetchGoalsController.currentGoal.value.foreign_account! == false ? 1 : 0.4,
+                          child:  ActionBox(title: "Urgence",backColor: Color(0xFFFFCCCC),iconColor:Color(0xFFFF4C4C),icon: Icons.emergency,function:(fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true) && fetchGoalsController.currentGoal.value.foreign_account! == false ? ()=>{
+                            Get.to(()=>Withdrawal(goalId: fetchGoalsController.currentGoal.value.id ?? "",emergency: true,)),
+                            if(securityController.canAskPin){
+                              securityController.startTimer(),
+                              securityController.showOverlay(context)
+                            }
+                          }: (){},)),
                         Opacity(
                             opacity: fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.foreign_account! == false ? 1 : 0.4,
                             child: ActionBox(title: "Réglages",backColor: Color(0xFFE9CAFF),iconColor: Color(0xFF9900FF),icon: Icons.settings,function:fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.foreign_account! == false ?  ()=>{
@@ -164,20 +174,25 @@ class AccoutDetails extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(18.0),
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 20.0,right: 20.0),
-                    child: ListView(
+                    padding: const EdgeInsets.only(left: 15.0,right: 15.0),
+                    child: Column(
                       children: [
                         Text("Transactions",textAlign: TextAlign.center,style: TextStyle(fontSize:20,color: apCol,fontWeight: FontWeight.bold),),
                         SizedBox(height: 15,),
 
                         fetchGoalsController.currentGoal.value.transactions!.isEmpty ?
                             Center(child: Text("Aucune Transaction pour le moment, veuillez effectuer un dépot pour économiser.",textAlign: TextAlign.center,)) :
-                       Container(
-                         child: Column(
-                           children: [
-                             for(Transaction transaction in fetchGoalsController.currentGoal.value.transactions ?? [])
-                               SingleTransactionInList(transaction: transaction),
-                           ],
+                       Expanded(
+                         child: ListView.separated(
+                           itemCount: fetchGoalsController.currentGoal.value.transactions!.length,
+                           separatorBuilder: (BuildContext context, int index) =>
+                               const SizedBox(height: 10.0,),
+                           itemBuilder: (BuildContext context, int index) {
+                             Transaction transaction = fetchGoalsController.currentGoal.value.transactions![index];
+                             return SingleTransactionInList(
+                               transaction: transaction,
+                             );
+                           },
                          ),
                        )
                       ],
@@ -255,6 +270,7 @@ void showMoreMenu(BuildContext context) {
     context: context,
     position: RelativeRect.fromLTRB(300, 80, 0, 0), // Ajuste la position du menu
     items: [
+      if(fetchGoalsController.currentGoal.value.type == GoalType.PRIVATE.name)
       PopupMenuItem(
         child: Text('Recommandations'),
         onTap: () {
@@ -262,6 +278,7 @@ void showMoreMenu(BuildContext context) {
               MaterialPageRoute(builder: (context) =>  Informations()));
         },
       ),
+      if(fetchGoalsController.currentGoal.value.type == GoalType.TONTIN.name)
       PopupMenuItem(
         child: Text('Partager le coffre'),
         onTap: () {

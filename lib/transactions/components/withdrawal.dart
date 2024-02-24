@@ -19,6 +19,7 @@ class Withdrawal extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   TextEditingController numeroTelController = TextEditingController();
   TextEditingController amountTelController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
   DepositController depositController = Get.find<DepositController>();
   AuthController authController = Get.find<AuthController>();
 
@@ -114,6 +115,18 @@ class Withdrawal extends StatelessWidget {
                             }
         
                         )) : SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: TextFormField(
+                        maxLength: 100,
+                        maxLines: 2,
+                        controller: noteController,
+                        decoration: InputDecoration(
+
+                          labelText: "Description",
+                        ),
+                      ),
+                    ),
                     GetBuilder<DepositController>(
                         builder: (value)=> Padding(
                           padding: EdgeInsets.all(20.0),
@@ -125,7 +138,7 @@ class Withdrawal extends StatelessWidget {
                                              emergency & !depositController.acceptEmmergencyTerm ? null : () {
                                                if(_formKey.currentState!.validate()){
                                                  depositController.makeWithdrawal(context, newTransactionModel(
-                                                     null,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text.replaceAll(',', '')),null,emergency), goalId);
+                                                     null,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text.replaceAll(',', '')),null,emergency,noteController.text), goalId);
                                                }
 
                                              } :
@@ -139,7 +152,7 @@ class Withdrawal extends StatelessWidget {
                                }
 
                              depositController.makeWithdrawal(context, newTransactionModel(
-                                 null,"221${numeroTelController.text}", depositController.operator.name, null,null,emergency), goalId);
+                                 null,"221${numeroTelController.text}", depositController.operator.name, null,null,emergency,noteController.text), goalId);
                            }
 
                          },

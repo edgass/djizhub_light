@@ -5,6 +5,7 @@ import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/goals/controllers/joinGoalController.dart';
 import 'package:djizhub_light/home/socket_controller.dart';
 import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
+import 'package:djizhub_light/transactions/controllers/fetch_member_controller.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -20,6 +21,7 @@ class HomeBinding implements Bindings{
     Get.put<SecurityController>(SecurityController());
     Get.put<JoinGoalController>(JoinGoalController());
     Get.put<SocketController>(SocketController());
+    Get.put<FetchMemberController>(FetchMemberController());
 
 
 

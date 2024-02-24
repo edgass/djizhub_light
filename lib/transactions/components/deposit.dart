@@ -1,5 +1,6 @@
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:djizhub_light/auth/controller/auth_controller.dart';
+import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/goals/controllers/joinGoalController.dart';
 import 'package:djizhub_light/home/home.dart';
 import 'package:djizhub_light/transactions/components/operator_card.dart';
@@ -24,6 +25,7 @@ class Deposit extends StatelessWidget {
   TextEditingController amountController = TextEditingController();
   TextEditingController otpController = TextEditingController();
   DepositController depositController = Get.find<DepositController>();
+  FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
   JoinGoalController joinGoalController = Get.find<JoinGoalController>();
   AuthController authController = Get.find<AuthController>();
   RegExp myRegNumValidation = RegExp('0-9');
@@ -99,10 +101,10 @@ class Deposit extends StatelessWidget {
                     validator: (value) {
                       if(value!.isEmpty){
                         return 'Ce champs est obligatoire';
-                      }else if (double.parse(value.replaceAll(',', '') ?? "0.0")<500) {
-                        return 'Le montant minimum est de 500 FCFA';
-                      }else if (double.parse(value.replaceAll(',', '') ?? "0.0")>200000) {
-                        return 'Le montant maximum est de 200.000 FCFA';
+                      }else if (double.parse(value.replaceAll(',', '') ?? "0.0")<fetchGoalsController.currentGoal.value.min_transaction!) {
+                        return 'Le montant minimum est de ${fetchGoalsController.currentGoal.value.min_transaction!} FCFA';
+                      }else if (double.parse(value.replaceAll(',', '') ?? "0.0")>fetchGoalsController.currentGoal.value.max_transaction!) {
+                        return 'Le montant maximum est de ${fetchGoalsController.currentGoal.value.max_transaction!} FCFA';
                       }
                       return null;
                     },
@@ -203,7 +205,7 @@ class Deposit extends StatelessWidget {
                             }else{
                               finalName = depositController.nameToSend!;
                             }
-                            depositController.makeDeposit(context, newTransactionModel(joinGoalController.anonymousDeposit,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountCleanString),otpController.text,null ), goalId);
+                            depositController.makeDeposit(context, newTransactionModel(joinGoalController.anonymousDeposit,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountCleanString),otpController.text,null,null ), goalId);
                           }
 
                         },

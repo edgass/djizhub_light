@@ -42,6 +42,7 @@ class JoinGoalController extends GetxController{
       final idToken = await user.getIdToken();
       joinGoalState = JoinGoalState.LOADING;
       update();
+      print("Name to sennnnnnnnnnddddd : $nameToSend");
       response = await http.patch(Uri.parse(url),
           headers: {
             'Content-Type': 'application/json',

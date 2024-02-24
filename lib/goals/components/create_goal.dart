@@ -11,6 +11,7 @@ class CreateGoal extends StatelessWidget {
    bool isLoading = false;
   TextEditingController descriptionController = TextEditingController();
   TextEditingController nameController = TextEditingController();
+  TextEditingController nbrParticipantsController = TextEditingController();
   TextEditingController objectifController = TextEditingController();
    var formatter = NumberFormat("#,###");
 
@@ -67,61 +68,82 @@ class CreateGoal extends StatelessWidget {
                       labelText: "Description",
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10.0,bottom: 10),
-                    child: TextFormField(
-                      onChanged: (value){
-                        formatInput();
-                      },
-                      controller: objectifController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
+                 GetBuilder<CreateGoalController>(
 
-                        suffix: Text("FCFA"),
-                        labelText: "Objectif financier pour ce coffre",
-                      ),
-                      // The validator receives the text that the user has entered.
-                      validator: (value) {
-                        if (int.parse(value?.replaceAll(',', '') ?? "0") <5000) {
-                          return 'Le montant minimum est de 5000 FCFA';
-                        }else if(int.parse(value?.replaceAll(',', '') ?? "0") > 10000000){
-                          return 'Le montant maximum est de 10.000.000 FCFA';
-                        }
-                        return null;
-                      },
-                    ),
+                   builder: (value)=> Padding(
+                   padding: EdgeInsets.only(top: 10.0,bottom: 10),
+                   child: TextFormField(
+                     onChanged: (value){
+                       formatInput();
+                     },
+                     controller: objectifController,
+                     keyboardType: TextInputType.number,
+                     decoration: InputDecoration(
+
+                       suffix: Text("FCFA"),
+                       labelText: value.goalType == GoalType.PRIVATE ? "Objectif financier pour ce coffre" : "Montant retrait (Teggi Natt)",
+                     ),
+                     // The validator receives the text that the user has entered.
+                     validator: value.goalType == GoalType.PRIVATE ? (value) {
+                       if (int.parse(value?.replaceAll(',', '') ?? "0") <5000) {
+                         return 'Le montant minimum est de 5000 FCFA';
+                       }else if(int.parse(value?.replaceAll(',', '') ?? "0") > 10000000){
+                         return 'Le montant maximum est de 10.000.000 FCFA';
+                       }
+                       return null;
+                     } : null,
+                   ),
+                 ),),
+
+                  GetBuilder<CreateGoalController>(
+                      builder: (value)=> value.goalType == GoalType.TONTIN ? TextFormField(
+                        controller: nbrParticipantsController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          helperText: 'Veuillez indiquer le nombre total de participants prévu pour cette tontine.',
+                          labelText: "Nombre de participants",
+                        ),
+                        // The validator receives the text that the user has entered.
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Ce champs est obligatoire';
+                          }
+                          if(int.parse(value) < 2){
+                            return 'Il faut au moins deux personnes dans le groupe';
+                          }
+                          return null;
+                        },
+                      ) : const SizedBox(),
                   ),
                   GestureDetector(
                     onTap: ()=>createGoalController.selectDate(context),
                     child: AbsorbPointer(
-                      child:
+                      child:GetBuilder<CreateGoalController>(builder: (value)=> value.goalType == GoalType.PRIVATE ? Padding(
+                          padding: EdgeInsets.only(top: 25.0,bottom: 10),
 
-                      Padding(
-                        padding: EdgeInsets.only(top: 25.0,bottom: 10),
-
-                        child: GetBuilder<CreateGoalController>(
-                          builder:(value)=>  TextFormField(
-                            controller: TextEditingController(text: "${value.selectedDate.toLocal()}".split(' ')[0]),
-                            decoration: const InputDecoration(
-                              labelText: "ÉCHÉANCE",
+                          child: GetBuilder<CreateGoalController>(
+                            builder:(value)=>  TextFormField(
+                              controller: TextEditingController(text: "${value.selectedDate.toLocal()}".split(' ')[0]),
+                              decoration: const InputDecoration(
+                                labelText: "ÉCHÉANCE",
+                              ),
+                              // The validator receives the text that the user has entered.
                             ),
-                            // The validator receives the text that the user has entered.
-                          ),
-                        )
+                          )
 
 
-                      ),
+                      ) : SizedBox()),
                     ),
                   ),
-                  Padding(
+                GetBuilder<CreateGoalController>(
+                    builder: (value)=>Padding(
                   padding: EdgeInsets.only(top: 10.0,bottom: 10),
-                  child:  Column(
+                  child: value.goalType == GoalType.PRIVATE ?  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
 
-                      GetBuilder<CreateGoalController>(
-                        builder: (value)=>CheckboxListTile(
+                      CheckboxListTile(
                         title: Text("Contrainte d'objectif"),
                          controlAffinity: ListTileControlAffinity.leading,
 
@@ -132,13 +154,13 @@ class CreateGoal extends StatelessWidget {
                             }
                         }
 
-                        )),
+                        ),
                       Text("Lorsque vous cochez cette case, vous ne pourrez pas retirer vos fonds tant que vous n'aurez pas atteint votre objectif financier, même si la date de retrait est déjà arrivée")
                     ],
                     
-                  ),
+                  ) : null,
 
-                  ),
+                  )),
                   Padding(
                     padding: EdgeInsets.all(20.0),
                     child: GetBuilder<CreateGoalController>(
@@ -149,7 +171,7 @@ class CreateGoal extends StatelessWidget {
                         onPressed: () {
                           if (_formKey.currentState!.validate()){
                             String objectifCleanString = objectifController.text.replaceAll(',', '');
-                            createGoalController.createNewGoal(context, newGoalModel(null,nameController.text, descriptionController.text, double.parse(objectifCleanString), createGoalController.selectedDate.toString(), createGoalController.goalConstraint));
+                            createGoalController.createNewGoal(context, newGoalModel(null,nameController.text, descriptionController.text, double.parse(objectifCleanString), createGoalController.selectedDate.toString(), createGoalController.goalConstraint,createGoalController.goalType,int.parse(nbrParticipantsController.text)));
                           }
                         },
                         child: Text('Envoyer',style: TextStyle(color: Colors.white),),

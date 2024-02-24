@@ -17,6 +17,11 @@ enum CreateGoalState {
 
 }
 
+enum GoalType{
+  PRIVATE,TONTIN
+
+}
+
 enum UpdateGoalState {
   PENDING,LOADING,ERROR,SUCCESS
 
@@ -28,12 +33,14 @@ class newGoalModel {
   final String name;
   final String description;
   final double goal;
+  final int limit_guest;
   final String date_of_withdrawal;
   final bool constraint;
+  final GoalType? goalType;
 
 
   newGoalModel(
-      this.id,this.name,this.description,this.goal,this.date_of_withdrawal,this.constraint
+      this.id,this.name,this.description,this.goal,this.date_of_withdrawal,this.constraint,this.goalType,this.limit_guest
       );
 
 }
@@ -44,6 +51,7 @@ class CreateGoalController extends GetxController{
   DateTime selectedUpdateDate = DateTime.now();
   bool goalConstraint = false;
   bool goalConstraintOfUpdate = false;
+  GoalType goalType = GoalType.PRIVATE;
   CreateGoalState createGoalState = CreateGoalState.PENDING;
   UpdateGoalState updateGoalState = UpdateGoalState.PENDING;
 
@@ -73,6 +81,8 @@ class CreateGoalController extends GetxController{
           "goal": newGoal.goal,
           "date_of_withdrawal": newGoal.date_of_withdrawal,
           "constraint": newGoal.constraint,
+          "type": goalType.name,
+          "limit_guest": newGoal.limit_guest
         }));
 
     if (response.statusCode == 201) {
@@ -86,6 +96,7 @@ class CreateGoalController extends GetxController{
           SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Compte crée avec succés",),backgroundColor: Colors.green,)
       );
         fetchGoalsController.getGoals();
+      Get.back();
       Get.back();
     //  Get.to(()=>Informations());
     } else {
@@ -127,6 +138,7 @@ class CreateGoalController extends GetxController{
             "name": newGoal.name,
             "description": newGoal.description,
             "goal": newGoal.goal,
+            "limit_guest": newGoal.limit_guest,
             "date_of_withdrawal": selectedUpdateDate.toIso8601String(),
             "constraint": goalConstraintOfUpdate,
           }));
@@ -194,6 +206,11 @@ class CreateGoalController extends GetxController{
 
   setInitialUpdateDate(DateTime date){
     selectedUpdateDate = date;
+  }
+
+  setCreateGoalType(GoalType createGoalType){
+    goalType = createGoalType;
+    update();
   }
 
   setGoalConstraint(value){

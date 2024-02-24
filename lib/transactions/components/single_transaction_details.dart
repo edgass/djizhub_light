@@ -123,6 +123,14 @@ class SingleTransactionDetails extends StatelessWidget {
                             Text(value.currentTransaction.partner_id.toString()),
                           ],
                         ),
+                        SizedBox(height: 35,),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text("Note : ",),
+                            Text(value.currentTransaction.note ?? "",),
+                          ],
+                        ),
                       ],
                     ),
                   ),

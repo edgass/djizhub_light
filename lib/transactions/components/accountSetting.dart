@@ -13,6 +13,7 @@ class AccountParameter extends StatelessWidget {
 
   TextEditingController descriptionController = TextEditingController()..text = fetchGoalsController.currentGoal.value.description ?? "";
   TextEditingController nameController = TextEditingController()..text = fetchGoalsController.currentGoal.value.name!;
+  TextEditingController nbrParticipantsController = TextEditingController()..text = fetchGoalsController.currentGoal.value.limit_guest.toString()!;
   TextEditingController objectifController = TextEditingController()..text = fetchGoalsController.currentGoal.value.goal.toString();
 
 
@@ -81,6 +82,27 @@ class AccountParameter extends StatelessWidget {
                       },
                     ),
                   ),
+                  GetBuilder<CreateGoalController>(
+                    builder: (value)=> value.goalType == GoalType.TONTIN ? TextFormField(
+                      controller: nbrParticipantsController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        helperText: 'Veuillez indiquer le nombre total de participants prévu pour cette tontine.',
+                        labelText: "Nombre de participants",
+                      ),
+                      // The validator receives the text that the user has entered.
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Ce champs est obligatoire';
+                        }
+                        if(int.parse(value) < 2){
+                          return 'Il faut au moins deux personnes dans le groupe';
+                        }
+                        return null;
+                      },
+                    ) : const SizedBox(),
+                  ),
+                  fetchGoalsController.currentGoal.value.type == GoalType.PRIVATE.name ?
                   GestureDetector(
                     onTap: ()=>createGoalController.selectUpdateDate(context),
                     child: AbsorbPointer(
@@ -102,7 +124,8 @@ class AccountParameter extends StatelessWidget {
 
                       ),
                     ),
-                  ),
+                  ) : const SizedBox(),
+                  fetchGoalsController.currentGoal.value.type == GoalType.PRIVATE.name ?
                   Padding(
                     padding: EdgeInsets.only(top: 10.0,bottom: 10),
                     child:  Column(
@@ -112,7 +135,7 @@ class AccountParameter extends StatelessWidget {
 
                         GetBuilder<CreateGoalController>(
                             builder: (value)=>CheckboxListTile(
-                                title: Text("Contrainte d'objectif"),
+                                title: const Text("Contrainte d'objectif"),
                                 controlAffinity: ListTileControlAffinity.leading,
 
                                 value: value.goalConstraintOfUpdate,
@@ -128,7 +151,7 @@ class AccountParameter extends StatelessWidget {
 
                     ),
 
-                  ),
+                  ) : SizedBox(),
                   Padding(
                       padding: EdgeInsets.all(20.0),
                       child: GetBuilder<CreateGoalController>(
@@ -138,7 +161,7 @@ class AccountParameter extends StatelessWidget {
                           style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(apCol)),
                           onPressed: () {
                             if (_formKey.currentState!.validate()){
-                              createGoalController.updateGoal(context, newGoalModel(fetchGoalsController.currentGoal.value.id,nameController.text, descriptionController.text, double.parse(objectifController.text), createGoalController.selectedUpdateDate.toString(), createGoalController.goalConstraintOfUpdate));
+                              createGoalController.updateGoal(context, newGoalModel(fetchGoalsController.currentGoal.value.id,nameController.text, descriptionController.text, double.parse(objectifController.text), createGoalController.selectedUpdateDate.toString(), createGoalController.goalConstraintOfUpdate,null,int.parse(nbrParticipantsController.text)));
                             }
                           },
                           child: Text('Modifier',style: TextStyle(color: Colors.white),),

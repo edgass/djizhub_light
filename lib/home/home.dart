@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/auth/setting.dart';
+import 'package:djizhub_light/goals/components/choose_create_goal_type.dart';
 import 'package:djizhub_light/goals/components/create_goal.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
@@ -272,7 +273,8 @@ class _HomeState extends State<Home> {
                     style: ButtonStyle(
                         backgroundColor: MaterialStateColor.resolveWith((states) => lightGrey)
                     ),
-                    onPressed:()=>Get.to(()=>CreateGoal()),
+                    onPressed:()=>Get.to(()=>ChooseCreateGoalType()),
+                   // onPressed:()=>Get.to(()=>CreateGoal()),
                     child:  Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

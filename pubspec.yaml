@@ -34,6 +34,7 @@ dependencies:
   get: ^4.6.5
   http: ^1.1.0
   firebase_dynamic_links: ^5.4.8
+  firebase_messaging: ^14.7.16
   firebase_analytics: ^10.7.4
   firebase_core: ^2.24.0
   firebase_auth: ^4.15.0

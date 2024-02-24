@@ -1,8 +1,10 @@
 
 import 'package:circulito/circulito.dart';
+import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/home/info_box.dart';
 import 'package:djizhub_light/models/goals_model.dart';
+import 'package:djizhub_light/transactions/components/deposit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,8 +26,13 @@ class SingleAccountInList extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
             onTap: ()=> {
-               fetchGoalsController.setCurrentGoal(currentGoal),
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const AccoutDetails()))
+              if(currentGoal.balance == 0 && currentGoal.type == GoalType.PRIVATE.name){
+                Get.to(()=>Deposit(goalId: currentGoal.id!))
+              }else{
+                fetchGoalsController.setCurrentGoal(currentGoal),
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AccoutDetails()))
+              }
+
             },
             child: Container(
             width: MediaQuery.of(context).size.width*0.8,
@@ -78,7 +85,9 @@ class SingleAccountInList extends StatelessWidget {
                                 )
                               ],
                             ),
-                            Text("Échéance : ${currentGoal.dateOfWithdrawal?.day.toString().padLeft(2, '0')}/${currentGoal.dateOfWithdrawal?.month.toString().padLeft(2, '0')}/${currentGoal.dateOfWithdrawal?.year}",style: TextStyle(fontWeight: FontWeight.bold,color: lightGrey)),
+                            currentGoal.type == GoalType.PRIVATE.name ?
+                            Text("Échéance : ${currentGoal.dateOfWithdrawal?.day.toString().padLeft(2, '0')}/${currentGoal.dateOfWithdrawal?.month.toString().padLeft(2, '0')}/${currentGoal.dateOfWithdrawal?.year}",style: TextStyle(fontWeight: FontWeight.bold,color: lightGrey))
+                            :Text("Participants : ${currentGoal.subscribers}",style: TextStyle(fontWeight: FontWeight.bold,color: lightGrey)),
                           ],
                         ),
 
@@ -122,6 +131,17 @@ class SingleAccountInList extends StatelessWidget {
                       ],
                     ),
                   ),
+                  currentGoal.balance == 0 && currentGoal.type == GoalType.PRIVATE.name && currentGoal.status == "WITHDRAWN" ?
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text("Votre compte est actuellement à zéro. Pour le rendre actif et accéder aux détails, effectuez votre premier dépôt dès maintenant.",textAlign: TextAlign.center,style: TextStyle(overflow: TextOverflow.fade),),
+                        TextButton(onPressed: null, child: Text('Effectuer mon premier dépot',style: TextStyle(color: apCol,),))
+                      ],
+                    ),
+                  )  :
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -136,7 +156,7 @@ class SingleAccountInList extends StatelessWidget {
                       ),
           ),
         ),
-          currentGoal.foreign_account! ?
+          currentGoal.foreign_account! && currentGoal.type == GoalType.TONTIN.name ?
           Positioned(
             right: 0,
             top: 5,
@@ -149,7 +169,24 @@ class SingleAccountInList extends StatelessWidget {
                 ),
                 child: const Padding(
                   padding: EdgeInsets.only(left: 10.0,right: 10.0,top: 3.0,bottom: 3.0),
-                  child: Text("invité",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                  child: Text("membre",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                ),
+              ),
+            ),
+          ) : currentGoal.type == GoalType.TONTIN.name && currentGoal.foreign_account == false ?
+          Positioned(
+            right: 0,
+            top: 5,
+            child: RotationTransition(
+              turns: AlwaysStoppedAnimation(25/360),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.blueGrey,
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 10.0,right: 10.0,top: 3.0,bottom: 3.0),
+                  child: Text("admin",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
                 ),
               ),
             ),

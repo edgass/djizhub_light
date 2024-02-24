@@ -127,6 +127,7 @@ class FetchGoalsController extends GetxController{
          'Accept': 'application/json',
          'Authorization': 'Bearer $idToken',
        });
+   print(response.body);
 
    if (response.statusCode == 200) {
      openedGoals.value = [];
@@ -142,6 +143,7 @@ class FetchGoalsController extends GetxController{
      }
      fetchState.value = FetchState.SUCCESS;
      update();
+
    } else {
      fetchState.value = FetchState.ERROR;
      update();

@@ -44,16 +44,21 @@ class Goals {
 class Goal {
   String? id;
   String? code;
+  String? type;
   int? goal;
+  int? limit_guest;
   String? name;
   String? description;
   DateTime? dateOfWithdrawal;
   bool? withdrawable;
+  bool? listable;
   bool? emmergency_withdrawal;
   int? percent_progress;
   bool? constraint;
   bool? foreign_account;
   int? balance;
+  int? min_transaction;
+  int? max_transaction;
   int? subscribers;
   String? status;
   List<Transaction>? transactions;
@@ -63,16 +68,21 @@ class Goal {
   Goal({
     this.id,
     this.code,
+    this.type,
     this.goal,
+    this.limit_guest,
     this.name,
     this.description,
     this.dateOfWithdrawal,
     this.withdrawable,
+    this.listable,
     this.emmergency_withdrawal,
     this.percent_progress,
     this.constraint,
     this.foreign_account,
     this.balance,
+    this.min_transaction,
+    this.max_transaction,
     this.subscribers,
     this.status,
     this.transactions,
@@ -83,16 +93,21 @@ class Goal {
   factory Goal.fromJson(Map<String, dynamic> json) => Goal(
     id: json["id"],
     code: json["code"],
+    type: json["type"],
     goal: json["goal"],
+    limit_guest: json["limit_guest"],
     name: json["name"],
     description: json["description"],
     dateOfWithdrawal: json["date_of_withdrawal"] == null ? null : DateTime.parse(json["date_of_withdrawal"]),
     withdrawable: json["withdrawable"],
+    listable: json["listable"],
     emmergency_withdrawal: json["emmergency_withdrawal"],
     percent_progress: json["percent_progress"],
     constraint: json["constraint"],
     foreign_account: json["foreign_account"],
     balance: json["balance"],
+    min_transaction: json["min_transaction"],
+    max_transaction: json["max_transaction"],
     subscribers: json["subscribers"],
     status: json["status"],
     transactions: json["transactions"] == null ? [] : List<Transaction>.from(json["transactions"]!.map((x) => Transaction.fromJson(x))),
@@ -103,16 +118,21 @@ class Goal {
   Map<String, dynamic> toJson() => {
     "id": id,
     "code": code,
+    "type": type,
     "goal": goal,
+    "limit_guest": limit_guest,
     "name": name,
     "description": description,
     "date_of_withdrawal": dateOfWithdrawal?.toIso8601String(),
     "withdrawable": withdrawable,
+    "listable": listable,
     "emmergency_withdrawal": emmergency_withdrawal,
     "percent_progress": percent_progress,
     "constraint": constraint,
     "foreign_account": foreign_account,
     "balance": balance,
+    "min_transaction": min_transaction,
+    "max_transaction": max_transaction,
     "subscribers": subscribers,
     "status": status,
     "transactions": transactions == null ? [] : List<dynamic>.from(transactions!.map((x) => x.toJson())),
@@ -125,6 +145,7 @@ class Transaction {
   String? id;
   String? type;
   String? name;
+  String? note;
   bool? secret;
   String? transactionOperator;
   int? amount;
@@ -139,6 +160,7 @@ class Transaction {
     this.id,
     this.type,
     this.name,
+    this.note,
     this.secret,
     this.transactionOperator,
     this.amount,
@@ -154,6 +176,7 @@ class Transaction {
     id: json["id"],
     type: json["type"],
     name: json["name"],
+    note: json["note"],
     secret: json["secret"],
     transactionOperator: json["operator"],
     amount: json["amount"],
@@ -169,6 +192,7 @@ class Transaction {
     "id": id,
     "type": type,
     "name": name,
+    "note": note,
     "secret": secret,
     "operator": transactionOperator,
     "amount": amount,

@@ -33,7 +33,7 @@ class SecurityController extends GetxController{
 
   startTimer(){
     canAskPin = false;
-    Future.delayed(const Duration(minutes: 1), () {
+    Future.delayed(const Duration(minutes: 2), () {
       canAskPin = true;
     });
 
@@ -58,8 +58,8 @@ class SecurityController extends GetxController{
   @override
   void onInit() {
      sessionConfig = SessionConfig(
-        invalidateSessionForAppLostFocus: const Duration(seconds:15),
-        invalidateSessionForUserInactivity: const Duration(seconds: 15));
+        invalidateSessionForAppLostFocus: const Duration(seconds:60),
+        invalidateSessionForUserInactivity: const Duration(seconds: 60));
 
 
 
