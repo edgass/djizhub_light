@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../globals.dart';
 import '../../models/goals_model.dart';
+import 'package:intl/intl.dart';
 class AccountParameter extends StatelessWidget {
   Goal goal;
   AccountParameter({super.key,required this.goal});
@@ -16,11 +17,22 @@ class AccountParameter extends StatelessWidget {
   TextEditingController nameController = TextEditingController()..text = fetchGoalsController.currentGoal.value.name!;
   TextEditingController nbrParticipantsController = TextEditingController()..text = fetchGoalsController.currentGoal.value.limit_guest.toString()!;
   TextEditingController objectifController = TextEditingController()..text = fetchGoalsController.currentGoal.value.goal.toString();
-
+  var formatter = NumberFormat("#,###");
 
   @override
   Widget build(BuildContext context) {
     CreateGoalController createGoalController = Get.find<CreateGoalController>();
+    void formatInput() {
+      // Utilise NumberFormat pour formater le nombre avec une virgule
+      NumberFormat formatter = NumberFormat('#,###');
+      String formattedNumber = formatter.format(double.parse(objectifController.text.replaceAll(',', '')));
+
+      // Met à jour le texte dans le TextField avec le nombre formaté
+      objectifController.value = objectifController.value.copyWith(
+        text: formattedNumber,
+        selection: TextSelection.collapsed(offset: formattedNumber.length),
+      );
+    }
     return  Scaffold(
       appBar: AppBar(
         title: Text("Paramétres du coffre"),
@@ -64,6 +76,9 @@ class AccountParameter extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(top: 10.0,bottom: 10),
                     child: TextFormField(
+                      onChanged: (value){
+                        formatInput();
+                      },
                       controller: objectifController,
                       keyboardType: TextInputType.number,
                       decoration: const InputDecoration(

@@ -14,14 +14,16 @@ import 'package:get/get_instance/src/bindings_interface.dart';
 class HomeBinding implements Bindings{
   @override
   void dependencies() {
+
     Get.put<AuthController>(AuthController());
     Get.put<FetchGoalsController>(FetchGoalsController());
+    Get.put<FetchMemberController>(FetchMemberController());
     Get.put<CreateGoalController>(CreateGoalController());
     Get.put<DepositController>(DepositController());
     Get.put<SecurityController>(SecurityController());
     Get.put<JoinGoalController>(JoinGoalController());
     Get.put<SocketController>(SocketController());
-    Get.put<FetchMemberController>(FetchMemberController());
+
 
 
 

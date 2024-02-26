@@ -52,6 +52,7 @@ class SingleMember {
   DateTime? createdAt;
   bool? deleted;
   bool? out;
+  bool? disjoinable;
 
   SingleMember({
     this.id,
@@ -62,6 +63,7 @@ class SingleMember {
     this.createdAt,
     this.deleted,
     this.out,
+    this.disjoinable,
   });
 
   factory SingleMember.fromRawJson(String str) => SingleMember.fromJson(json.decode(str));
@@ -79,6 +81,7 @@ class SingleMember {
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     deleted: json["deleted"],
     out: json["out"],
+    disjoinable: json["disjoinable"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -90,6 +93,7 @@ class SingleMember {
     "created_at": createdAt?.toIso8601String(),
     "deleted": deleted,
     "out": out,
+    "disjoinable": disjoinable,
   };
 }
 /*

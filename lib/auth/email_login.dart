@@ -137,7 +137,6 @@ class _EmailLogInState extends State<EmailLogIn> {
       socketController.disconnectToWebsocket();
       socketController.connectToWebsocket();
     }).catchError((err) {
-      print(err.message);
       showDialog(
           context: context,
           builder: (BuildContext context) {

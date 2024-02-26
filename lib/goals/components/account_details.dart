@@ -13,6 +13,8 @@ import 'package:djizhub_light/transactions/components/deposit.dart';
 import 'package:djizhub_light/transactions/components/accountSetting.dart';
 import 'package:djizhub_light/transactions/components/withdrawal.dart';
 import 'package:djizhub_light/transactions/controllers/fetch_member_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
@@ -21,7 +23,7 @@ import '../../globals.dart';
 import '../../models/goals_model.dart';
 import '../../transactions/components/single_transaction.dart';
 class AccoutDetails extends StatelessWidget {
-  const AccoutDetails({Key? key}) : super(key: key);
+   AccoutDetails({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,9 @@ class AccoutDetails extends StatelessWidget {
     JoinGoalController joinGoalController = Get.find<JoinGoalController>();
     FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
     FetchMemberController fetchMemberController = Get.find<FetchMemberController>();
+
+
+
 
     return Scaffold(
       appBar: AppBar(
@@ -227,7 +232,8 @@ void _onShareAccount(BuildContext context) async {
 }
 
 
-Future<void> _showDeletAccountDialog(BuildContext context) async {
+Future<void> _showDeletAccountDialog(BuildContext context,Goal goal,String userId,) async {
+
   return showDialog<void>(
     context: context,
     barrierDismissible: false, // user must tap button!
@@ -255,7 +261,7 @@ Future<void> _showDeletAccountDialog(BuildContext context) async {
           TextButton(
             child: const Text('Retirer',style: TextStyle(color: Colors.deepOrangeAccent),),
             onPressed: () {
-              joinGoalController.disjoinGoal(context, fetchGoalsController.currentGoal.value.code!);
+              joinGoalController.disjoinGoal(context, goal,userId);
             },
           ),
         ],
@@ -266,6 +272,8 @@ Future<void> _showDeletAccountDialog(BuildContext context) async {
 
 
 void showMoreMenu(BuildContext context) {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  final User? user = auth.currentUser;
   showMenu(
     context: context,
     position: RelativeRect.fromLTRB(300, 80, 0, 0), // Ajuste la position du menu
@@ -289,7 +297,7 @@ void showMoreMenu(BuildContext context) {
       PopupMenuItem(
         child: Text('Quitter le coffre'),
         onTap: () {
-          _showDeletAccountDialog(context);
+          _showDeletAccountDialog(context,fetchGoalsController.currentGoal.value,user?.uid ?? "");
         },
       ),
       // Ajoute autant d'items que nécessaire

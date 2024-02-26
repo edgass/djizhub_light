@@ -120,8 +120,8 @@ class FetchGoalsController extends GetxController{
    String url = "${createGoalController.backendUrl}/goals";
 
 
-   final user = FirebaseAuth.instance.currentUser!;
-   final idToken = await user.getIdToken();
+   final User? user = FirebaseAuth.instance.currentUser;
+   final idToken = await user?.getIdToken();
    fetchState.value = FetchState.LOADING;
     print("from fetch fcm from authController test : ${authController.fcmToken}");
    var response = await http.get(Uri.parse(url),
@@ -129,7 +129,7 @@ class FetchGoalsController extends GetxController{
          'Content-Type': 'application/json',
          'Accept': 'application/json',
          'Authorization': 'Bearer $idToken',
-         'fcmToken':authController.fcmToken ?? "",
+         'fcm-token': authController.fcmToken ?? "",
        });
    print(response.body);
 

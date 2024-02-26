@@ -298,7 +298,10 @@ class _HomeState extends State<Home> {
                 children: [
                   Text("ou  "),
                   InkWell(
-                      onTap: ()=>_showAddForeignAccountDialog(context),
+                      onTap: ()=> {
+                        depositController.setNameToSend(authController.userName ?? FirebaseAuth.instance.currentUser!.displayName ?? ""),
+                        _showAddForeignAccountDialog(context)
+                      },
                       child: Text("Rejoindre un coffre",style: TextStyle(color: lightGrey),)),
                 ],
               ),
@@ -396,10 +399,10 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
                     },
                     controller: codeController,
                     textCapitalization: TextCapitalization.characters,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         hintText: 'Code du compte',
                         helperMaxLines: 3,
-                        helperText: "Demandez au propriétaire du compte de vous fournir le code d'adhésion, puis saisissez-le ici.",
+                        helperText: "Demandez à l'administrateur du coffre de vous fournir le code d'adhésion, puis saisissez-le ici.",
                         counterText: "",
                     ),
                   ),
@@ -417,7 +420,7 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
               ),
               value.joinGoalState == JoinGoalState.LOADING ? CircularProgressIndicator() :
               TextButton(
-                child: const Text('Ajouter'),
+                child: const Text('Rejoindre'),
                 onPressed: () {
                   if (_joinFormKey.currentState!.validate()){
                     FocusScope.of(context).unfocus();

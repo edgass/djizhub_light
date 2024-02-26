@@ -128,6 +128,7 @@ Future <void> initFCMNotifications() async {
     final FCMToken = await _firebaseMessaging.getToken();
     print("FCM TOKEN : $FCMToken");
     storage.write(key: 'fcmToken', value: FCMToken);
+
   //  FirebaseMessaging.onBackgroundMessage(handleBackroundMessage);
   initPushNotification();
 

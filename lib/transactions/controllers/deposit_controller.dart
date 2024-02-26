@@ -93,7 +93,7 @@ class DepositController extends GetxController{
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer $idToken',
-            'fcmToken':authController.fcmToken ?? "",
+            'fcm-token':authController.fcmToken ?? "",
           },
           body: jsonEncode({
             "secret": transaction.secret,
@@ -154,7 +154,7 @@ class DepositController extends GetxController{
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer $idToken',
-            'fcmToken':authController.fcmToken ?? "",
+            'fcm-token':authController.fcmToken ?? "",
           },
           body: jsonEncode({
             "secret": transaction.secret,

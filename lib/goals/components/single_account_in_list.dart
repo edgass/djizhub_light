@@ -26,11 +26,11 @@ class SingleAccountInList extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
             onTap: ()=> {
-              if(currentGoal.balance == 0 && currentGoal.type == GoalType.PRIVATE.name){
+              if(currentGoal.balance == 0 && currentGoal.type == GoalType.PRIVATE.name && currentGoal.status != "WITHDRAWN"){
                 Get.to(()=>Deposit(goalId: currentGoal.id!))
               }else{
                 fetchGoalsController.setCurrentGoal(currentGoal),
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const AccoutDetails()))
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AccoutDetails()))
               }
 
             },
