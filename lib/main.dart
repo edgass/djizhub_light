@@ -1,8 +1,6 @@
-import 'package:djizhub_light/App_home.dart';
 import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/auth/signup.dart';
 import 'package:djizhub_light/globals.dart';
-import 'package:djizhub_light/home/home.dart';
 import 'package:djizhub_light/home/home_check.dart';
 import 'package:djizhub_light/utils/binding.dart';
 import 'package:djizhub_light/utils/dynamic_links.dart';
@@ -12,6 +10,7 @@ import 'package:djizhub_light/utils/security/enter_pin.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -19,6 +18,7 @@ import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:local_session_timeout/local_session_timeout.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -27,6 +27,7 @@ void main() async {
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+
   FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
   NotificationService().initFCMNotifications();
   NotificationService().initNotification();
@@ -37,15 +38,21 @@ void main() async {
   });
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   HomeBinding().dependencies();
-
-
-
-
-
-
   DynamicLinksProvider().initDynamicLink();
+  /*
+  if(!kIsWeb){
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kDebugMode ? false : true);
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+  }
+  */
+
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+
   runApp( MyApp());
 }
+
+
+
 
 class MyApp extends StatelessWidget {
    MyApp({super.key});
@@ -56,7 +63,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return GetMaterialApp(
+        localizationsDelegates: const[
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en'),
+          Locale('fr')
+        ],
     debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -78,8 +95,8 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         // primarySwatch: Colors.blue,
-        primaryColor: Color(0xFF70bccc),
-        appBarTheme: AppBarTheme(
+        primaryColor: const Color(0xFF70bccc),
+        appBarTheme: const AppBarTheme(
          // backgroundColor: lightGrey,
 
         )
@@ -102,7 +119,7 @@ class MyApp extends StatelessWidget {
                     // You can return a loading indicator or something here if needed.
                     securityController.stopListening();
 
-                    return Loading();
+                    return const Loading();
                   } else {
                     print("pin in cache = ${pinSnapshot.data}");
 
@@ -113,8 +130,7 @@ class MyApp extends StatelessWidget {
                     } else {
                       securityController.stopListening();
 
-
-                      return HomeCheck();
+                      return const HomeCheck();
                     }
                   }
                 },

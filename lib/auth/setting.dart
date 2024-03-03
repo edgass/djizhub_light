@@ -360,8 +360,8 @@ void _onShare(BuildContext context) async {
 }
 
 contactClientService() async{
-  var contact = "+221778370953";
-  var url = "https://wa.me/$contact?text=${Uri.parse('Bonjour Djizhub ')}";
+  var contact = "+221786074636";
+  var url = "https://wa.me/$contact?text=${Uri.parse('Bonjour Djizhub, ')}";
 
   try{
     await launchUrl(Uri.parse(url));
@@ -371,7 +371,7 @@ contactClientService() async{
 }
 
 contactCollabo() async{
-  var contact = "+221778370953";
+  var contact = "+221786074636";
   var url = "https://wa.me/$contact?text=${Uri.parse("Bonjour Djizhub je vous contacte à propos d'une collaboration ")}";
 
   try{
@@ -382,7 +382,7 @@ contactCollabo() async{
 }
 
 visitWebsite() async{
-  var url = "https://www.wave.com/fr/";
+  var url = "https://www.djizhub.com";
 
   try{
     await launchUrl(Uri.parse(url));

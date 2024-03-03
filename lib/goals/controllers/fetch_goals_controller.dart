@@ -50,6 +50,7 @@ class FetchGoalsController extends GetxController{
  FetchSingleTransactionState fetchSingleTransactionState = FetchSingleTransactionState.PENDING;
  AuthController authController = Get.find<AuthController>();
  final storage = const FlutterSecureStorage();
+ String backendUrl = appUrl;
 
 
  @override
@@ -158,7 +159,7 @@ class FetchGoalsController extends GetxController{
 
   getSingleGoal(String idGoal) async {
    print("executing get goals ");
-   String url = "${createGoalController.backendUrl}/goals";
+   String url = "$backendUrl/goals";
 
 
    final user = FirebaseAuth.instance.currentUser!;
@@ -189,7 +190,7 @@ class FetchGoalsController extends GetxController{
  }
 
  void getSingleTransaction() async {
-   String url = "${createGoalController.backendUrl}/goals";
+   String url = "$backendUrl/goals";
 
 
    final user = FirebaseAuth.instance.currentUser!;

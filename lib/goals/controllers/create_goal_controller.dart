@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:djizhub_light/goals/components/informations.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/models/Single_goal_model.dart';
 import 'package:djizhub_light/models/goals_model.dart';
@@ -54,10 +53,13 @@ class CreateGoalController extends GetxController{
   GoalType goalType = GoalType.PRIVATE;
   CreateGoalState createGoalState = CreateGoalState.PENDING;
   UpdateGoalState updateGoalState = UpdateGoalState.PENDING;
+  static const Locale french = Locale('fr', 'CH');
 
   FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
 
-  String backendUrl = "https://feasible-vocal-gator.ngrok-free.app";
+  String backendUrl = appUrl;
+
+
 
 
   void createNewGoal(BuildContext context,newGoalModel newGoal) async {
@@ -181,7 +183,11 @@ class CreateGoalController extends GetxController{
         context: context,
         initialDate: selectedDate,
         firstDate: DateTime.now().add(const Duration(days: 7)),
-        lastDate: DateTime(2050));
+        lastDate: DateTime(2050),
+        locale: french
+
+    );
+
     if (picked != null) {
       selectedDate = picked;
 
@@ -195,7 +201,9 @@ class CreateGoalController extends GetxController{
         context: context,
         initialDate: selectedUpdateDate,
         firstDate: selectedUpdateDate,
-        lastDate: DateTime(2050));
+        lastDate: DateTime(2050),
+        locale: french);
+
     if (picked != null) {
       selectedUpdateDate = picked;
 

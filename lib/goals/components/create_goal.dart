@@ -24,7 +24,7 @@ class CreateGoal extends StatelessWidget {
     void formatInput() {
       // Utilise NumberFormat pour formater le nombre avec une virgule
       NumberFormat formatter = NumberFormat('#,###');
-      String formattedNumber = formatter.format(double.parse(objectifController.text.replaceAll(',', '')));
+      String formattedNumber = formatter.format(double.tryParse(objectifController.text.replaceAll(',', '')));
 
       // Met à jour le texte dans le TextField avec le nombre formaté
       objectifController.value = objectifController.value.copyWith(
@@ -34,7 +34,7 @@ class CreateGoal extends StatelessWidget {
     }
     return  Scaffold(
       appBar: AppBar(
-        title: Text("Créer un coffre"),
+        title: const Text("Créer un coffre"),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 20.0,right: 20.0),
@@ -45,7 +45,7 @@ class CreateGoal extends StatelessWidget {
                   TextFormField(
                     maxLength: 12,
                     controller: nameController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Quel nom voudrais-tu donner à ce coffre ?",
                     ),
                     // The validator receives the text that the user has entered.
@@ -63,7 +63,7 @@ class CreateGoal extends StatelessWidget {
                     maxLength: 100,
                     maxLines: 2,
                     controller: descriptionController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
 
                       labelText: "Description",
                     ),
@@ -71,7 +71,7 @@ class CreateGoal extends StatelessWidget {
                  GetBuilder<CreateGoalController>(
 
                    builder: (value)=> Padding(
-                   padding: EdgeInsets.only(top: 10.0,bottom: 10),
+                   padding: const EdgeInsets.only(top: 10.0,bottom: 10),
                    child: TextFormField(
                      onChanged: (value){
                        formatInput();
@@ -80,7 +80,7 @@ class CreateGoal extends StatelessWidget {
                      keyboardType: TextInputType.number,
                      decoration: InputDecoration(
 
-                       suffix: Text("FCFA"),
+                       suffix: const Text("FCFA"),
                        labelText: value.goalType == GoalType.PRIVATE ? "Objectif financier pour ce coffre" : "Montant retrait (Teggi Natt)",
                      ),
                      // The validator receives the text that the user has entered.
@@ -99,7 +99,7 @@ class CreateGoal extends StatelessWidget {
                       builder: (value)=> value.goalType == GoalType.TONTIN ? TextFormField(
                         controller: nbrParticipantsController,
                         keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           helperText: 'Veuillez indiquer le nombre total de participants prévu pour cette tontine.',
                           labelText: "Nombre de participants",
                         ),
@@ -119,11 +119,12 @@ class CreateGoal extends StatelessWidget {
                     onTap: ()=>createGoalController.selectDate(context),
                     child: AbsorbPointer(
                       child:GetBuilder<CreateGoalController>(builder: (value)=> value.goalType == GoalType.PRIVATE ? Padding(
-                          padding: EdgeInsets.only(top: 25.0,bottom: 10),
+                          padding: const EdgeInsets.only(top: 25.0,bottom: 10),
 
                           child: GetBuilder<CreateGoalController>(
                             builder:(value)=>  TextFormField(
-                              controller: TextEditingController(text: "${value.selectedDate.toLocal()}".split(' ')[0]),
+                            //  controller: TextEditingController(text: "${value.selectedDate.toLocal()}".split(' ')[0]),
+                                controller: TextEditingController(text: "${value.selectedDate.day.toString().padLeft(2, '0')} ${DateFormat.MMMM('fr').format(value.selectedDate)} ${value.selectedDate.year}"),
                               decoration: const InputDecoration(
                                 labelText: "ÉCHÉANCE",
                               ),
@@ -132,19 +133,19 @@ class CreateGoal extends StatelessWidget {
                           )
 
 
-                      ) : SizedBox()),
+                      ) : const SizedBox()),
                     ),
                   ),
                 GetBuilder<CreateGoalController>(
                     builder: (value)=>Padding(
-                  padding: EdgeInsets.only(top: 10.0,bottom: 10),
+                  padding: const EdgeInsets.only(top: 10.0,bottom: 10),
                   child: value.goalType == GoalType.PRIVATE ?  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
 
                       CheckboxListTile(
-                        title: Text("Contrainte d'objectif"),
+                        title: const Text("Contrainte d'objectif"),
                          controlAffinity: ListTileControlAffinity.leading,
 
                         value: value.goalConstraint,
@@ -155,17 +156,17 @@ class CreateGoal extends StatelessWidget {
                         }
 
                         ),
-                      Text("Lorsque vous cochez cette case, vous ne pourrez pas retirer vos fonds tant que vous n'aurez pas atteint votre objectif financier, même si la date de retrait est déjà arrivée")
+                      const Text("Lorsque vous cochez cette case, vous ne pourrez pas retirer vos fonds tant que vous n'aurez pas atteint votre objectif financier, même si la date de retrait est déjà arrivée")
                     ],
                     
                   ) : null,
 
                   )),
                   Padding(
-                    padding: EdgeInsets.all(20.0),
+                    padding: const EdgeInsets.all(20.0),
                     child: GetBuilder<CreateGoalController>(
                       builder: (value)=> value.createGoalState == CreateGoalState.LOADING
-                          ? CircularProgressIndicator()
+                          ? const CircularProgressIndicator()
                           : ElevatedButton(
                         style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(apCol)),
                         onPressed: () {
@@ -174,7 +175,7 @@ class CreateGoal extends StatelessWidget {
                             createGoalController.createNewGoal(context, newGoalModel(null,nameController.text, descriptionController.text, double.parse(objectifCleanString), createGoalController.selectedDate.toString(), createGoalController.goalConstraint,createGoalController.goalType,int.tryParse(nbrParticipantsController.text) ?? 0));
                           }
                         },
-                        child: Text('Envoyer',style: TextStyle(color: Colors.white),),
+                        child: const Text('Envoyer',style: TextStyle(color: Colors.white),),
                       ),
                     )
                   )

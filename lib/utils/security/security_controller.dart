@@ -1,10 +1,16 @@
+import 'package:djizhub_light/auth/controller/auth_controller.dart';
+import 'package:djizhub_light/home/home.dart';
 import 'package:djizhub_light/main.dart';
 import 'package:djizhub_light/utils/security/Reenter_pin.dart';
 import 'package:djizhub_light/utils/security/enter_pin.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:local_session_timeout/local_session_timeout.dart';
+import 'package:local_auth_android/local_auth_android.dart';
+import 'package:local_auth_darwin/local_auth_darwin.dart';
 
 class SecurityController extends GetxController{
 
@@ -13,6 +19,8 @@ class SecurityController extends GetxController{
   late SessionConfig sessionConfig;
   final sessionStateStream = StreamController<SessionState>();
   bool canAskPin = true;
+  static final _auth = LocalAuthentication();
+  AuthController authController = Get.find<AuthController>();
 
   startListening() {
     print("start listning");
@@ -105,6 +113,96 @@ class SecurityController extends GetxController{
     // Vous pouvez ajuster la durée de persistance de la page au besoin
 
   }
+
+  //Biometric Local_auth
+
+  static Future<bool> hasBiometrics() async {
+    try {
+      return await _auth.canCheckBiometrics;
+    } on PlatformException catch (e) {
+      return false;
+    }
+  }
+
+  static Future<List<BiometricType>> getBiometrics() async {
+    try {
+      return await _auth.getAvailableBiometrics();
+    } on PlatformException catch (e) {
+      return <BiometricType>[];
+    }
+  }
+
+   Future<bool> authenticateInEnterPin() async {
+    print("Auth launched");
+    final isAvailable = await hasBiometrics();
+    if (!isAvailable) return false;
+
+    try {
+      bool auth =  await _auth.authenticate(
+        localizedReason: 'Scan Fingerprint to Authenticate',
+        /*
+        authMessages: [
+          IOSAuthMessages(
+
+          ),
+          AndroidAuthMessages(
+            cancelButton: 'Entrer le code',
+          )
+        ],
+        */
+        options: const AuthenticationOptions(
+          biometricOnly: true,
+          stickyAuth: true,
+          useErrorDialogs: true
+        ),
+      );
+
+      if(auth) {
+        String? pin = await authController.searchPinInCache();
+        setCurrentPin(pin);
+        startListening();
+        Get.offAll(()=>Home());
+      }
+      return auth;
+
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+
+    }
+  }
+  Future<bool> authenticateInRenterPin() async {
+    print("Auth launched");
+    final isAvailable = await hasBiometrics();
+    if (!isAvailable) return false;
+
+    try {
+      bool auth =  await _auth.authenticate(
+        localizedReason: 'Scan Fingerprint to Authenticate',
+        options: const AuthenticationOptions(
+            biometricOnly: true,
+            stickyAuth: true,
+            useErrorDialogs: true
+        ),
+      );
+
+      if(auth) {
+        startListening();
+        removeOverlay();
+      }
+      return auth;
+
+    } on PlatformException catch (e) {
+      print(e);
+      return false;
+
+    }
+  }
+
+
+
+
+
 
 
 

@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
   class CreatePin extends StatefulWidget {
-   CreatePin({super.key});
+   const CreatePin({super.key});
   static  final createPinformKey = GlobalKey<FormState>();
 
   @override
@@ -19,6 +19,7 @@ class _CreatePinState extends State<CreatePin> {
 
    StreamController<ErrorAnimationType>? errorController;
 
+  @override
   void initState() {
     errorController = StreamController<ErrorAnimationType>();
     super.initState();
@@ -35,17 +36,14 @@ class _CreatePinState extends State<CreatePin> {
   Widget build(BuildContext context) {
     final pinController = TextEditingController();
     final focusNode = FocusNode();
-    const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
-    const fillColor = Color.fromRGBO(243, 246, 249, 0);
-    const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
 
 
 
     return Scaffold(
         appBar: AppBar(
             automaticallyImplyLeading: false,
-        actions: [Padding(
-        padding: const EdgeInsets.only(right: 15.0),
+        actions: const [Padding(
+        padding: EdgeInsets.only(right: 15.0),
     child: Text("Se déconnecter",style: TextStyle(color: Colors.redAccent),),
     )],),
       body:   Form(
@@ -56,12 +54,12 @@ class _CreatePinState extends State<CreatePin> {
             children: [
               SizedBox(
                   width: MediaQuery.of(context).size.width*0.8,
-                  child: Text("Code secret",textAlign: TextAlign.center,style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),)),
-              SizedBox(height: 35,),
+                  child: const Text("Code secret",textAlign: TextAlign.center,style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),)),
+              const SizedBox(height: 35,),
               SizedBox(
                   width: MediaQuery.of(context).size.width*0.8,
-                  child: Text("Creez un code secret pour restreindre l'accés à vos épargnes",textAlign: TextAlign.center,)),
-              SizedBox(height: 35,),
+                  child: const Text("Creez un code secret pour restreindre l'accés à vos épargnes",textAlign: TextAlign.center,)),
+              const SizedBox(height: 35,),
 
               Directionality(
                 textDirection: TextDirection.ltr,
@@ -138,7 +136,7 @@ class _CreatePinState extends State<CreatePin> {
                     Get.to(transition: Transition.rightToLeftWithFade,
 
                             ()=>ConfirmCreatePin());
-                  };
+                  }
 
                 },
                 child: const Text('Suivant'),

@@ -1,8 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.djizhub_light">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
    <application
-        android:label="djizhub_light"
+        android:label="djizhub"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

@@ -15,7 +15,7 @@ class Informations extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final rnd = new Random();
+    final rnd = Random();
 
     return Scaffold(
       appBar: AppBar(
@@ -32,7 +32,7 @@ class Informations extends StatelessWidget {
 
               child: Opacity(
                 opacity: 0.1,
-                child: Container(
+                child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
                   child: Lottie.asset('assets/lottie/faible/faible${1 + rnd.nextInt(10 - 1)}.json',fit: BoxFit.contain),
@@ -44,9 +44,9 @@ class Informations extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(calculerStrategie(),style: TextStyle(fontSize: 17),),
-                SizedBox(height: 25,),
-                ElevatedButton(onPressed: Get.back, child: Text("Ok, c'est partie"))
+                Text(calculerStrategie(),style: const TextStyle(fontSize: 17),),
+                const SizedBox(height: 25,),
+                ElevatedButton(onPressed: Get.back, child: const Text("Ok, c'est partie"))
               ],
             ),
           ),

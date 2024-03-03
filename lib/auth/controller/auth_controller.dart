@@ -2,11 +2,14 @@
 import 'dart:async';
 
 import 'package:djizhub_light/auth/otp.dart';
+import 'package:djizhub_light/globals.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/home/home_check.dart';
+import 'package:djizhub_light/utils/local_notifications.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
@@ -40,6 +43,7 @@ class AuthController extends GetxController{
   String? userName;
   String fcmToken = "";
   Rx<MyconnexionState> myConnexionState = Rx<MyconnexionState>(MyconnexionState.idle);
+  final _firebaseMessaging = FirebaseMessaging.instance;
   late final _connectivitySubscription;
 
 
@@ -59,8 +63,12 @@ class AuthController extends GetxController{
         Future.delayed(const Duration(seconds: 2), () {
           myConnexionState.value = MyconnexionState.idle;
         });
-        FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
-        fetchGoalsController.getGoals();
+
+        if(FirebaseAuth.instance.currentUser != null){
+          FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
+          fetchGoalsController.getGoals();
+        }
+
       }
     });
     storage.read(key: 'name').then((value) => userName = value);
@@ -155,15 +163,17 @@ class AuthController extends GetxController{
           idToken: googleSignInAuthentication.idToken,
           accessToken: googleSignInAuthentication.accessToken,
         );
-
         await FirebaseAuth.instance.signInWithCredential(credential);
-        Get.offAll(()=>HomeCheck());
+        Get.offAll(()=>const HomeCheck());
+        final FCMToken = await _firebaseMessaging.getToken();
+        print("FCM TOKEN : $FCMToken");
+        storage.write(key: 'fcmToken', value: FCMToken);
       }
 
     }catch(e) {
       print("Erreuuuuuur : $e");
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Erreur d'authentification, réessayez svp"),backgroundColor: Colors.redAccent,)
+          const SnackBar(content: Text("Erreur d'authentification, réessayez svp"),backgroundColor: Colors.redAccent,)
       );
     }
 

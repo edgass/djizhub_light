@@ -23,7 +23,7 @@ class SocketController extends GetxController{
     Transaction transaction;
     FirebaseAuth.instance.currentUser?.getIdToken().then((value) =>{
 
-      socket = IO.io("${createGoalController.backendUrl}",
+      socket = IO.io(createGoalController.backendUrl,
           OptionBuilder()
               .setTransports(['websocket']) // for Flutter or Dart VM
               .disableAutoConnect()  // disable auto-connection

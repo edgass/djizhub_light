@@ -2,7 +2,6 @@ import 'package:djizhub_light/goals/components/single_goal_in_list_loading_shimm
 import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 
-import '../../globals.dart';
 class GoalsLoadingShimmer extends StatelessWidget {
   const GoalsLoadingShimmer({super.key});
 
@@ -10,7 +9,7 @@ class GoalsLoadingShimmer extends StatelessWidget {
   Widget build(BuildContext context) {
     return  Column(
         children: [
-          FadeShimmer(
+          const FadeShimmer(
             width: 145,
             height: 35,
             radius: 15,

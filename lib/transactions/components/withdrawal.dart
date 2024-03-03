@@ -1,13 +1,9 @@
-import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:djizhub_light/transactions/components/operator_card.dart';
 import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../globals.dart';
@@ -27,7 +23,7 @@ class Withdrawal extends StatelessWidget {
   void formatInput() {
     // Utilise NumberFormat pour formater le nombre avec une virgule
     NumberFormat formatter = NumberFormat('#,###');
-    String formattedNumber = formatter.format(double.parse(amountTelController.text.replaceAll(',', '')));
+    String formattedNumber = formatter.format(double.tryParse(amountTelController.text.replaceAll(',', '')));
 
     // Met à jour le texte dans le TextField avec le nombre formaté
     amountTelController.value = amountTelController.value.copyWith(
@@ -40,7 +36,7 @@ class Withdrawal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: emergency ? const Text("Retrait d'urgence") : Text("Retrait"),
+        title: emergency ? const Text("Retrait d'urgence") : const Text("Retrait"),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -58,11 +54,11 @@ class Withdrawal extends StatelessWidget {
                       ],
                     ),
                     Padding(
-                      padding: EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: TextFormField(
                         keyboardType: TextInputType.number,
                         controller: numeroTelController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           prefix: Text("+221"),
                           labelText: "Numéro de Téléphone",
                         ),
@@ -79,14 +75,14 @@ class Withdrawal extends StatelessWidget {
                     ),
                     emergency ?
                     Padding(
-                      padding: EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: TextFormField(
                         onChanged: (value){
                           formatInput();
                         },
                         keyboardType: TextInputType.number,
                         controller: amountTelController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: "Montant",
                         ),
                         validator: (value) {
@@ -99,13 +95,30 @@ class Withdrawal extends StatelessWidget {
                     ) : const SizedBox(),
                     emergency ?
                     Padding(
+                      padding: const EdgeInsets.only(left: 10.0,right: 10.0),
+                      child: Text("Lors d'un retrait d'urgence, la limite est de 50 % du compte, soit ${((int.parse(fetchGoalsController.currentGoal.value.balance.toString())~/2) /5).floor() * 5} FCFA maximum, avec une pénalité de 5 % sur le montant retiré.",textAlign: TextAlign.center,style: const TextStyle(color: Colors.redAccent),),
+                    ) : const SizedBox(),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: TextFormField(
+                        maxLength: 100,
+                        maxLines: 2,
+                        controller: noteController,
+                        decoration: const InputDecoration(
+
+                          labelText: "Description",
+                        ),
+                      ),
+                    ),
+                    !emergency ?
+                    const Padding(
                       padding: EdgeInsets.only(top: 20.0,left: 10.0,right: 10.0),
-                      child: Text("Lors d'un retrait d'urgence, la limite est de 50 % du compte, soit ${((int.parse(fetchGoalsController.currentGoal.value.balance.toString())~/2) /5).floor() * 5} FCFA maximum, avec une pénalité de 5 % sur le montant retiré.",textAlign: TextAlign.center,style: TextStyle(color: Colors.redAccent),),
-                    ) : SizedBox(),
+                      child: Text("Les retraits sont soumis à des frais de 2%.",textAlign: TextAlign.center,),
+                    ) : const SizedBox(),
                     emergency ?
                     GetBuilder<DepositController>(
                         builder: (value)=>CheckboxListTile(
-                            title: Text("J'accepte"),
+                            title: const Text("J'accepte"),
                             controlAffinity: ListTileControlAffinity.leading,
                             value: value.acceptEmmergencyTerm,
                             onChanged: (bool? value){
@@ -113,25 +126,13 @@ class Withdrawal extends StatelessWidget {
                                 depositController.setAcceptEmmergencyTerm(value);
                               }
                             }
-        
-                        )) : SizedBox(),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: TextFormField(
-                        maxLength: 100,
-                        maxLines: 2,
-                        controller: noteController,
-                        decoration: InputDecoration(
 
-                          labelText: "Description",
-                        ),
-                      ),
-                    ),
+                        )) : const SizedBox(),
                     GetBuilder<DepositController>(
                         builder: (value)=> Padding(
-                          padding: EdgeInsets.all(20.0),
+                          padding: const EdgeInsets.all(20.0),
                           child: value.makeTransactionState == MakeTransactionState.LOADING
-                              ? CircularProgressIndicator()
+                              ? const CircularProgressIndicator()
                               : ElevatedButton(
                             style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(emergency & !depositController.acceptEmmergencyTerm ? Colors.black12 : lightGrey)),
                          onPressed:emergency ?
@@ -144,11 +145,8 @@ class Withdrawal extends StatelessWidget {
                                              } :
                              () {
                            if(_formKey.currentState!.validate()){
-                             String? finalName = "";
                                if(authController.userName == null){
-                                 finalName = FirebaseAuth.instance.currentUser?.displayName ?? "";
                                }else{
-                                 finalName = authController.userName!;
                                }
 
                              depositController.makeWithdrawal(context, newTransactionModel(
@@ -158,7 +156,7 @@ class Withdrawal extends StatelessWidget {
                          },
                          onLongPress: null,
         
-                            child: Text('Recevoir',style: TextStyle(color: Colors.white),),
+                            child: const Text('Recevoir',style: TextStyle(color: Colors.white),),
                           ),
                         ))
         

@@ -1,13 +1,12 @@
-import 'package:djizhub_light/globals.dart';
 import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 class InfoBoxLoadingShimmer extends StatelessWidget {
-  InfoBoxLoadingShimmer({Key? key}) : super(key: key);
+  InfoBoxLoadingShimmer({super.key});
   var formatter = NumberFormat("#,###");
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width*0.3,
       height: MediaQuery.of(context).size.width*0.3,
       /* decoration: BoxDecoration(
@@ -15,8 +14,8 @@ class InfoBoxLoadingShimmer extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
 
       ), */
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
+      child: const Padding(
+        padding: EdgeInsets.all(8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,

@@ -15,7 +15,7 @@ import 'package:intl/intl.dart';
 
 import '../../globals.dart';
 class Deposit extends StatelessWidget {
-  final _formKey = GlobalKey<FormState>();
+  final _depositFormKey = GlobalKey<FormState>();
   String goalId;
   var formatter = NumberFormat("#,###");
    Deposit({super.key,required this.goalId});
@@ -33,7 +33,7 @@ class Deposit extends StatelessWidget {
   void formatInput() {
     // Utilise NumberFormat pour formater le nombre avec une virgule
     NumberFormat formatter = NumberFormat('#,###');
-    String formattedNumber = formatter.format(double.parse(amountController.text.replaceAll(',', '')));
+    String formattedNumber = formatter.format(double.tryParse(amountController.text.replaceAll(',', '')));
 
     // Met à jour le texte dans le TextField avec le nombre formaté
     amountController.value = amountController.value.copyWith(
@@ -53,7 +53,7 @@ class Deposit extends StatelessWidget {
         padding: const EdgeInsets.all(25.0),
         child:  SingleChildScrollView(
           child: Form(
-            key: _formKey,
+            key: _depositFormKey,
             child: Column(
               children: [
                   Row(
@@ -65,11 +65,11 @@ class Deposit extends StatelessWidget {
                   ),
                 GetBuilder<DepositController>(
                     builder: (value)=> value.operator == Operator.OM  || value.operator == Operator.WAVE ? Padding(
-                      padding: EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: TextFormField(
                         keyboardType: TextInputType.number,
                         controller: numeroTelController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           prefix: Text("+221"),
                           labelText: "Numéro de Téléphone",
                         ),
@@ -85,7 +85,7 @@ class Deposit extends StatelessWidget {
                           return null;
                         },
                       ),
-                    ) : SizedBox(),),
+                    ) : const SizedBox(),),
                 Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: TextFormField(
@@ -94,7 +94,7 @@ class Deposit extends StatelessWidget {
                     },
                     keyboardType: TextInputType.number,
                     controller: amountController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Montant",
                     ),
                     // The validator receives the text that the user has entered.
@@ -118,11 +118,11 @@ class Deposit extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Padding(
-                            padding: EdgeInsets.all(20.0),
+                            padding: const EdgeInsets.all(20.0),
                             child: TextFormField(
                               keyboardType: TextInputType.number,
                               controller: otpController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 labelText: "Code de paiement",
                               ),
                               // The validator receives the text that the user has entered.
@@ -144,7 +144,7 @@ class Deposit extends StatelessWidget {
                           child: Icon(Icons.paste,color: lightGrey,),
                         )
                       ],
-                    ) : SizedBox(),
+                    ) : const SizedBox(),
                   ),),
                 GetBuilder<DepositController>(
 
@@ -154,7 +154,7 @@ class Deposit extends StatelessWidget {
                       child: RichText(
                           text: TextSpan(
                               children: <TextSpan>[
-                                TextSpan(
+                                const TextSpan(
                                     style: TextStyle(color: Colors.black54),
                                     text: "Pour obtenir un code de paiement, composez sur votre téléphone le #144#391# et suivez les instructions ou cliquez tout simplement"),
                                 TextSpan(
@@ -169,7 +169,7 @@ class Deposit extends StatelessWidget {
                               ]
                           )
                       ),
-                    ): SizedBox(),),
+                    ): const SizedBox(),),
                 //Depot anonyme actuellement supprimé
                 /*
                 GetBuilder<JoinGoalController>(
@@ -189,14 +189,14 @@ class Deposit extends StatelessWidget {
                  */
                 GetBuilder<DepositController>(
                     builder: (value)=> Padding(
-                      padding: EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: value.makeTransactionState == MakeTransactionState.LOADING
-                          ? CircularProgressIndicator()
+                          ? const CircularProgressIndicator()
                           : ElevatedButton(
                         style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(apCol)),
                         onPressed: () {
                           print("221${numeroTelController.text}");
-                          if(_formKey.currentState!.validate()){
+                          if(_depositFormKey.currentState!.validate()){
                             FocusScope.of(context).unfocus();
                             String amountCleanString = amountController.text.replaceAll(',', '');
                             String? finalName = "";
@@ -213,7 +213,7 @@ class Deposit extends StatelessWidget {
                           }
 
                         },
-                        child: Text('Envoyer',style: TextStyle(color: Colors.white),),
+                        child: const Text('Envoyer',style: TextStyle(color: Colors.white),),
                       ),
                     ))
 

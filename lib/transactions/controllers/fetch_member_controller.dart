@@ -13,7 +13,7 @@ import 'package:observe_internet_connectivity/observe_internet_connectivity.dart
 
 import '../../models/member_list_model.dart';
 
-enum FetchState {
+enum FetchMemberState {
   PENDING,LOADING,ERROR,SUCCESS
 
 }
@@ -32,7 +32,7 @@ class FetchMemberController extends GetxController{
   RxList<SingleMember> members = <SingleMember>[].obs;
   MemberListModel memberList = MemberListModel();
   double goalPercentage = 0;
-  Rx<FetchState> fetchState = FetchState.PENDING.obs;
+  Rx<FetchMemberState> fetchState = FetchMemberState.PENDING.obs;
   FetchSingleTransactionState fetchSingleTransactionState = FetchSingleTransactionState.PENDING;
   final storage = const FlutterSecureStorage();
 
@@ -58,22 +58,28 @@ class FetchMemberController extends GetxController{
 
     final user = FirebaseAuth.instance.currentUser!;
     final idToken = await user.getIdToken();
-    fetchState.value = FetchState.LOADING;
+    fetchState.value = FetchMemberState.LOADING;
 
     var response = await http.get(Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Authorization': 'Bearer $idToken',
-        });
+        }).timeout(
+      const Duration(seconds: 5),
+      onTimeout: () {
+        // Time has run out, do what you wanted to do.
+        return http.Response('Error', 408); // Request Timeout response status code
+      },
+    );
     if (response.statusCode == 200) {
 
       memberList= memberListModelFromJson(response.body);
       members.value = memberList.data ?? [];
-      fetchState.value = FetchState.SUCCESS;
+      fetchState.value = FetchMemberState.SUCCESS;
       update();
     } else {
-      fetchState.value = FetchState.ERROR;
+      fetchState.value = FetchMemberState.ERROR;
       update();
     }
 

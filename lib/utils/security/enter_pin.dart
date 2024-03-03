@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/home/home.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -27,6 +26,25 @@ class _EnterPinState extends State<EnterPin> {
   final shakeKey = GlobalKey<ShakeWidgetState>();
 
   @override
+  void initState() {
+  //  errorController = StreamController<ErrorAnimationType>();
+    super.initState();
+    _startAuthBio();
+
+  }
+
+  _startAuthBio()async{
+    await securityController.authenticateInEnterPin();
+  }
+
+  @override
+  void dispose() {
+  //  errorController!.close();
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     SecurityController securityController = Get.find<SecurityController>();
     final pinController = TextEditingController();
@@ -36,18 +54,7 @@ class _EnterPinState extends State<EnterPin> {
 
     bool hasError = false;
 
-    @override
-    void initState() {
-      errorController = StreamController<ErrorAnimationType>();
-      super.initState();
-    }
 
-    @override
-    void dispose() {
-      errorController!.close();
-
-      super.dispose();
-    }
 
 
 
@@ -79,7 +86,7 @@ class _EnterPinState extends State<EnterPin> {
                       });
                     }
 
-                  }, child: Text("Se déconnecter",textAlign: TextAlign.start,)),
+                  }, child: const Text("Se déconnecter",textAlign: TextAlign.start,)),
                 ],
               ),
               Expanded(
@@ -89,12 +96,12 @@ class _EnterPinState extends State<EnterPin> {
                     children: [
                       SizedBox(
                           width: MediaQuery.of(context).size.width*0.8,
-                          child: Text("Vérification",textAlign: TextAlign.center,style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),)),
-                      SizedBox(height: 35,),
+                          child: const Text("Vérification",textAlign: TextAlign.center,style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),)),
+                      const SizedBox(height: 35,),
                       SizedBox(
                           width: MediaQuery.of(context).size.width*0.8,
-                          child: Text("Entrez votre code secret",textAlign: TextAlign.center,)),
-                      SizedBox(height: 35,),
+                          child: const Text("Entrez votre code secret",textAlign: TextAlign.center,)),
+                      const SizedBox(height: 35,),
                 
                       Directionality(
                         textDirection: TextDirection.ltr,
@@ -106,7 +113,7 @@ class _EnterPinState extends State<EnterPin> {
                             // 5. configure the animation parameters
                             shakeCount: 3,
                             shakeOffset: 10,
-                            shakeDuration: Duration(milliseconds: 500),
+                            shakeDuration: const Duration(milliseconds: 500),
                             child: PinCodeTextField(
                               appContext: context,
                               autoDismissKeyboard: false,
@@ -154,7 +161,7 @@ class _EnterPinState extends State<EnterPin> {
                                 )
                               ],
                               onCompleted: (v) {
-                                if(this.widget.rightPin == v){
+                                if(widget.rightPin == v){
                                   securityController.setCurrentPin(v);
                                   securityController.startListening();
                                   Get.offAll(()=>Home());

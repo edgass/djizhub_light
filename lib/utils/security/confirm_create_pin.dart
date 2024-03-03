@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:djizhub_light/home/home.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 import '../../auth/controller/auth_controller.dart';
@@ -19,16 +18,13 @@ import '../../globals.dart';
     final pinController = TextEditingController();
     final focusNode = FocusNode();
 
-    const focusedBorderColor = Color.fromRGBO(23, 171, 144, 1);
-    const fillColor = Color.fromRGBO(243, 246, 249, 0);
-    const borderColor = Color.fromRGBO(23, 171, 144, 0.4);
 
 
 
     return Scaffold(
       appBar: AppBar(
-        actions: [Padding(
-          padding: const EdgeInsets.only(right: 15.0),
+        actions: const [Padding(
+          padding: EdgeInsets.only(right: 15.0),
           child: Text("Se déconnecter",style: TextStyle(color: Colors.redAccent),),
         )],
       ),
@@ -42,12 +38,12 @@ import '../../globals.dart';
             children: [
               SizedBox(
                   width: MediaQuery.of(context).size.width*0.8,
-                  child: Text("Retaper Code",textAlign: TextAlign.center,style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),)),
-              SizedBox(height: 35,),
+                  child: const Text("Retaper Code",textAlign: TextAlign.center,style: TextStyle(fontSize: 35,fontWeight: FontWeight.bold),)),
+              const SizedBox(height: 35,),
               SizedBox(
                   width: MediaQuery.of(context).size.width*0.8,
-                  child: Text("Retapez votre code secret",textAlign: TextAlign.center,)),
-              SizedBox(height: 35,),
+                  child: const Text("Retapez votre code secret",textAlign: TextAlign.center,)),
+              const SizedBox(height: 35,),
               Directionality(
                 // Specify direction if desired
                 textDirection: TextDirection.ltr,
@@ -134,8 +130,13 @@ import '../../globals.dart';
                     }
                     securityController.startListening();
                   }
-
-
+                  /*
+                  user?.sendEmailVerification().then((value){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Un email de vérification a été envoyé au ${user?.email}",),backgroundColor: Colors.green,)
+                    );
+                  });
+                  */
                 },
                 child: const Text('Valider'),
               ),

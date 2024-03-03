@@ -56,7 +56,7 @@ class TransactionList extends StatelessWidget {
           Text("A rejoint le ${member.createdAt?.day.toString().padLeft(2, '0')}/${member.createdAt?.month.toString().padLeft(2, '0')}/${member.createdAt?.year}",overflow: TextOverflow.ellipsis,),
           Expanded(
             child: member.transactions!.isEmpty
-                ? Center(
+                ? const Center(
               child: Text(
                 "Ce participant n'a pas encore effectué de transaction",
               ),

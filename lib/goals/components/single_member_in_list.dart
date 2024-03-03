@@ -9,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/goals_model.dart';
-import 'account_details.dart';
 class SingleMemberInList extends StatelessWidget {
   FetchMemberController fetchMemberController = Get.find<FetchMemberController>();
   JoinGoalController joinGoalController = Get.find<JoinGoalController>();
@@ -21,13 +20,13 @@ class SingleMemberInList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: member.name == "Moi" ? const Color(0XFFc4e5e9) : Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.15),
             spreadRadius: 1,
             blurRadius: 4,
-            offset: Offset(0, 2), // changes position of shadow
+            offset: const Offset(0, 2), // changes position of shadow
           ),
         ],
       ),
@@ -40,7 +39,7 @@ class SingleMemberInList extends StatelessWidget {
                 onTap: ()=>{
                   if(member.transactions!.isEmpty){
                     ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Aucune transaction éffectuée pour le moment"),backgroundColor: Colors.grey,)
+                        const SnackBar(content: Text("Aucune transaction éffectuée pour le moment"),backgroundColor: Colors.grey,)
                     )
                   }else{
                     Get.to(()=>TransactionList(member))
@@ -60,10 +59,10 @@ class SingleMemberInList extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(member.name ?? "",overflow: TextOverflow.ellipsis,),
-                            SizedBox(height: 10,),
+                            const SizedBox(height: 10,),
                             member.out ?? false ?
-                            Text("Inactif",style: TextStyle(color: Colors.red)) :
-                            Text("Actif",style: TextStyle(color: Colors.green),)
+                            const Text("Inactif",style: TextStyle(color: Colors.red)) :
+                            const Text("Actif",style: TextStyle(color: Colors.green),)
                           ],
                         ),
                       ),
@@ -76,12 +75,12 @@ class SingleMemberInList extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               mainAxisSize: MainAxisSize.max,
                               children: [
-                                Text("${member.count} transaction(s)",style: TextStyle(fontWeight: FontWeight.bold),),
-                                SizedBox(height: 10,),
+                                Text("${member.count} transaction(s)",style: const TextStyle(fontWeight: FontWeight.bold),),
+                                const SizedBox(height: 10,),
                                 Row(
                                   children: [
                                     Text("${formatter.format(member.total)} Fcfa",style: TextStyle(color: apCol),),
-                                    Text(" au total"),
+                                    const Text(" au total"),
                                   ],
                                 ),
                               ],
@@ -97,7 +96,7 @@ class SingleMemberInList extends StatelessWidget {
                                     decoration: BoxDecoration(color: Colors.black12,borderRadius: BorderRadius.circular(50)),
                                     width: 20,
                                     height: 20,
-                                    child: Icon(Icons.arrow_forward_ios,size: 12,color: Colors.white,),
+                                    child: const Icon(Icons.arrow_forward_ios,size: 12,color: Colors.white,),
                                   ),
                                 ),
                               ],
@@ -111,16 +110,16 @@ class SingleMemberInList extends StatelessWidget {
                 ),
               ),
               member.disjoinable ?? false ?
-              Padding(
-                padding: const EdgeInsets.only(top: 10.0,bottom: 10.0),
+              const Padding(
+                padding: EdgeInsets.only(top: 10.0,bottom: 10.0),
                 child: Divider(height: 0.01,),
               ) : const SizedBox(),
               member.disjoinable ?? false ?
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Icon(Icons.remove_circle_outline),
-                  SizedBox(width: 5,),
+                  const Icon(Icons.remove_circle_outline),
+                  const SizedBox(width: 5,),
                   GestureDetector(
                       onTap: ()async{
                         await _showDeletAccountDialogByAdmin(context,fetchGoalsController.currentGoal.value,member.id ?? "",member.name ?? "");

@@ -17,21 +17,21 @@ class SingleTransactionDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xfffafafa),
+        backgroundColor: const Color(0xfffafafa),
         elevation: 0,
         iconTheme: IconThemeData(
           color: lightGrey, //change your color here
         ),
-        title: Text(""),
+        title: const Text(""),
       ),
       body: GetBuilder<FetchGoalsController>(
           builder: (value)=> value.fetchSingleTransactionState == FetchSingleTransactionState.LOADING || value.fetchSingleTransactionState == FetchSingleTransactionState.PENDING ?
-          Center(child: CircularProgressIndicator()) :
+          const Center(child: CircularProgressIndicator()) :
           Padding(
             padding: const EdgeInsets.all(25.0),
             child: ListView(
               children: [
-                Text("${formatter.format(value.currentTransaction.amount)} FCFA", style: TextStyle(fontWeight: FontWeight.w500,fontSize: 30),),
+                Text("${formatter.format(value.currentTransaction.amount)} FCFA", style: const TextStyle(fontWeight: FontWeight.w500,fontSize: 30),),
                 Container(
 
                   decoration: BoxDecoration(
@@ -45,89 +45,89 @@ class SingleTransactionDetails extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Type",),
+                            const Text("Type",),
                             Text(value.currentTransaction.type ?? ""),
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        const SizedBox(height: 35,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Montant",),
+                            const Text("Montant",),
                             Text("${formatter.format(value.currentTransaction.amount)} FCFA"),
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        const SizedBox(height: 35,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Frais",),
+                            const Text("Frais",),
                             Text("${formatter.format(value.currentTransaction.fee)} FCFA"),
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        const SizedBox(height: 35,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Reférence",),
+                            const Text("Reférence",),
                             Flexible(child: SizedBox( child: Text(value.currentTransaction.id ?? "",maxLines: 2,))),
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        const SizedBox(height: 35,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Statut",),
+                            const Text("Statut",),
                             Text(value.currentTransaction.status ?? ""),
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        const SizedBox(height: 35,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Date",),
+                            const Text("Date",),
                             Text("${value.currentTransaction.createdAt?.day.toString().padLeft(2, '0')}/${value.currentTransaction.createdAt?.month.toString().padLeft(2, '0')}/${value.currentTransaction.createdAt?.year} à ${value.currentTransaction.createdAt?.hour.toString().padLeft(2, '0')}H ${value.currentTransaction.createdAt?.minute.toString().padLeft(2, '0')}"),
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        const SizedBox(height: 35,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Émetteur",),
+                            const Text("Émetteur",),
                               Text(value.currentTransaction.name ?? "Djizhub User"),
 
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        const SizedBox(height: 35,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("téléphone",),
+                            const Text("téléphone",),
                             Text(value.currentTransaction.phone_number.toString()),
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        const SizedBox(height: 35,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Opérateur",),
+                            const Text("Opérateur",),
                             Text(value.currentTransaction.transactionOperator ?? ""),
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        const SizedBox(height: 35,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text("Id transaction",),
+                            const Text("Id transaction",),
                             value.currentTransaction.partner_id == null ? const Text("") :
                             Text(value.currentTransaction.partner_id.toString()),
                           ],
                         ),
-                        SizedBox(height: 35,),
+                        const SizedBox(height: 35,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text("Note : ",),
+                            const Text("Note : ",),
                             Text(value.currentTransaction.note ?? "",),
                           ],
                         ),

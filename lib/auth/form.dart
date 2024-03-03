@@ -1,21 +1,24 @@
 import 'package:djizhub_light/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
   final _phoneController = TextEditingController();
   final _codeController = TextEditingController();
 
-  Future<bool> loginUser(String phone, BuildContext context) async{
-    FirebaseAuth _auth = FirebaseAuth.instance;
+  LoginScreen({super.key});
 
-    _auth.verifyPhoneNumber(
+  Future<bool> loginUser(String phone, BuildContext context) async{
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    auth.verifyPhoneNumber(
         phoneNumber: phone,
-        timeout: Duration(seconds: 60),
+        timeout: const Duration(seconds: 60),
         verificationCompleted: (AuthCredential credential) async{
           Navigator.of(context).pop();
 
-          UserCredential result = await _auth.signInWithCredential(credential);
+          UserCredential result = await auth.signInWithCredential(credential);
 
            User? user = result.user;
 
@@ -24,13 +27,17 @@ class LoginScreen extends StatelessWidget {
                 builder: (context) => Home()
             ));
           }else{
-            print("Error");
+            if (kDebugMode) {
+              print("Error");
+            }
           }
 
           //This callback would gets called when verification is done auto maticlly
         },
         verificationFailed: (FirebaseAuthException exception){
-          print(exception);
+          if (kDebugMode) {
+            print(exception);
+          }
         },
         codeSent: (String verificationId, int? forceResendingToken){
           showDialog(
@@ -38,7 +45,7 @@ class LoginScreen extends StatelessWidget {
               barrierDismissible: false,
               builder: (context) {
                 return AlertDialog(
-                  title: Text("Give the code?"),
+                  title: const Text("Give the code?"),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
@@ -49,14 +56,14 @@ class LoginScreen extends StatelessWidget {
                   ),
                   actions: <Widget>[
                     ElevatedButton(
-                      child: Text("Confirm"),
+                      child: const Text("Confirm"),
                     //  textColor: Colors.white,
                     //  color: Colors.blue,
                       onPressed: () async{
                         final code = _codeController.text.trim();
                         AuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: code);
 
-                        UserCredential result = await _auth.signInWithCredential(credential);
+                        UserCredential result = await auth.signInWithCredential(credential);
 
                         User? user = result.user;
 
@@ -65,7 +72,9 @@ class LoginScreen extends StatelessWidget {
                               builder: (context) => Home()
                           ));
                         }else{
-                          print("Error");
+                          if (kDebugMode) {
+                            print("Error");
+                          }
                         }
                       },
                     )
@@ -76,7 +85,9 @@ class LoginScreen extends StatelessWidget {
         },
       codeAutoRetrievalTimeout: (String verificationId) {
         // Fais quelque chose lorsque le timeout se produit, si nécessaire
-        print("Timeout occurred. Verification ID: $verificationId");
+        if (kDebugMode) {
+          print("Timeout occurred. Verification ID: $verificationId");
+        }
       },
 
 
@@ -89,23 +100,23 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
         body: SingleChildScrollView(
           child: Container(
-            padding: EdgeInsets.all(32),
+            padding: const EdgeInsets.all(32),
             child: Form(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text("Login", style: TextStyle(color: Colors.lightBlue, fontSize: 36, fontWeight: FontWeight.w500),),
+                  const Text("Login", style: TextStyle(color: Colors.lightBlue, fontSize: 36, fontWeight: FontWeight.w500),),
 
-                  SizedBox(height: 16,),
+                  const SizedBox(height: 16,),
 
                   TextFormField(
                     decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             borderSide: BorderSide(color: Colors.grey)
                         ),
-                        focusedBorder: OutlineInputBorder(
+                        focusedBorder: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(8)),
                             borderSide: BorderSide(color: Colors.grey)
                         ),
@@ -117,13 +128,13 @@ class LoginScreen extends StatelessWidget {
                     controller: _phoneController,
                   ),
 
-                  SizedBox(height: 16,),
+                  const SizedBox(height: 16,),
 
 
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      child: Text("LOGIN"),
+                      child: const Text("LOGIN"),
                    //   textColor: Colors.white,
                    //   padding: EdgeInsets.all(16),
                       onPressed: () {

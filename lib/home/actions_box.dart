@@ -1,4 +1,3 @@
-import 'package:djizhub_light/globals.dart';
 import 'package:flutter/material.dart';
 class ActionBox extends StatelessWidget {
   String title;
@@ -7,7 +6,7 @@ class ActionBox extends StatelessWidget {
   IconData icon;
   final VoidCallback function;
 
-  ActionBox({Key? key,required this.title,required this.backColor,required this.iconColor,required this.icon,required this.function}) : super(key: key);
+  ActionBox({super.key,required this.title,required this.backColor,required this.iconColor,required this.icon,required this.function});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +26,8 @@ class ActionBox extends StatelessWidget {
               child: Icon(icon,color: iconColor,)
             ),
           ),
-          SizedBox(height: 5,),
-          Center(child: Text(title,style: TextStyle(fontWeight: FontWeight.bold),))
+          const SizedBox(height: 5,),
+          Center(child: Text(title,style: const TextStyle(fontWeight: FontWeight.bold),))
         ],
       ),
     );

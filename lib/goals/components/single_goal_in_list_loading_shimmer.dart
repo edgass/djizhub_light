@@ -1,16 +1,12 @@
 
 import 'package:circulito/circulito.dart';
 import 'package:djizhub_light/goals/components/info_box_loading_shimmer.dart';
-import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
-import 'package:djizhub_light/home/info_box.dart';
-import 'package:djizhub_light/models/goals_model.dart';
 import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-import '../../globals.dart';
-import 'account_details.dart';
 class SingleGoalInListLoadingShimmer extends StatelessWidget {
+  const SingleGoalInListLoadingShimmer({super.key});
+
 
 
   @override
@@ -43,7 +39,7 @@ class SingleGoalInListLoadingShimmer extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
+                    const Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FadeShimmer( radius: 10,  highlightColor: Color(0xffF9F9FB),
@@ -56,7 +52,7 @@ class SingleGoalInListLoadingShimmer extends StatelessWidget {
                     ),
 
 
-                    Container(
+                    SizedBox(
                       width: 50,
                       height: 50,
                       /*
@@ -86,7 +82,7 @@ class SingleGoalInListLoadingShimmer extends StatelessWidget {
 
                             value: (100/100),
                             //   decoration: CirculitoDecoration.fromColor(fetchGoalsController.getColorFromValue(currentGoal.percent_progress!.toInt() ?? 0)),
-                            decoration: CirculitoDecoration.fromColor(Color(0xffF9F9FB)),
+                            decoration: const CirculitoDecoration.fromColor(Color(0xffF9F9FB)),
                           )
                         ],
                       ),

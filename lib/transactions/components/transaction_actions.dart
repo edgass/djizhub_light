@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../globals.dart';
 class TransactionsActions extends StatelessWidget {
-  const TransactionsActions({Key? key}) : super(key: key);
+  const TransactionsActions({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +15,8 @@ class TransactionsActions extends StatelessWidget {
             //Heder Question
             SizedBox(
               width: MediaQuery.of(context).size.width*0.7,
-                child: Text("Que voulez vous faire ?",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),)),
-            SizedBox(height: 50,),
+                child: const Text("Que voulez vous faire ?",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),)),
+            const SizedBox(height: 50,),
             //List des actions
             Column(
               children: [
@@ -34,15 +34,15 @@ class TransactionsActions extends StatelessWidget {
                                color: Colors.blueAccent,
                                borderRadius: BorderRadius.circular(10)
                            ),
-                           child: Icon(Icons.arrow_downward),
+                           child: const Icon(Icons.arrow_downward),
                          ),
-                         Padding(
-                           padding: const EdgeInsets.only(left: 15.0),
+                         const Padding(
+                           padding: EdgeInsets.only(left: 15.0),
                            child: Text("Depot",style: TextStyle(fontSize:25),),
                          ),
                        ],
                      ),
-                      Icon(Icons.arrow_forward_ios_sharp,)
+                      const Icon(Icons.arrow_forward_ios_sharp,)
                     ],
                   ),
                 ),
@@ -60,15 +60,15 @@ class TransactionsActions extends StatelessWidget {
                                 color: Colors.blue,
                                 borderRadius: BorderRadius.circular(10)
                             ),
-                            child: Icon(Icons.arrow_upward),
+                            child: const Icon(Icons.arrow_upward),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 15.0),
                             child: Text("Retrait",style: TextStyle(fontSize:25),),
                           ),
                         ],
                       ),
-                      Icon(Icons.arrow_forward_ios_sharp,)
+                      const Icon(Icons.arrow_forward_ios_sharp,)
                     ],
                   ),
                 ),
@@ -86,15 +86,15 @@ class TransactionsActions extends StatelessWidget {
                                 color: Colors.blueGrey,
                                 borderRadius: BorderRadius.circular(10)
                             ),
-                            child: Icon(Icons.settings),
+                            child: const Icon(Icons.settings),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15.0),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 15.0),
                             child: Text("Reglage",style: TextStyle(fontSize:25,),),
                           ),
                         ],
                       ),
-                      Icon(Icons.arrow_forward_ios_sharp,)
+                      const Icon(Icons.arrow_forward_ios_sharp,)
 
                     ],
                   ),
@@ -109,7 +109,7 @@ class TransactionsActions extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
                     Container(
@@ -117,8 +117,8 @@ class TransactionsActions extends StatelessWidget {
                      color: apCol,
                      borderRadius: BorderRadius.circular(20)
                    ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
+                      child: const Padding(
+                        padding: EdgeInsets.all(15.0),
                         child: Row(
                           children: [
                             Text("Fermer"),

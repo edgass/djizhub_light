@@ -13,13 +13,13 @@ class HomeCheck extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthController authController = Get.find<AuthController>();
 
-    final storage = const FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     return StreamBuilder<String?>(
         stream: authController.fetchUserPin(FirebaseAuth.instance.currentUser?.uid ?? ""),
         builder: (context,snapshot){
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Pendant le chargement
-            return Loading();
+            return const Loading();
           } else if (snapshot.hasError) {
             // En cas d'erreur
             return CreatePin();

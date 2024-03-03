@@ -101,7 +101,13 @@ class DepositController extends GetxController{
             "operator": transaction.operator,
             "amount": transaction.amount,
             "otp": transaction.otp,
-          }));
+          })).timeout(
+         const Duration(seconds: 5),
+         onTimeout: () {
+           // Time has run out, do what you wanted to do.
+           return http.Response('Error', 408); // Request Timeout response status code
+         },
+       );
   print(response.statusCode);
       if (response.statusCode == 200) {
         makeTransactionState = MakeTransactionState.SUCCESS;
@@ -163,7 +169,13 @@ class DepositController extends GetxController{
             "emergency":transaction.emergency,
             "amount":transaction.amount,
             "note":transaction.note
-          }));
+          })).timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          // Time has run out, do what you wanted to do.
+          return http.Response('Error', 408); // Request Timeout response status code
+        },
+      );;
       print(response.statusCode);
       if (response.statusCode == 200) {
 

@@ -1,5 +1,4 @@
 
-import 'dart:ffi';
 
 import 'package:djizhub_light/goals/components/informations.dart';
 import 'package:djizhub_light/goals/components/member_list.dart';
@@ -14,7 +13,6 @@ import 'package:djizhub_light/transactions/components/accountSetting.dart';
 import 'package:djizhub_light/transactions/components/withdrawal.dart';
 import 'package:djizhub_light/transactions/controllers/fetch_member_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:share_plus/share_plus.dart';
@@ -23,12 +21,12 @@ import '../../globals.dart';
 import '../../models/goals_model.dart';
 import '../../transactions/components/single_transaction.dart';
 class AccoutDetails extends StatelessWidget {
-   AccoutDetails({Key? key}) : super(key: key);
+   const AccoutDetails({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     CreateGoalController createGoalController = Get.find<CreateGoalController>();
-    JoinGoalController joinGoalController = Get.find<JoinGoalController>();
+    Get.find<JoinGoalController>();
     FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
     FetchMemberController fetchMemberController = Get.find<FetchMemberController>();
 
@@ -37,10 +35,10 @@ class AccoutDetails extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(""),
+        title: const Text(""),
         actions: [
           IconButton(
-            icon: Icon(Icons.more_vert),
+            icon: const Icon(Icons.more_vert),
             onPressed: () {
               showMoreMenu(context);
             },
@@ -59,7 +57,7 @@ class AccoutDetails extends StatelessWidget {
        */
       body: Obx(
         ()=>fetchGoalsController.fetchSingleGoalState.value == FetchSingleGoalState.LOADING || fetchGoalsController.fetchSingleGoalState.value == FetchSingleGoalState.PENDING ?
-        Center(
+        const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -92,23 +90,23 @@ class AccoutDetails extends StatelessWidget {
                 ],
               ),
             ),*/
-            SizedBox(height: 12,),
+            const SizedBox(height: 12,),
             Column(
               children: [
-                Text(fetchGoalsController.currentGoal?.value.name?.toUpperCase() ?? "",textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 25),),
-                SizedBox(height: 10,),
+                Text(fetchGoalsController.currentGoal.value.name?.toUpperCase() ?? "",textAlign: TextAlign.center,style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 25),),
+                const SizedBox(height: 10,),
                 fetchGoalsController.currentGoal.value.type == GoalType.PRIVATE.name ?
-                Text("Échéance : ${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.day.toString().padLeft(2, '0')}/${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.month.toString().padLeft(2, '0')}/${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.year}",textAlign: TextAlign.center,style: TextStyle(),)
+                Text("Échéance : ${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.day.toString().padLeft(2, '0')}/${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.month.toString().padLeft(2, '0')}/${fetchGoalsController.currentGoal.value.dateOfWithdrawal?.year}",textAlign: TextAlign.center,style: const TextStyle(),)
                 :Text("Nombre de participants : ${fetchGoalsController.currentGoal.value.subscribers}"),
-                SizedBox(height: 20,),
+                const SizedBox(height: 20,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    InfoBox(title: "Solde",price: double.parse(fetchGoalsController.currentGoal.value.balance.toString()) ?? 0.0,designShadow: true,),
-                    InfoBox(title: "Objectif",price: double.parse(fetchGoalsController.currentGoal.value.goal.toString()) ?? 0.0,designShadow: true,),
+                    InfoBox(title: "Solde",price: double.parse(fetchGoalsController.currentGoal.value.balance.toString()),designShadow: true,),
+                    InfoBox(title: "Objectif",price: double.parse(fetchGoalsController.currentGoal.value.goal.toString()),designShadow: true,),
                   ],
                 ),
-                SizedBox(height: 15,),
+                const SizedBox(height: 15,),
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0,right: 15.0),
                   child: AbsorbPointer(
@@ -118,10 +116,10 @@ class AccoutDetails extends StatelessWidget {
                       children: [
                         Opacity(
                             opacity:fetchGoalsController.currentGoal.value.status == "OPENED" ? 1 : 0.4,
-                            child: ActionBox(title: "Dépot",backColor:  const Color(0xFFD5EDD0),iconColor:Color(0xFF38761D),icon: Icons.input,function: fetchGoalsController.currentGoal.value.status == "OPENED" || !fetchGoalsController.currentGoal.value.foreign_account! ? ()=>Get.to(()=>Deposit(goalId: fetchGoalsController.currentGoal.value.id ?? "",)): (){},)),
+                            child: ActionBox(title: "Dépot",backColor:  const Color(0xFFD5EDD0),iconColor:const Color(0xFF38761D),icon: Icons.input,function: fetchGoalsController.currentGoal.value.status == "OPENED" || !fetchGoalsController.currentGoal.value.foreign_account! ? ()=>Get.to(()=>Deposit(goalId: fetchGoalsController.currentGoal.value.id ?? "",)): (){},)),
                         Opacity(
                             opacity: fetchGoalsController.currentGoal.value.withdrawable == true && fetchGoalsController.currentGoal.value.foreign_account! == false ? 1 : 0.4,
-                            child: ActionBox(title: "Retrait",backColor: Color(0xFFFFE4BD),iconColor:Color(0xFFFF9900),icon: Icons.output,function:fetchGoalsController.currentGoal.value.withdrawable == true && fetchGoalsController.currentGoal.value.foreign_account == false ? ()=>{
+                            child: ActionBox(title: "Retrait",backColor: const Color(0xFFFFE4BD),iconColor:const Color(0xFFFF9900),icon: Icons.output,function:fetchGoalsController.currentGoal.value.withdrawable == true && fetchGoalsController.currentGoal.value.foreign_account == false ? ()=>{
                               Get.to(()=>Withdrawal(goalId: fetchGoalsController.currentGoal.value.id ?? "",emergency: false,)),
                               if(securityController.canAskPin){
                                 securityController.startTimer(),
@@ -130,13 +128,13 @@ class AccoutDetails extends StatelessWidget {
 
                             }: (){},)),
                       fetchGoalsController.currentGoal.value.listable ?? true ?
-                      ActionBox(title: "Membres",backColor: Color(0xFFdfe3ee),iconColor:Color(0xFF8b9dc3),icon: Icons.list_alt_outlined,function:()=>{
+                      ActionBox(title: "Membres",backColor: const Color(0xFFdfe3ee),iconColor:const Color(0xFF8b9dc3),icon: Icons.list_alt_outlined,function:()=>{
                             fetchMemberController.fetchMembersFromApi(fetchGoalsController.currentGoal.value.id ?? ''),
                             Get.to(()=>MemberList())
                       },) :
                       Opacity(
                           opacity: (fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true) && fetchGoalsController.currentGoal.value.foreign_account! == false ? 1 : 0.4,
-                          child:  ActionBox(title: "Urgence",backColor: Color(0xFFFFCCCC),iconColor:Color(0xFFFF4C4C),icon: Icons.emergency,function:(fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true) && fetchGoalsController.currentGoal.value.foreign_account! == false ? ()=>{
+                          child:  ActionBox(title: "Urgence",backColor: const Color(0xFFFFCCCC),iconColor:const Color(0xFFFF4C4C),icon: Icons.emergency,function:(fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.emmergency_withdrawal == true) && fetchGoalsController.currentGoal.value.foreign_account! == false ? ()=>{
                             Get.to(()=>Withdrawal(goalId: fetchGoalsController.currentGoal.value.id ?? "",emergency: true,)),
                             if(securityController.canAskPin){
                               securityController.startTimer(),
@@ -145,7 +143,7 @@ class AccoutDetails extends StatelessWidget {
                           }: (){},)),
                         Opacity(
                             opacity: fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.foreign_account! == false ? 1 : 0.4,
-                            child: ActionBox(title: "Réglages",backColor: Color(0xFFE9CAFF),iconColor: Color(0xFF9900FF),icon: Icons.settings,function:fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.foreign_account! == false ?  ()=>{
+                            child: ActionBox(title: "Réglages",backColor: const Color(0xFFE9CAFF),iconColor: const Color(0xFF9900FF),icon: Icons.settings,function:fetchGoalsController.currentGoal.value.status == "OPENED" && fetchGoalsController.currentGoal.value.foreign_account! == false ?  ()=>{
                               createGoalController.setUpdateGoalConstraint(fetchGoalsController.currentGoal.value.constraint ?? true),
                               createGoalController.setInitialUpdateDate(fetchGoalsController.currentGoal.value.dateOfWithdrawal ?? DateTime.now()),
                               createGoalController.goalConstraintOfUpdate = fetchGoalsController.currentGoal.value.constraint ?? true,
@@ -161,12 +159,12 @@ class AccoutDetails extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: 20,),
+            const SizedBox(height: 20,),
             Expanded(
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(topLeft: Radius.circular(15),topRight: Radius.circular(15)),
+                    borderRadius: const BorderRadius.only(topLeft: Radius.circular(15),topRight: Radius.circular(15)),
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
@@ -183,10 +181,10 @@ class AccoutDetails extends StatelessWidget {
                     child: Column(
                       children: [
                         Text("Transactions",textAlign: TextAlign.center,style: TextStyle(fontSize:20,color: apCol,fontWeight: FontWeight.bold),),
-                        SizedBox(height: 15,),
+                        const SizedBox(height: 15,),
 
                         fetchGoalsController.currentGoal.value.transactions!.isEmpty ?
-                            Center(child: Text("Aucune Transaction pour le moment, veuillez effectuer un dépot pour économiser.",textAlign: TextAlign.center,)) :
+                            const Center(child: Text("Aucune Transaction pour le moment, veuillez effectuer un dépot pour économiser.",textAlign: TextAlign.center,)) :
                        Expanded(
                          child: ListView.separated(
                            itemCount: fetchGoalsController.currentGoal.value.transactions!.length,
@@ -221,7 +219,7 @@ void _onShareAccount(BuildContext context) async {
 
   final box = context.findRenderObject() as RenderBox?;
 
-  shareResult = await Share.shareWithResult("Pour rejoindre le coffre, veuillez entrer le code suivant : ${fetchGoalsController.currentGoal.value.code} ou cliquez tout simplement sur le lien suivant : https://djizhub.com/",
+  shareResult = await Share.shareWithResult("Pour rejoindre le coffre, veuillez entrer le code suivant : ${fetchGoalsController.currentGoal.value.code}. Cliquez sur https://djizhub.page.link/app pour ouvrir l'application. ",
       subject: "Invitation à rejoindre le coffre ${fetchGoalsController.currentGoal.value.name}! 💰🔄",
       sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
 
@@ -276,11 +274,11 @@ void showMoreMenu(BuildContext context) {
   final User? user = auth.currentUser;
   showMenu(
     context: context,
-    position: RelativeRect.fromLTRB(300, 80, 0, 0), // Ajuste la position du menu
+    position: const RelativeRect.fromLTRB(300, 80, 0, 0), // Ajuste la position du menu
     items: [
       if(fetchGoalsController.currentGoal.value.type == GoalType.PRIVATE.name)
       PopupMenuItem(
-        child: Text('Recommandations'),
+        child: const Text('Recommandations'),
         onTap: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) =>  Informations()));
@@ -288,14 +286,14 @@ void showMoreMenu(BuildContext context) {
       ),
       if(fetchGoalsController.currentGoal.value.type == GoalType.TONTIN.name)
       PopupMenuItem(
-        child: Text('Partager le coffre'),
+        child: const Text('Partager le coffre'),
         onTap: () {
           _onShareAccount(context);
         },
       ),
       if(fetchGoalsController.currentGoal.value.foreign_account!)
       PopupMenuItem(
-        child: Text('Quitter le coffre'),
+        child: const Text('Quitter le coffre'),
         onTap: () {
           _showDeletAccountDialog(context,fetchGoalsController.currentGoal.value,user?.uid ?? "");
         },

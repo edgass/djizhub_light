@@ -1,34 +1,27 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/auth/setting.dart';
 import 'package:djizhub_light/goals/components/choose_create_goal_type.dart';
-import 'package:djizhub_light/goals/components/create_goal.dart';
 import 'package:djizhub_light/goals/controllers/create_goal_controller.dart';
 import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/goals/controllers/joinGoalController.dart';
 import 'package:djizhub_light/home/socket_controller.dart';
 import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
 
-import 'package:djizhub_light/utils/local_notifications.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:local_session_timeout/local_session_timeout.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:socket_io_client/socket_io_client.dart';
 import 'package:intl/intl.dart';
 
 
 import '../globals.dart';
 import '../goals/components/account_list.dart';
-import '../models/goals_model.dart';
 class Home extends StatefulWidget {
 
    Home({Key? key}) : super(key: key);
@@ -53,12 +46,13 @@ final _joinFormKey = GlobalKey<FormState>();
 
 TextEditingController codeController = TextEditingController();
 TextEditingController numeroTelController = TextEditingController();
+    final User? user = FirebaseAuth.instance.currentUser;
 
 
 
 
 class _HomeState extends State<Home> {
-  late TextEditingController _textController = TextEditingController();
+  late final TextEditingController _textController = TextEditingController();
   Timer? _timer;
   var formatter = NumberFormat("#,###");
   final RefreshController _refreshController = RefreshController(initialRefresh: false,initialRefreshStatus: RefreshStatus.idle);
@@ -89,7 +83,7 @@ class _HomeState extends State<Home> {
           title: const Text("Entrez l'url"),
           content: TextField(
             controller: _textController,
-            decoration: InputDecoration(hintText: 'back url'),
+            decoration: const InputDecoration(hintText: 'back url'),
           ),
           actions: <Widget>[
             TextButton(
@@ -97,7 +91,7 @@ class _HomeState extends State<Home> {
                 createGoalController.setNewUrl(_textController.text);
                 Navigator.of(context).pop();
               },
-              child: Text('Valider'),
+              child: const Text('Valider'),
             ),
           ],
         );
@@ -119,6 +113,8 @@ class _HomeState extends State<Home> {
 
   }
 
+
+
   Future<void> initDynamicLinks() async {
 
     print("Try to start dynamique link listener");
@@ -139,7 +135,6 @@ class _HomeState extends State<Home> {
   }
 
   void handleDynamicLink(PendingDynamicLinkData data) {
-    print("hjwhhjbsbkjbesbe");
     final Uri? deepLink = data.link;
 
     if (deepLink != null) {
@@ -182,7 +177,7 @@ class _HomeState extends State<Home> {
                  color: apCol,
                  borderRadius: BorderRadius.circular(15)
              ),
-             child: Icon(Icons.settings,color: Colors.white,),
+             child: const Icon(Icons.settings,color: Colors.white,),
            ),
          ),
        )
@@ -197,7 +192,7 @@ class _HomeState extends State<Home> {
         automaticallyImplyLeading: false,
 
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(10),
+          preferredSize: const Size.fromHeight(10),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(23)
@@ -239,16 +234,17 @@ class _HomeState extends State<Home> {
                        height: 23,
                        width: MediaQuery.of(context).size.width,
                        color: Colors.grey.shade100,
-                       child: Text("Vérifiez votre Connexion",style: TextStyle(color: Colors.black87),textAlign: TextAlign.center),
+                       child: const Text("Vérifiez votre Connexion",style: TextStyle(color: Colors.black87),textAlign: TextAlign.center),
                      ) : authController.myConnexionState.value == MyconnexionState.backToInternet ?
                  Container(
                    height: 23,
                    width: MediaQuery.of(context).size.width,
                    color: Colors.green,
-                   child: Text("De retour sur internet",style: TextStyle(color: Colors.white),textAlign: TextAlign.center,),
+                   child: const Text("De retour sur internet",style: TextStyle(color: Colors.white),textAlign: TextAlign.center,),
                  ) : const SizedBox()
                  ),
-               )
+               ),
+
               ],
             ),
           ),
@@ -274,7 +270,7 @@ class _HomeState extends State<Home> {
                     style: ButtonStyle(
                         backgroundColor: MaterialStateColor.resolveWith((states) => lightGrey)
                     ),
-                    onPressed:()=>Get.to(()=>ChooseCreateGoalType()),
+                    onPressed:()=>Get.to(()=>const ChooseCreateGoalType()),
                    // onPressed:()=>Get.to(()=>CreateGoal()),
                     child:  Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -284,19 +280,20 @@ class _HomeState extends State<Home> {
                             color: Colors.black45,
                             borderRadius: BorderRadius.circular(4)
                           ),
-                            child: Icon(Icons.add,color: Colors.white,size: 18,)),
-                        SizedBox(width: 5,),
-                        Text('Nouveau coffre',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                            child: const Icon(Icons.add,color: Colors.white,size: 18,)),
+                        const SizedBox(width: 5,),
+                        const Text('Nouveau coffre',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
                       ],
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 13,),
+            //  TextButton(onPressed: ()=>throw Exception(), child: const Text('Crasher')),
+              const SizedBox(height: 13,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("ou  "),
+                  const Text("ou  "),
                   InkWell(
                       onTap: ()=> {
                         depositController.setNameToSend(authController.userName ?? FirebaseAuth.instance.currentUser!.displayName ?? ""),
@@ -306,10 +303,37 @@ class _HomeState extends State<Home> {
                 ],
               ),
 
-              SizedBox(height: 20,),
+              const SizedBox(height: 20,),
 
               AccountList(),
+              /*
+              user?.emailVerified == false ?
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    Text("Confirmez le lien reçu par email à ${user?.email ?? ""} afin d'éviter des limitations. S'il n'est pas arrivé dans votre boîte mail, cliquez ",style:TextStyle(color: Colors.red),textAlign: TextAlign.center,),
+                    InkWell(
+                        onTap: ()async{
+                          try{
+                            await user?.sendEmailVerification();
+                          }catch(err){
+                            print(err);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("Email de confirmation non envoyé, reessayez svp"))
+                            );
+                          }
+                        },
+                        child: Text("ici",style: TextStyle(color: apCol,decorationStyle: TextDecorationStyle.dotted,fontWeight: FontWeight.bold),textAlign: TextAlign.center)),
+                    Text(" pour le réenvoyer",style:TextStyle(color: Colors.red),textAlign: TextAlign.center),
+                  ],
+                ),
+              ) : SizedBox()
+              */
             ],
+
           ),
         ),
       ),
@@ -340,14 +364,14 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
             content: SingleChildScrollView(
               child: ListBody(
                 children: <Widget>[
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   TextFormField(
 
                     initialValue: authController.userName ?? FirebaseAuth.instance.currentUser?.displayName,
                     onChanged: (value){
                       depositController.setNameToSend(value);
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Prénom et nom",
                     ),
                     // The validator receives the text that the user has entered.
@@ -368,7 +392,7 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
                   TextFormField(
                     keyboardType: TextInputType.number,
                     controller: numeroTelController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefix: Text("+221"),
                       labelText: "Numéro de Téléphone",
                     ),
@@ -382,10 +406,10 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
                       return null;
                     },
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                 //  Text("Veuillez entrer le code du coffre."),
                //   Text("C'est un code à 4 caractéres.",style: TextStyle(fontSize: 15,fontStyle: FontStyle.italic),),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   TextFormField(
                     inputFormatters: [UpperCaseTextFormatter()],
                     maxLength: 4,
@@ -400,7 +424,7 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
                     controller: codeController,
                     textCapitalization: TextCapitalization.characters,
                     decoration: const InputDecoration(
-                        hintText: 'Code du compte',
+                        hintText: "Code du Coffre",
                         helperMaxLines: 3,
                         helperText: "Demandez à l'administrateur du coffre de vous fournir le code d'adhésion, puis saisissez-le ici.",
                         counterText: "",
@@ -411,14 +435,14 @@ Future<void> _showAddForeignAccountDialog(BuildContext context) async {
               ),
             ),
             actions: <Widget>[
-              value.joinGoalState == JoinGoalState.LOADING ? SizedBox() :
+              value.joinGoalState == JoinGoalState.LOADING ? const SizedBox() :
               TextButton(
                 child: const Text('Annuler',style: TextStyle(color: Colors.deepOrangeAccent),),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),
-              value.joinGoalState == JoinGoalState.LOADING ? CircularProgressIndicator() :
+              value.joinGoalState == JoinGoalState.LOADING ? const CircularProgressIndicator() :
               TextButton(
                 child: const Text('Rejoindre'),
                 onPressed: () {

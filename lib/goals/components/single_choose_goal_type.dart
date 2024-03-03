@@ -24,21 +24,20 @@ class SingleChooseGoalType extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
+            SizedBox(
               width: MediaQuery.of(context).size.width*0.3,
 
               child: Lottie.asset(lootieFileName,fit: BoxFit.contain),
             ),
-            Container(
-              width: MediaQuery.of(context).size.width*0.4,
+            SizedBox(
+              width: MediaQuery.of(context).size.width*0.6,
 
               child:  Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
-                  Text(contentText
-                  ),
+                  Text(title,style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
+                  Text(contentText),
                 ],
               ),
             )

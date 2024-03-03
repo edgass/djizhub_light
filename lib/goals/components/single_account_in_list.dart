@@ -12,7 +12,7 @@ import '../../globals.dart';
 import 'account_details.dart';
 class SingleAccountInList extends StatelessWidget {
   Goal currentGoal;
-   SingleAccountInList({Key? key,required this.currentGoal}) : super(key: key);
+   SingleAccountInList({super.key,required this.currentGoal});
    FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
 
   @override
@@ -27,10 +27,11 @@ class SingleAccountInList extends StatelessWidget {
           child: GestureDetector(
             onTap: ()=> {
               if(currentGoal.balance == 0 && currentGoal.type == GoalType.PRIVATE.name && currentGoal.status != "WITHDRAWN"){
+                fetchGoalsController.setCurrentGoal(currentGoal),
                 Get.to(()=>Deposit(goalId: currentGoal.id!))
               }else{
                 fetchGoalsController.setCurrentGoal(currentGoal),
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AccoutDetails()))
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AccoutDetails()))
               }
 
             },
@@ -76,11 +77,11 @@ class SingleAccountInList extends StatelessWidget {
                           children: [
                             Row(
                               children: [
-                                Text(currentGoal.name?.toUpperCase() ?? "",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 17,color: Colors.black54),),
+                                Text(currentGoal.name?.toUpperCase() ?? "",style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 17,color: Colors.black54),),
                                 currentGoal.withdrawable == true || currentGoal.status == "WITHDRAWN"  ?
-                                 SizedBox() :
+                                 const SizedBox() :
                                  Padding(
-                                  padding:  EdgeInsets.only(left: 8.0),
+                                  padding:  const EdgeInsets.only(left: 8.0),
                                   child: Icon(Icons.lock_rounded,size: 16,color: lightGrey,),
                                 )
                               ],
@@ -92,7 +93,7 @@ class SingleAccountInList extends StatelessWidget {
                         ),
 
 
-                        Container(
+                        SizedBox(
                           width: 50,
                           height: 50,
                           /*
@@ -108,7 +109,6 @@ class SingleAccountInList extends StatelessWidget {
                             background: CirculitoBackground(
                               decoration: const CirculitoDecoration.fromColor(Colors.black12),
                             ) ,
-                            child: Text("${currentGoal.percent_progress}%"),
 
                             animation: CirculitoAnimation(
                               duration: 600,
@@ -125,6 +125,7 @@ class SingleAccountInList extends StatelessWidget {
                                 decoration: CirculitoDecoration.fromColor(fetchGoalsController.getColorFromValue(currentGoal.percent_progress ?? 0)),
                               )
                             ],
+                            child: Text("${currentGoal.percent_progress}%"),
                           ),
 
                         )
@@ -145,8 +146,8 @@ class SingleAccountInList extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      InfoBox(title: "Solde",price: double.parse(currentGoal.balance.toString()) ?? 0.0,designShadow: false,),
-                      InfoBox(title: "Objectif",price: double.parse(currentGoal.goal.toString()) ?? 0.0,designShadow: false,),
+                      InfoBox(title: "Solde",price: double.parse(currentGoal.balance.toString()),designShadow: false,),
+                      InfoBox(title: "Objectif",price: double.parse(currentGoal.goal.toString()),designShadow: false,),
                     ],
                   ),
 
@@ -161,7 +162,7 @@ class SingleAccountInList extends StatelessWidget {
             right: 0,
             top: 5,
             child: RotationTransition(
-              turns: AlwaysStoppedAnimation(25/360),
+              turns: const AlwaysStoppedAnimation(25/360),
               child: Container(
                 decoration: BoxDecoration(
                     color: lightGrey,
@@ -178,7 +179,7 @@ class SingleAccountInList extends StatelessWidget {
             right: 0,
             top: 5,
             child: RotationTransition(
-              turns: AlwaysStoppedAnimation(25/360),
+              turns: const AlwaysStoppedAnimation(25/360),
               child: Container(
                 decoration: BoxDecoration(
                     color: Colors.blueGrey,

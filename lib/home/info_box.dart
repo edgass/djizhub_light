@@ -5,11 +5,11 @@ class InfoBox extends StatelessWidget {
   String title;
   double price;
   bool designShadow;
-   InfoBox({Key? key,required this.title,required this.price,required this.designShadow}) : super(key: key);
+   InfoBox({super.key,required this.title,required this.price,required this.designShadow});
     var formatter = NumberFormat("#,###");
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: MediaQuery.of(context).size.width*0.3,
       height: MediaQuery.of(context).size.width*0.3,
      /* decoration: BoxDecoration(
@@ -23,9 +23,9 @@ class InfoBox extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(child: Text(title,style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: apCol),)),
-            Container(child: Text("${formatter.format(price)}\nFCFA",textAlign:TextAlign.center,style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.black))),
-            SizedBox(height: 1,)
+            Text(title,style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold,color: apCol),),
+            Text("${formatter.format(price)}\nFCFA",textAlign:TextAlign.center,style: const TextStyle(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.black)),
+            const SizedBox(height: 1,)
           ],
         ),
       ),

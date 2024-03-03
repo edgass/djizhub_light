@@ -32,7 +32,7 @@ class JoinGoalController extends GetxController{
   FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
 
 
-  String backendUrl = "https://feasible-vocal-gator.ngrok-free.app";
+  String backendUrl = appUrl;
 
 
   void joinGoal(BuildContext context,String goalCode,String nameToSend,String numeroTel) async {

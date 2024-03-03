@@ -15,7 +15,14 @@ class OperatorCard extends StatelessWidget {
 
         builder: (value)=>InkWell(
           onTap: (){
-            depositController.setOperator(operator);
+            if(operator == Operator.OM){
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Les dépôts via Orange Money seront bientôt disponibles. Merci pour votre patience."),backgroundColor: Colors.orange,duration: Duration(seconds: 5),)
+              );
+            }else{
+              depositController.setOperator(operator);
+            }
+
           },
           child: Container(
             padding: const EdgeInsets.all(4.0),
@@ -31,13 +38,13 @@ class OperatorCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                      image: new ExactAssetImage(assetPath),
+                      image: ExactAssetImage(assetPath),
                       fit: BoxFit.scaleDown,
                     ),
                   ),
-                  child: Text(""),
+                  child: const Text(""),
                 ),
-                SizedBox(height: 5,),
+                const SizedBox(height: 5,),
                 Text(name)
               ],
             ),

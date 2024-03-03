@@ -15,7 +15,7 @@ class AccountParameter extends StatelessWidget {
 
   TextEditingController descriptionController = TextEditingController()..text = fetchGoalsController.currentGoal.value.description ?? "";
   TextEditingController nameController = TextEditingController()..text = fetchGoalsController.currentGoal.value.name!;
-  TextEditingController nbrParticipantsController = TextEditingController()..text = fetchGoalsController.currentGoal.value.limit_guest.toString()!;
+  TextEditingController nbrParticipantsController = TextEditingController()..text = fetchGoalsController.currentGoal.value.limit_guest.toString();
   TextEditingController objectifController = TextEditingController()..text = fetchGoalsController.currentGoal.value.goal.toString();
   var formatter = NumberFormat("#,###");
 
@@ -35,7 +35,7 @@ class AccountParameter extends StatelessWidget {
     }
     return  Scaffold(
       appBar: AppBar(
-        title: Text("Paramétres du coffre"),
+        title: const Text("Paramétres du coffre"),
       ),
       body: Padding(
         padding: const EdgeInsets.only(left: 20.0,right: 20.0),
@@ -43,14 +43,14 @@ class AccountParameter extends StatelessWidget {
             key: _formKey,
             child: SingleChildScrollView(
                 child: Column(children: <Widget>[
-                  SizedBox(height: 20,),
-                  Text("Identifiant : ${fetchGoalsController.currentGoal.value.code}",style: TextStyle(fontWeight: FontWeight.bold),),
-                  Text("N'échangez ce code qu'avec ceux avec qui vous souhaitez partager les informations du coffre. Cependant, les personnes à qui vous le partagez ne pourront faire que des dépôts, pas de retraits.",textAlign:TextAlign.center, style: TextStyle(fontSize: 10),),
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
+                  Text("Identifiant : ${fetchGoalsController.currentGoal.value.code}",style: const TextStyle(fontWeight: FontWeight.bold),),
+                  const Text("N'échangez ce code qu'avec ceux avec qui vous souhaitez partager les informations du coffre. Cependant, les personnes à qui vous le partagez ne pourront faire que des dépôts, pas de retraits.",textAlign:TextAlign.center, style: TextStyle(fontSize: 10),),
+                  const SizedBox(height: 20,),
                   TextFormField(
                     maxLength: 12,
                     controller: nameController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Nom",
                     ),
                     // The validator receives the text that the user has entered.
@@ -68,13 +68,13 @@ class AccountParameter extends StatelessWidget {
                     maxLength: 100,
                     maxLines: 2,
                     controller: descriptionController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
 
                       labelText: "Description",
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(top: 10.0,bottom: 10),
+                    padding: const EdgeInsets.only(top: 10.0,bottom: 10),
                     child: TextFormField(
                       onChanged: (value){
                         formatInput();
@@ -102,7 +102,7 @@ class AccountParameter extends StatelessWidget {
                     builder: (value)=> value.currentGoal.value.type == GoalType.TONTIN.name ? TextFormField(
                       controller: nbrParticipantsController,
                       keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         helperText: 'Veuillez indiquer le nombre total de participants prévu pour cette tontine.',
                         labelText: "Nombre de participants",
                       ),
@@ -125,11 +125,11 @@ class AccountParameter extends StatelessWidget {
                       child:
 
                       Padding(
-                          padding: EdgeInsets.only(top: 25.0,bottom: 10),
+                          padding: const EdgeInsets.only(top: 25.0,bottom: 10),
 
                           child: GetBuilder<CreateGoalController>(
                             builder:(value)=>  TextFormField(
-                              controller: TextEditingController(text: "${value.selectedUpdateDate.toLocal()}".split(' ')[0]),
+                              controller: TextEditingController(text: "${value.selectedUpdateDate.day.toString().padLeft(2, '0')} ${DateFormat.MMMM('fr').format(value.selectedUpdateDate)} ${value.selectedUpdateDate.year}"),
                               decoration: const InputDecoration(
                                 labelText: "ÉCHÉANCE",
                               ),
@@ -143,7 +143,7 @@ class AccountParameter extends StatelessWidget {
                   ) : const SizedBox(),
                   fetchGoalsController.currentGoal.value.type == GoalType.PRIVATE.name ?
                   Padding(
-                    padding: EdgeInsets.only(top: 10.0,bottom: 10),
+                    padding: const EdgeInsets.only(top: 10.0,bottom: 10),
                     child:  Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -161,18 +161,18 @@ class AccountParameter extends StatelessWidget {
 
                             )),
                         fetchGoalsController.currentGoal.value.constraint ?? true ?
-                        Text("Vous avez déjà validé la contrainte d'objectif. Vous récupérerez vos fonds dès que l'échéance sera atteinte et que vous aurez accompli votre objectif financier.") :
-                        Text("Lorsque vous cochez cette case, vous ne pourrez pas retirer vos fonds tant que vous n'aurez pas atteint votre objectif financier, même si la date de retrait est déjà arrivée")
+                        const Text("Vous avez déjà validé la contrainte d'objectif. Vous récupérerez vos fonds dès que l'échéance sera atteinte et que vous aurez accompli votre objectif financier.") :
+                        const Text("Lorsque vous cochez cette case, vous ne pourrez pas retirer vos fonds tant que vous n'aurez pas atteint votre objectif financier, même si la date de retrait est déjà arrivée")
                       ],
 
                     ),
 
-                  ) : SizedBox(),
+                  ) : const SizedBox(),
                   Padding(
-                      padding: EdgeInsets.all(20.0),
+                      padding: const EdgeInsets.all(20.0),
                       child: GetBuilder<CreateGoalController>(
                         builder: (value)=> value.updateGoalState == UpdateGoalState.LOADING
-                            ? CircularProgressIndicator()
+                            ? const CircularProgressIndicator()
                             : ElevatedButton(
                           style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(apCol)),
                           onPressed: () {
@@ -180,7 +180,7 @@ class AccountParameter extends StatelessWidget {
                               createGoalController.updateGoal(context, newGoalModel(fetchGoalsController.currentGoal.value.id,nameController.text, descriptionController.text, double.parse(objectifController.text), createGoalController.selectedUpdateDate.toString(), createGoalController.goalConstraintOfUpdate,null,int.parse(nbrParticipantsController.text)));
                             }
                           },
-                          child: Text('Modifier',style: TextStyle(color: Colors.white),),
+                          child: const Text('Modifier',style: TextStyle(color: Colors.white),),
                         ),
                       )
                   )

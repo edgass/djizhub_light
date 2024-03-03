@@ -8,7 +8,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 
-import '../auth/controller/auth_controller.dart';
 
 class NotificationService {
 
@@ -99,7 +98,9 @@ class NotificationService {
             _androidChannel.id,
             _androidChannel.name,
             channelDescription : _androidChannel.description,
-            icon: '@drawable/ic_launcher'
+            icon: '@drawable/splash_logo',
+            styleInformation: BigTextStyleInformation(
+                notification.body ?? '', htmlFormatBigText: false, contentTitle: notification.title, htmlFormatContentTitle: false),
           )
         ),
         payload: jsonEncode(message.toMap()),
