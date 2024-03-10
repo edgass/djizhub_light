@@ -38,15 +38,15 @@ class SettingPage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(FirebaseAuth.instance.currentUser?.email ?? "",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-                  SizedBox(height: 15,),
+                  Text(FirebaseAuth.instance.currentUser?.email ?? "",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                  const SizedBox(height: 15,),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Général",style: TextStyle(fontSize: 16,color: Colors.black38),),
+                        const Text("Général",style: TextStyle(fontSize: 16,color: Colors.black38),),
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Container(
@@ -69,13 +69,13 @@ class SettingPage extends StatelessWidget {
                                 children: [
                                   InkWell(
                                     onTap: ()async=> _onShare(context),
-                                    child: Row(children: [
+                                    child: const Row(children: [
                                       Icon(Icons.share,size: 25,),
                                       SizedBox(width: 10,),
                                       Text("Inviter un ami à partager",style: TextStyle(fontSize: 16,color: Colors.black87),)
                                     ],),
                                   ),
-                                  SizedBox(height: 15,),
+                                  const SizedBox(height: 15,),
                                 ],
                               ),
                             ),
@@ -90,7 +90,7 @@ class SettingPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Support",style: TextStyle(fontSize: 16,color: Colors.black38),),
+                        const Text("Support",style: TextStyle(fontSize: 16,color: Colors.black38),),
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0),
                           child: Container(
@@ -98,12 +98,12 @@ class SettingPage extends StatelessWidget {
                               //    backgroundBlendMode: BlendMode.overlay,
                               borderRadius: BorderRadius.circular(5),
                               color: Colors.white54,
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
                                   color: Colors.black12,
                                   spreadRadius: 1,
                                   blurRadius: 20,
-                                  offset: const Offset(0, 1),
+                                  offset: Offset(0, 1),
                                 ),
                               ],
                             ),
@@ -113,25 +113,25 @@ class SettingPage extends StatelessWidget {
                                 children: [
                                   InkWell(
                                     onTap: ()async=>contactClientService(),
-                                    child: Row(children: [
+                                    child: const Row(children: [
                                       Icon(Icons.call,size: 25,),
                                       SizedBox(width: 10,),
                                       Text("Contacter le service client",style: TextStyle(fontSize: 16,color: Colors.black87),)
                                     ],),
                                   ),
-                                  SizedBox(height: 15,),
+                                  const SizedBox(height: 15,),
                                   InkWell(
                                     onTap: ()async=>visitWebsite(),
-                                    child: Row(children: [
+                                    child: const Row(children: [
                                       Icon(Icons.web,size: 25,),
                                       SizedBox(width: 10,),
                                       Text("Visiter le site",style: TextStyle(fontSize: 16,color: Colors.black87),)
                                     ],),
                                   ),
-                                  SizedBox(height: 15,),
+                                  const SizedBox(height: 15,),
                                   InkWell(
                                     onTap: ()async =>contactCollabo(),
-                                    child: Row(children: [
+                                    child: const Row(children: [
                                       Icon(Icons.group_add,size: 25,),
                                       SizedBox(width: 10,),
                                       Text("Collaboration",style: TextStyle(fontSize: 16,color: Colors.black87),)
@@ -161,7 +161,7 @@ class SettingPage extends StatelessWidget {
                             }catch(e){
                               print(e);
                             }finally{
-                              storage.deleteAll();
+                              await storage.deleteAll();
                               await GoogleSignIn().signOut();
                               FirebaseAuth auth = FirebaseAuth.instance;
                               auth.signOut().then((res) {
@@ -182,17 +182,17 @@ class SettingPage extends StatelessWidget {
                                 //    backgroundBlendMode: BlendMode.overlay,
                                 borderRadius: BorderRadius.circular(5),
                                 color: Colors.white54,
-                                boxShadow: [
+                                boxShadow: const [
                                   BoxShadow(
                                     color: Colors.black12,
                                     spreadRadius: 1,
                                     blurRadius: 20,
-                                    offset: const Offset(0, 1),
+                                    offset: Offset(0, 1),
                                   ),
                                 ],
                               ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(15.0),
+                              child: const Padding(
+                                padding: EdgeInsets.all(15.0),
                                 child: Column(
                                   children: [
                                     Row(children: [
@@ -211,8 +211,8 @@ class SettingPage extends StatelessWidget {
                   )
                 ],
               ),
-              SizedBox(height: 30,),
-              Column(
+              const SizedBox(height: 30,),
+              const Column(
                 children: [
                   Text("Djizhub",style: TextStyle(color: Colors.black26,fontSize: 11),),
                   Text("Version 1.0.0",style: TextStyle(color: Colors.black26,fontSize: 11),),
@@ -349,7 +349,7 @@ void _onShare(BuildContext context) async {
 
   final box = context.findRenderObject() as RenderBox?;
 
-    shareResult = await Share.shareWithResult("On modernise la tradition avec Djizhub, la Condané Digitale! 🚀 Téléchargez l'appli maintenant et faites revivre l'épargne d'une manière nouvelle et amusante. Télecharger l'app : https://play.google.com/store/apps/details?id=com.wave.personal&pcampaignid=web_share",
+    shareResult = await Share.shareWithResult("On modernise la tradition avec Djizhub, la Condané Digitale! 🚀 Téléchargez l'appli maintenant et faites revivre l'épargne d'une manière nouvelle et amusante. Vous pouvez aussi rejoindre vos groupes de tontine sécurisés. Télecharger l'app : https://djizhub.com/",
         subject: "💼 Retour aux sources avec Djizhub - La Condané Digitale! 💰🔄",
         sharePositionOrigin: box!.localToGlobal(Offset.zero) & box.size);
 

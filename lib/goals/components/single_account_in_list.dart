@@ -6,6 +6,7 @@ import 'package:djizhub_light/home/info_box.dart';
 import 'package:djizhub_light/models/goals_model.dart';
 import 'package:djizhub_light/transactions/components/deposit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 
 import '../../globals.dart';
@@ -120,7 +121,7 @@ class SingleAccountInList extends StatelessWidget {
                               // One single section at 50%.
                               CirculitoSection(
 
-                                value: (double.parse(currentGoal.percent_progress.toString())/100),
+                                value:double.parse(currentGoal.percent_progress.toString())/100 >= 0 ? (double.parse(currentGoal.percent_progress.toString())/100) : 0,
                              //   decoration: CirculitoDecoration.fromColor(fetchGoalsController.getColorFromValue(currentGoal.percent_progress!.toInt() ?? 0)),
                                 decoration: CirculitoDecoration.fromColor(fetchGoalsController.getColorFromValue(currentGoal.percent_progress ?? 0)),
                               )
@@ -192,6 +193,28 @@ class SingleAccountInList extends StatelessWidget {
               ),
             ),
           ) : const SizedBox(),
+          currentGoal?.action_required ?? false ?
+          Positioned(
+              left: 0,
+              top: 0,
+              child: RotationTransition(
+                turns: const AlwaysStoppedAnimation(0.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.orange,
+                      borderRadius: BorderRadius.circular(50)
+                  ),
+                  child: const Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: Icon(Icons.info_outlined,color: Colors.white,),
+                  ),
+                ),
+              ),
+            ).animate(
+           // this delay only happens once at the very start
+            onPlay: (controller) => controller.repeat(reverse: true), // loop
+          ).scale(duration: 3000.ms,curve: Curves.easeInOut ).addEffect(ShimmerEffect()) : SizedBox()
+
         ],
       ),
     );

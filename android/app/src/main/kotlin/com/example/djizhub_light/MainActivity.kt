@@ -1,4 +1,4 @@
-package com.example.djizhub_light
+package com.devcon7.djizhub
 
 import android.os.Bundle
 import android.content.Intent

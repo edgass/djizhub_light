@@ -52,6 +52,7 @@ class Goal {
   DateTime? dateOfWithdrawal;
   bool? withdrawable;
   bool? listable;
+  bool? action_required;
   bool? emmergency_withdrawal;
   int? percent_progress;
   bool? constraint;
@@ -76,6 +77,7 @@ class Goal {
     this.dateOfWithdrawal,
     this.withdrawable,
     this.listable,
+    this.action_required,
     this.emmergency_withdrawal,
     this.percent_progress,
     this.constraint,
@@ -101,6 +103,7 @@ class Goal {
     dateOfWithdrawal: json["date_of_withdrawal"] == null ? null : DateTime.parse(json["date_of_withdrawal"]),
     withdrawable: json["withdrawable"],
     listable: json["listable"],
+    action_required: json["action_required"],
     emmergency_withdrawal: json["emmergency_withdrawal"],
     percent_progress: json["percent_progress"],
     constraint: json["constraint"],
@@ -126,6 +129,7 @@ class Goal {
     "date_of_withdrawal": dateOfWithdrawal?.toIso8601String(),
     "withdrawable": withdrawable,
     "listable": listable,
+    "action_required": action_required,
     "emmergency_withdrawal": emmergency_withdrawal,
     "percent_progress": percent_progress,
     "constraint": constraint,
@@ -147,6 +151,7 @@ class Transaction {
   String? name;
   String? note;
   bool? secret;
+  bool? validation_required;
   String? transactionOperator;
   int? amount;
   int? fee;
@@ -155,6 +160,7 @@ class Transaction {
   String? phone_number;
   DateTime? createdAt;
   DateTime? updatedAt;
+  List<Validator>? validators;
 
   Transaction({
     this.id,
@@ -162,6 +168,7 @@ class Transaction {
     this.name,
     this.note,
     this.secret,
+    this.validation_required,
     this.transactionOperator,
     this.amount,
     this.fee,
@@ -170,6 +177,7 @@ class Transaction {
     this.phone_number,
     this.createdAt,
     this.updatedAt,
+    this.validators,
   });
 
   factory Transaction.fromJson(Map<String, dynamic> json) => Transaction(
@@ -178,6 +186,7 @@ class Transaction {
     name: json["name"],
     note: json["note"],
     secret: json["secret"],
+    validation_required: json["validation_required"],
     transactionOperator: json["operator"],
     amount: json["amount"],
     fee: json["fee"],
@@ -186,6 +195,7 @@ class Transaction {
     phone_number: json["phone_number"],
     createdAt: json["created_at"] == null ? null : DateTime.parse(json["created_at"]),
     updatedAt: json["updated_at"] == null ? null : DateTime.parse(json["updated_at"]),
+    validators: json["validators"] == null ? [] : List<Validator>.from(json["validators"]!.map((x) => Validator.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
@@ -194,6 +204,7 @@ class Transaction {
     "name": name,
     "note": note,
     "secret": secret,
+    "validation_required": validation_required,
     "operator": transactionOperator,
     "amount": amount,
     "fee": fee,
@@ -202,6 +213,35 @@ class Transaction {
     "phone_number": phone_number,
     "created_at": createdAt?.toIso8601String(),
     "updated_at": updatedAt?.toIso8601String(),
+    "validators": validators == null ? [] : List<dynamic>.from(validators!.map((x) => x.toJson())),
+  };
+}
+
+class Validator {
+  String? name;
+  String? phoneNumber;
+  String? status;
+
+  Validator({
+    this.name,
+    this.phoneNumber,
+    this.status,
+  });
+
+  factory Validator.fromRawJson(String str) => Validator.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory Validator.fromJson(Map<String, dynamic> json) => Validator(
+    name: json["name"],
+    phoneNumber: json["phone_number"],
+    status: json["status"]!,
+  );
+
+  Map<String, dynamic> toJson() => {
+    "name": name,
+    "phone_number": phoneNumber,
+    "status": status,
   };
 }
 

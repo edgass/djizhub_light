@@ -27,6 +27,31 @@ enum MakeTransactionState {
 
 }
 
+enum MakeDeniedApprobationState {
+  PENDING,LOADING,ERROR,SUCCESS
+
+}
+
+enum MakeAcceptApprobationState {
+  PENDING,LOADING,ERROR,SUCCESS
+
+}
+
+enum UserApprobation {
+  ACCEPT,DENIED
+
+}
+
+enum ProcessingStatus {
+  PENDING,SUCCESS,FAILED,ERROR,ACCEPT,DENIED
+
+}
+
+enum TransactionType {
+  WITHDRAWAL,DEPOSIT,EMERGENCY_WITHDRAWAL
+
+}
+
 class newTransactionModel {
 
   final bool? secret;
@@ -51,7 +76,11 @@ class DepositController extends GetxController{
   AuthController authController = Get.find<AuthController>();
   Operator operator = Operator.WAVE;
   MakeTransactionState makeTransactionState = MakeTransactionState.PENDING;
+  MakeAcceptApprobationState makeAcceptApprobationState = MakeAcceptApprobationState.PENDING;
+  MakeDeniedApprobationState makeDeniedApprobationState = MakeDeniedApprobationState.PENDING;
   bool acceptEmmergencyTerm = false;
+  bool confirmApprobationChoice = false;
+  bool showApprobationChoicePopUp = false;
   final firebaseMessaging = FirebaseMessaging.instance;
 
   String? nameToSend;
@@ -66,6 +95,17 @@ class DepositController extends GetxController{
     operator = op;
     update();
   }
+
+  setConfirmApprobationChoice(bool approbationChoice){
+    confirmApprobationChoice = approbationChoice;
+    update();
+  }
+
+  setShowPopUpChoicePopUp(bool popUpChoice){
+    confirmApprobationChoice = popUpChoice;
+    update();
+  }
+
 
   int generateRandomNotificationId() {
     final random = Random();
@@ -216,6 +256,81 @@ class DepositController extends GetxController{
     }
   }
 
+  makeApprobation(BuildContext context,String transactionId,UserApprobation approbation) async {
+    String url = "${createGoalController.backendUrl}/goals/transaction";
+    print("transaction Id : $transactionId");
+    print("approbation : ${approbation.name}");
+    var response;
+    try{
+      final user = FirebaseAuth.instance.currentUser!;
+      final idToken = await user.getIdToken();
+      // final fcmToken = await firebaseMessaging.getToken();
+      if(approbation == UserApprobation.ACCEPT){
+        makeAcceptApprobationState = MakeAcceptApprobationState.LOADING;
+      }else{
+        makeDeniedApprobationState = MakeDeniedApprobationState.LOADING;
+      }
+
+      update();
+      response = await http.patch(Uri.parse("$url/$transactionId/${approbation.name}"),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': 'Bearer $idToken',
+            'fcm-token':authController.fcmToken ?? "",
+          },);
+      if (response.statusCode == 200) {
+        if(approbation == UserApprobation.ACCEPT){
+          makeAcceptApprobationState = MakeAcceptApprobationState.SUCCESS;
+        }else{
+          makeDeniedApprobationState = MakeDeniedApprobationState.SUCCESS;
+        }
+        update();
+        Get.back();
+        Get.back();
+        print("Transaction attribuée avec succés");
+      //  Get.back();
+        if(approbation == UserApprobation.ACCEPT){
+          ScaffoldMessenger.of(context).showSnackBar(
+            // SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Transaction attribuée avec succés",),backgroundColor: Colors.green,)
+              const SnackBar(content: Text("Votre Acceptation a été prise en compte",),backgroundColor: Colors.green,)
+          );
+        }else if(approbation == UserApprobation.ACCEPT){
+          ScaffoldMessenger.of(context).showSnackBar(
+            // SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Transaction attribuée avec succés",),backgroundColor: Colors.green,)
+              const SnackBar(content: Text("Votre refus a été prise en compte",),backgroundColor: Colors.green,)
+          );
+        }
+
+
+
+      } else {
+        print("Erreur de requete  lors de l'approbation ${response.body}");
+        if(approbation == UserApprobation.ACCEPT){
+          makeAcceptApprobationState = MakeAcceptApprobationState.ERROR;
+        }else{
+          makeDeniedApprobationState = MakeDeniedApprobationState.ERROR;
+        }
+        update();
+        ScaffoldMessenger.of(context).showSnackBar(
+           // SnackBar(content:  Text(singleGoalsFromJson(response.body).message ?? "Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
+           const SnackBar(content:  Text("Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
+        );
+      }
+    }catch(err){
+      print("Erreur lors de la creation du compte 2 : $err");
+      if(approbation == UserApprobation.ACCEPT){
+        makeAcceptApprobationState = MakeAcceptApprobationState.ERROR;
+      }else{
+        makeDeniedApprobationState = MakeDeniedApprobationState.ERROR;
+      }
+      update();
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Une erreur est survenue, veuillez réessayer SVP",),backgroundColor: Colors.redAccent,)
+      );
+    }
+  }
+
   launchWaveUrl(String waveUrl) async{
 
     try{
@@ -224,5 +339,4 @@ class DepositController extends GetxController{
       print('Erreur d launch');
     }
   }
-  
 }

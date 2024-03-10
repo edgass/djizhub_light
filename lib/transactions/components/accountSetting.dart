@@ -87,11 +87,11 @@ class AccountParameter extends StatelessWidget {
                       ),
                       // The validator receives the text that the user has entered.
                       validator: (value) {
-                        if (int.parse(value ?? "0") <5000) {
+                        if (int.parse(value?.replaceAll(',', '') ?? "0") <5000) {
                           return 'Le montant minimum est de 5000 FCFA';
-                        }else if(int.parse(value ?? "0") > 10000000){
+                        }if(int.parse(value?.replaceAll(',', '') ?? "0") > 10000000){
                           return 'Le montant maximum est de 10.000.000 FCFA';
-                        }else if(int.parse(value ?? "0") < int.parse(fetchGoalsController.currentGoal.value.goal.toString())){
+                        }else if(int.parse(value?.replaceAll(',', '') ?? "0") < int.parse(fetchGoalsController.currentGoal.value.goal.toString())){
                           return 'Minimum déja fixé : ${fetchGoalsController.currentGoal.value.goal} FCFA';
                         }
                         return null;

@@ -88,15 +88,17 @@ class CreateGoalController extends GetxController{
         }));
 
     if (response.statusCode == 201) {
-      createGoalState = CreateGoalState.SUCCESS;
+
       print(response.body);
 
       //fetchGoalsController.addNewGoal(goalFromJson(response.body));
-      update();
+
       print("Compte Crée avec success");
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(singleGoalsFromJson(response.body).message ?? "Compte crée avec succés",),backgroundColor: Colors.green,)
       );
+      createGoalState = CreateGoalState.SUCCESS;
+      update();
         fetchGoalsController.getGoals();
       Get.back();
       Get.back();

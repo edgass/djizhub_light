@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         fontFamily: 'poppins',
-        //scaffoldBackgroundColor: Color(0xFFF8F8F8),
+       // scaffoldBackgroundColor: Color(0xFFF2F2F0),
         colorScheme: ColorScheme.fromSeed(
             seedColor:  lightGrey,
             brightness: Brightness.light,
@@ -95,7 +95,7 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         // primarySwatch: Colors.blue,
-        primaryColor: const Color(0xFF70bccc),
+        primaryColor: const Color(0xff00597e),
         appBarTheme: const AppBarTheme(
          // backgroundColor: lightGrey,
 

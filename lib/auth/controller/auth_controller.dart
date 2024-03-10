@@ -63,16 +63,19 @@ class AuthController extends GetxController{
         Future.delayed(const Duration(seconds: 2), () {
           myConnexionState.value = MyconnexionState.idle;
         });
-
+      /*
         if(FirebaseAuth.instance.currentUser != null){
           FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
           fetchGoalsController.getGoals();
         }
-
+      */
       }
     });
     storage.read(key: 'name').then((value) => userName = value);
-    storage.read(key: "fcmToken").then((value) => fcmToken = value ?? "");
+    storage.read(key: "fcmToken").then((value) => {
+      print("fcm au niveau du auth controller : $value"),
+      fcmToken = value ?? ""
+    });
   }
 
 
@@ -167,13 +170,14 @@ class AuthController extends GetxController{
         Get.offAll(()=>const HomeCheck());
         final FCMToken = await _firebaseMessaging.getToken();
         print("FCM TOKEN : $FCMToken");
-        storage.write(key: 'fcmToken', value: FCMToken);
+        await storage.write(key: 'fcmToken', value: FCMToken);
       }
 
     }catch(e) {
       print("Erreuuuuuur : $e");
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Erreur d'authentification, réessayez svp"),backgroundColor: Colors.redAccent,)
+         // const SnackBar(content: Text("Erreur d'authentification, réessayez svp"),backgroundColor: Colors.redAccent,)
+           SnackBar(content: Text("erreur : $e"),backgroundColor: Colors.redAccent,)
       );
     }
 

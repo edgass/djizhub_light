@@ -43,7 +43,7 @@ class _AccountFilteredSectionState extends State<AccountFilteredSection> {
               fontSize: 8,
               fontWeight: FontWeight.w600),
           unSelectedTextStyle: TextStyle(
-              color: lightGrey,
+              color: apCol,
               fontSize: 14,
               fontWeight: FontWeight.w400),
           labels: const ["En cours","Clôturés"],

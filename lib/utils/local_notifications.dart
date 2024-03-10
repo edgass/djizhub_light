@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:djizhub_light/auth/controller/auth_controller.dart';
 import 'package:djizhub_light/home/home.dart';
 import 'package:djizhub_light/main.dart';
 import 'package:djizhub_light/utils/join_account_page_by_link.dart';
@@ -15,6 +16,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin notificationsPlugin =
   FlutterLocalNotificationsPlugin();
   final storage = const FlutterSecureStorage();
+
 
 
   Future<void> initNotification() async {
@@ -123,13 +125,13 @@ class NotificationService {
 
 
 
-
 Future <void> initFCMNotifications() async {
     await _firebaseMessaging.requestPermission();
     final FCMToken = await _firebaseMessaging.getToken();
-    print("FCM TOKEN : $FCMToken");
-    storage.write(key: 'fcmToken', value: FCMToken);
 
+    await storage.write(key: 'fcmToken', value: FCMToken);
+    final tok = await storage.read(key: "fcmToken");
+    print("FCM TOKEN : $tok");
   //  FirebaseMessaging.onBackgroundMessage(handleBackroundMessage);
   initPushNotification();
 

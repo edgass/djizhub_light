@@ -13,6 +13,7 @@ import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -166,7 +167,7 @@ class _HomeState extends State<Home> {
 
        backgroundColor: lightGrey,
      actions: [
-       InkWell(
+       GestureDetector(
          onTap: ()=>Navigator.push(context, MaterialPageRoute(builder: (context) =>  SettingPage())),
          child: Padding(
            padding: const EdgeInsets.all(8.0),
