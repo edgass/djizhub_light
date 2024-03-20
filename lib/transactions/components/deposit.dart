@@ -14,21 +14,50 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../globals.dart';
-class Deposit extends StatelessWidget {
-  final _depositFormKey = GlobalKey<FormState>();
+class Deposit extends StatefulWidget {
   String goalId;
-  var formatter = NumberFormat("#,###");
+
    Deposit({super.key,required this.goalId});
+
+  @override
+  State<Deposit> createState() => _DepositState();
+}
+
+class _DepositState extends State<Deposit> {
+  final _depositFormKey = GlobalKey<FormState>();
+
+  var formatter = NumberFormat("#,###");
+
   final storage = const FlutterSecureStorage();
+
  // TextEditingController nameController = TextEditingController(text: authController.userName ?? FirebaseAuth.instance.currentUser?.displayName);
-  TextEditingController numeroTelController = TextEditingController();
   TextEditingController amountController = TextEditingController();
+
   TextEditingController otpController = TextEditingController();
+
   DepositController depositController = Get.find<DepositController>();
-  FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
+
   JoinGoalController joinGoalController = Get.find<JoinGoalController>();
+
   AuthController authController = Get.find<AuthController>();
+
   RegExp myRegNumValidation = RegExp('0-9');
+
+  FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
+
+  TextEditingController numeroTelController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    numeroTelController = TextEditingController(text: fetchGoalsController.numbers.isNotEmpty ? fetchGoalsController.numbers[0].replaceFirst("221", "") : '');
+  }
+
+  void setNumber(String number) {
+    setState(() {
+      numeroTelController.text = number;
+    });
+  }
 
   void formatInput() {
     // Utilise NumberFormat pour formater le nombre avec une virgule
@@ -41,7 +70,6 @@ class Deposit extends StatelessWidget {
       selection: TextSelection.collapsed(offset: formattedNumber.length),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +97,12 @@ class Deposit extends StatelessWidget {
                       child: TextFormField(
                         keyboardType: TextInputType.number,
                         controller: numeroTelController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           prefix: Text("+221"),
+                          suffixIcon: fetchGoalsController.numbers.isNotEmpty ? InkWell(
+                              child: Icon(Icons.arrow_forward_ios,color: apCol,size: 17,),
+                              onTap: ()=> _showNumberListDialog(context,setNumber),
+                          ) : null,
                           labelText: "Numéro de Téléphone",
                         ),
                         // The validator receives the text that the user has entered.
@@ -209,7 +241,7 @@ class Deposit extends StatelessWidget {
                             }else{
                               finalName = depositController.nameToSend!;
                             }
-                            depositController.makeDeposit(context, newTransactionModel(joinGoalController.anonymousDeposit,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountCleanString),otpController.text,null,null ), goalId);
+                            depositController.makeDeposit(context, newTransactionModel(joinGoalController.anonymousDeposit,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountCleanString),otpController.text,null,null ), widget.goalId);
                           }
 
                         },
@@ -226,3 +258,45 @@ class Deposit extends StatelessWidget {
   }
 }
 
+
+Future<void> _showNumberListDialog(BuildContext context,Function(String) setNumber) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: true, // user must tap button!
+    builder: (BuildContext context) {
+      return GetBuilder<FetchGoalsController>(
+        builder: (value)=>AlertDialog(
+          title: const Text('Choisir un numéro'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                for(String num in fetchGoalsController.numbers)
+                  InkWell(
+                    onTap: (){
+                      setNumber(num.replaceFirst("221", ""));
+                      Navigator.of(context).pop();
+                    },
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(fetchGoalsController.transformNumberWithSpace(num.replaceFirst("221", "")),style: TextStyle(fontWeight: FontWeight.bold),),
+                      ),
+                    ),
+                  )
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Fermer'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+
+          ],
+        ),
+      );
+    },
+  );
+}

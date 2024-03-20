@@ -1,4 +1,5 @@
 import 'package:djizhub_light/auth/controller/auth_controller.dart';
+import 'package:djizhub_light/goals/controllers/fetch_goals_controller.dart';
 import 'package:djizhub_light/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -8,17 +9,29 @@ import 'package:get/get.dart';
 
 import '../../globals.dart';
 import 'package:intl/intl.dart';
-class Withdrawal extends StatelessWidget {
+class Withdrawal extends StatefulWidget {
   String goalId;
   bool emergency;
    Withdrawal({super.key,required this.goalId,required this.emergency});
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController numeroTelController = TextEditingController();
-  TextEditingController amountTelController = TextEditingController();
-  TextEditingController noteController = TextEditingController();
-  DepositController depositController = Get.find<DepositController>();
-  AuthController authController = Get.find<AuthController>();
 
+  @override
+  State<Withdrawal> createState() => _WithdrawalState();
+}
+
+class _WithdrawalState extends State<Withdrawal> {
+  final _formKey = GlobalKey<FormState>();
+
+  TextEditingController numeroTelController = TextEditingController();
+
+  TextEditingController amountTelController = TextEditingController();
+
+  TextEditingController noteController = TextEditingController();
+
+  DepositController depositController = Get.find<DepositController>();
+
+  FetchGoalsController fetchGoalsController = Get.find<FetchGoalsController>();
+
+  AuthController authController = Get.find<AuthController>();
 
   void formatInput() {
     // Utilise NumberFormat pour formater le nombre avec une virgule
@@ -33,10 +46,22 @@ class Withdrawal extends StatelessWidget {
   }
 
   @override
+  void initState() {
+    super.initState();
+    numeroTelController = TextEditingController(text: fetchGoalsController.numbers.isNotEmpty ? fetchGoalsController.numbers[0].replaceFirst("221", "") : '');
+  }
+
+  void setNumber(String number) {
+    setState(() {
+      numeroTelController.text = number;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: emergency ? const Text("Retrait d'urgence") : const Text("Retrait"),
+        title: widget.emergency ? const Text("Retrait d'urgence") : const Text("Retrait"),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -58,8 +83,12 @@ class Withdrawal extends StatelessWidget {
                       child: TextFormField(
                         keyboardType: TextInputType.number,
                         controller: numeroTelController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           prefix: Text("+221"),
+                          suffixIcon: fetchGoalsController.numbers.isNotEmpty ? InkWell(
+                            child: Icon(Icons.arrow_forward_ios,color: apCol,size: 17,),
+                            onTap: ()=> _showNumberListDialog(context,setNumber),
+                          ) : null,
                           labelText: "Numéro de Téléphone",
                         ),
                         // The validator receives the text that the user has entered.
@@ -73,7 +102,7 @@ class Withdrawal extends StatelessWidget {
                         },
                       ),
                     ),
-                    emergency ?
+                    widget.emergency ?
                     Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: TextFormField(
@@ -86,14 +115,14 @@ class Withdrawal extends StatelessWidget {
                           labelText: "Montant",
                         ),
                         validator: (value) {
-                          if (value!.isEmpty & emergency) {
+                          if (value!.isEmpty & widget.emergency) {
                             return 'Ce champs est obligatoire';
                           }
                           return null;
                         },
                       ),
                     ) : const SizedBox(),
-                    emergency ?
+                    widget.emergency ?
                     Padding(
                       padding: const EdgeInsets.only(left: 10.0,right: 10.0),
                       child: Text("Lors d'un retrait d'urgence, la limite est de 50 % du compte, soit ${((int.parse(fetchGoalsController.currentGoal.value.balance.toString())~/2) /5).floor() * 5} FCFA maximum, avec une pénalité de 5 % sur le montant retiré.",textAlign: TextAlign.center,style: const TextStyle(color: Colors.redAccent),),
@@ -110,12 +139,12 @@ class Withdrawal extends StatelessWidget {
                         ),
                       ),
                     ),
-                    !emergency ?
+                    !widget.emergency ?
                     const Padding(
                       padding: EdgeInsets.only(top: 20.0,left: 10.0,right: 10.0),
                       child: Text("Les retraits sont soumis à des frais de 2%.",textAlign: TextAlign.center,),
                     ) : const SizedBox(),
-                    emergency ?
+                    widget.emergency ?
                     GetBuilder<DepositController>(
                         builder: (value)=>CheckboxListTile(
                             title: const Text("J'accepte"),
@@ -134,12 +163,12 @@ class Withdrawal extends StatelessWidget {
                           child: value.makeTransactionState == MakeTransactionState.LOADING
                               ? const CircularProgressIndicator()
                               : ElevatedButton(
-                            style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(emergency & !depositController.acceptEmmergencyTerm ? Colors.black12 : lightGrey)),
-                         onPressed:emergency ?
-                                             emergency & !depositController.acceptEmmergencyTerm ? null : () {
+                            style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(widget.emergency & !depositController.acceptEmmergencyTerm ? Colors.black12 : lightGrey)),
+                         onPressed:widget.emergency ?
+                                             widget.emergency & !depositController.acceptEmmergencyTerm ? null : () {
                                                if(_formKey.currentState!.validate()){
                                                  depositController.makeWithdrawal(context, newTransactionModel(
-                                                     null,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text.replaceAll(',', '')),null,emergency,noteController.text), goalId);
+                                                     null,"221${numeroTelController.text}", depositController.operator.name, double.parse(amountTelController.text.replaceAll(',', '')),null,widget.emergency,noteController.text), widget.goalId);
                                                }
 
                                              } :
@@ -150,16 +179,16 @@ class Withdrawal extends StatelessWidget {
                                }
 
                              depositController.makeWithdrawal(context, newTransactionModel(
-                                 null,"221${numeroTelController.text}", depositController.operator.name, null,null,emergency,noteController.text), goalId);
+                                 null,"221${numeroTelController.text}", depositController.operator.name, null,null,widget.emergency,noteController.text), widget.goalId);
                            }
 
                          },
                          onLongPress: null,
-        
+
                             child: const Text('Recevoir',style: TextStyle(color: Colors.white),),
                           ),
                         ))
-        
+
                   ],
                 ),
               ),
@@ -169,4 +198,46 @@ class Withdrawal extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _showNumberListDialog(BuildContext context,Function(String) setNumber) async {
+  return showDialog<void>(
+    context: context,
+    barrierDismissible: true, // user must tap button!
+    builder: (BuildContext context) {
+      return GetBuilder<FetchGoalsController>(
+        builder: (value)=>AlertDialog(
+          title: const Text('Choisir un numéro'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                for(String num in fetchGoalsController.numbers)
+                  InkWell(
+                    onTap: (){
+                      setNumber(num.replaceFirst("221", ""));
+                      Navigator.of(context).pop();
+                    },
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(fetchGoalsController.transformNumberWithSpace(num.replaceFirst("221", "")),style: TextStyle(fontWeight: FontWeight.bold),),
+                      ),
+                    ),
+                  )
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Fermer'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            )
+
+          ],
+        ),
+      );
+    },
+  );
 }

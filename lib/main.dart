@@ -38,7 +38,6 @@ void main() async {
   });
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   HomeBinding().dependencies();
-  DynamicLinksProvider().initDynamicLink();
   /*
   if(!kIsWeb){
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(kDebugMode ? false : true);

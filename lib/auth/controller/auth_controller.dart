@@ -170,6 +170,7 @@ class AuthController extends GetxController{
         Get.offAll(()=>const HomeCheck());
         final FCMToken = await _firebaseMessaging.getToken();
         print("FCM TOKEN : $FCMToken");
+        await storage.delete(key: 'fcmToken');
         await storage.write(key: 'fcmToken', value: FCMToken);
       }
 

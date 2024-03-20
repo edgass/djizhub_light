@@ -12,10 +12,10 @@ import 'package:djizhub_light/transactions/controllers/deposit_controller.dart';
 
 import 'package:djizhub_light/utils/security/security_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:intl/intl.dart';
@@ -56,6 +56,7 @@ class _HomeState extends State<Home> {
   late final TextEditingController _textController = TextEditingController();
   Timer? _timer;
   var formatter = NumberFormat("#,###");
+  final storage = const FlutterSecureStorage();
   final RefreshController _refreshController = RefreshController(initialRefresh: false,initialRefreshStatus: RefreshStatus.idle);
   void _onRefresh() async{
     // monitor network fetch
@@ -99,15 +100,22 @@ class _HomeState extends State<Home> {
       },
     );
   }
-  FirebaseDynamicLinks dynamicLinks = FirebaseDynamicLinks.instance;
 
   @override
   void initState(){
 
     super.initState();
-    initDynamicLinks().then((value) =>print("Done"));
     fetchGoalsController.getGoals();
+    if(FirebaseAuth.instance.currentUser != null){
+     fetchGoalsController.loadNumbersFromCache().then((value) => {
+       if(value == null){
+         fetchGoalsController.fetchUserNumbers()
+       }else{
+         fetchGoalsController.loadNumbersFromCache()
+       }
+     });
 
+    }
 
 
     socketController.connectToWebsocket();
@@ -116,36 +124,9 @@ class _HomeState extends State<Home> {
 
 
 
-  Future<void> initDynamicLinks() async {
 
-    print("Try to start dynamique link listener");
 
-    dynamicLinks.onLink.listen((dynamicLinkData) {
-      print("Listening dynamique link");
-      handleDynamicLink(dynamicLinkData);
-    }).onError((error) {
-      print('onLink error $error');
-      print(error.message);
-    });
 
-    final PendingDynamicLinkData? data = await dynamicLinks.getInitialLink();
-    if (data?.link != null) {
-      print("Handling initial link");
-      handleDynamicLink(data!);
-    }
-  }
-
-  void handleDynamicLink(PendingDynamicLinkData data) {
-    final Uri? deepLink = data.link;
-
-    if (deepLink != null) {
-      String name = deepLink.queryParameters['name'] ?? '';
-      String code = deepLink.queryParameters['code'] ?? '';
-      if (code.isNotEmpty) {
-        _showAddForeignAccountDialog(context);
-      }
-    }
-  }
   @override
   void dispose() {
     _timer?.cancel(); // Assurez-vous d'annuler le minuteur lors de la suppression de l'objet State

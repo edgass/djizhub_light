@@ -18,8 +18,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:observe_internet_connectivity/observe_internet_connectivity.dart';
 import '../../home/home.dart';
 import '../../models/goals_model.dart';
+import '../../models/number_list_model.dart';
 
 enum FetchState {
+  PENDING,LOADING,ERROR,SUCCESS
+
+}
+
+enum FetchNumbersState {
   PENDING,LOADING,ERROR,SUCCESS
 
 }
@@ -44,8 +50,10 @@ class FetchGoalsController extends GetxController{
  RxList<Goal> closedGoals = <Goal>[].obs;
  Rx<Goal> currentGoal = Goal().obs;
  double goalPercentage = 0;
+ List<String> numbers = [];
  Transaction currentTransaction = Transaction();
  Rx<FetchState> fetchState = FetchState.PENDING.obs;
+ Rx<FetchNumbersState> fetchNumbersState = FetchNumbersState.PENDING.obs;
  Rx<FetchSingleGoalState> fetchSingleGoalState = FetchSingleGoalState.PENDING.obs;
  FetchSingleTransactionState fetchSingleTransactionState = FetchSingleTransactionState.PENDING;
  AuthController authController = Get.find<AuthController>();
@@ -87,6 +95,28 @@ class FetchGoalsController extends GetxController{
    String goealListString = jsonEncode(goals.value);
    // Enregistrer la chaîne JSON dans la cache
    await storage.write(key: 'goals', value: goealListString);
+ }
+
+ Future<List<String>?> loadNumbersFromCache() async {
+   var numbersListString = await storage.read(key: 'numbers');
+
+   // Récupérer la chaîne JSON depuis la cache
+   if (numbersListString != null) {
+     // Convertir la chaîne JSON en une liste d'objets
+     List<dynamic> loadedNumbersList = jsonDecode(numbersListString);
+     List<String> convertedNumbersList = loadedNumbersList.map((e) => e.toString()).toList();
+     print("loaded numbers $loadedNumbersList");
+     // Mettre à jour l'état de la liste
+     numbers = convertedNumbersList;
+     return convertedNumbersList;
+   }
+ }
+
+ void saveNumbersToCache() async {
+   // Convertir la liste en une chaîne JSON
+   String numbersListString = jsonEncode(numbers);
+   // Enregistrer la chaîne JSON dans la cache
+   await storage.write(key: 'numbers', value: numbersListString);
  }
 
  Future getGoals() async {
@@ -155,6 +185,40 @@ class FetchGoalsController extends GetxController{
    }
 
    print(response.statusCode);
+ }
+
+ Future<void> fetchUserNumbers() async {
+   String url = "${createGoalController.backendUrl}/goals/numbers";
+
+
+   final User? user = FirebaseAuth.instance.currentUser;
+   final idToken = await user?.getIdToken();
+   fetchNumbersState.value = FetchNumbersState.LOADING;
+   try{
+     var response = await http.get(Uri.parse(url),
+         headers: {
+           'Content-Type': 'application/json',
+           'Accept': 'application/json',
+           'Authorization': 'Bearer $idToken',
+           'fcm-token': authController.fcmToken ?? "",
+         });
+
+     if (response.statusCode == 200) {
+       numbers = numberListFromJson(response.body).data ?? [];
+       print("numbers list : "+ numbers.toString());
+       saveNumbersToCache();
+       fetchNumbersState.value = FetchNumbersState.SUCCESS;
+       update();
+
+     } else {
+       fetchNumbersState.value = FetchNumbersState.ERROR;
+       update();
+     }
+   }catch(e){
+     fetchNumbersState.value = FetchNumbersState.ERROR;
+     update();
+   }
+
  }
 
   getSingleGoal(String idGoal) async {
@@ -262,6 +326,19 @@ class FetchGoalsController extends GetxController{
         closedGoals.add(goals[i]);
       }
     }
+ }
+
+ String transformNumberWithSpace(String phoneNumber){
+   // Vérifier si la longueur du numéro de téléphone est valide
+   if (phoneNumber.length != 9) {
+     // Retourner une chaîne vide si la longueur du numéro de téléphone n'est pas valide
+     return '';
+   }
+
+   // Ajouter les espaces au numéro de téléphone
+   String formattedPhoneNumber = '${phoneNumber.substring(0, 2)} ${phoneNumber.substring(2, 5)} ${phoneNumber.substring(5, 7)} ${phoneNumber.substring(7)}';
+
+   return formattedPhoneNumber;
  }
 
  Color getColorFromValue(int value) {
